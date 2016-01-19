@@ -1,4 +1,4 @@
-# PureCloud Kiosk Dashboard [![Build Status](https://travis-ci.org/charlieduong94/PureCloud-Kiosk.svg)](https://travis-ci.org/charlieduong94/PureCloud-Kiosk)
+# PureCloud Kiosk Frontend [![Build Status](https://travis-ci.org/purecloud-kiosk/purecloud-kiosk-frontend.svg?branch=master)](https://travis-ci.org/purecloud-kiosk/purecloud-kiosk-frontend)
 
 This repo is for the front-end dashboard of the PureCloud Kiosk System.
 
