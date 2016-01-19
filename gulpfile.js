@@ -73,20 +73,25 @@ gulp.task("browserify-watch", function(){
 gulp.task("browserify-no-watch", function(){
   watch = false;
   return browserifyApp().once("end", function(){
+    console.log("bundle created");
     process.exit();
   });
 })
 
 function browserifyApp(){
-  var b = browserify({
-    cache : {},
-    packageCache : {},
-    plugin : [watchify],
+  var options = {
+    // cache : {},
+    // packageCache : {},
+    // plugin : [watchify],
     entries : "./jsx/index.jsx",
-    extensions : [".jsx"],
-    debug : true
-  });
+    extensions : [".jsx"]
+  }
+  var b;
   if(watch){
+    options.cache = {};
+    options.packageCache = {};
+    options.plugin = [watchify];
+    b = browserify(options);
     b = watchify(b);
     bundle(b);
     b.on("update", function(){
@@ -99,6 +104,7 @@ function browserifyApp(){
     });
   }
   else{
+    b = browserify(options);
     return bundle(b);
   }
 }

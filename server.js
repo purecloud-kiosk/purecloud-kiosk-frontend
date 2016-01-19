@@ -13,7 +13,7 @@ var apiServer = "http://localhost:8080";
 var app = express();
 app.use(favicon(__dirname + "/img/favicon-bar-chart.ico"));
 app.use(compression());
-app.use(bodyParser());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : true}));
 
 app.get("/", function(req, res){
@@ -45,7 +45,6 @@ app.use("/dist", express.static(__dirname + "/dist"));
  *  Forward all other requests to api server
  */
 app.use("/api/*", function(req, res){
-  console.log("wrong one...");
   console.log(req.originalUrl.substring(4, req.originalUrl.length));
   var newUrl = apiServer + req.originalUrl.substring(4, req.originalUrl.length);
   request({

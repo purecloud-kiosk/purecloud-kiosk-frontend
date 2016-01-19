@@ -16,15 +16,15 @@ export default class Dash extends Component {
     this.state = {stats : null, eventsManaging : [], publicEvents : [], privateEvents : []};
   }
   updateView(field){
-    var state = this.setState;
+    var state = this.state;
     switch(field){
       case "stats":
-        state[field] = statStore.getStats();
+        state[field] = statsStore.getStats();
         break;
       case "eventsManaging":
         state[field] = eventsStore.getEventsManaging();
         break;
-      case "publicEvents";
+      case "publicEvents":
         state[field] = eventsStore.getPublicEvents();
         break;
       case "privateEvents":
