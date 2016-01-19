@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" ng-app="RDash">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  	<title>PureCloud Kiosk</title>
+    <script>
+      function getQueries() {
+        var queries = [];
+        var queryString = window.location.toString().split("?")[1];
+        var hashes = queryString.split("&");
+        for(var i = 0; i < hashes.length; i++){
+          var query = hashes[i].split("=");
+          queries.push(query[0]);
+          queries[query[0]] = query[1];
+        }
+        return queries;
+      }
+      localStorage.setItem("pureCloudAccessToken", getQueries().client_token);
+      window.history.replaceState({}, document.title, location.protocol + "//" + location.host + location.pathname);
+    </script>
+    <!-- STYLES -->
+    <link rel="stylesheet" type="text/css" href="dist/css/lib.min.css">
+    <link rel="stylesheet" type="text/css" href="dist/css/dashboard.min.css">
+
+  </head>
+  <body>
+    <div id="app">
+      <!-- content in here will get replaced when the app loads -->
+      <div class="text-center">
+        <i class="fa fa-spinner fa-spin fa-5x"></i>
+        <p>Loading...</p>
+      </div>
+    </div>
+    <!-- Scripts -->
+    <script type="text/javascript" src="dist/js/lib.min.js"></script>
+    <script type="text/javascript" src="dist/js/bundle.min.js"></script>
+  </body>
+</html>
