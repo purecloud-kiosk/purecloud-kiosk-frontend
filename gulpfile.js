@@ -32,8 +32,13 @@ gulp.task("custom-images", function() {
 });
 
 gulp.task("compile-less", function() {
+    var lessCompiler = less();
+    lessCompiler.on("error", function(){
+      console.log("error compiling less");
+      lessCompiler.end();
+    });
     return gulp.src(paths.styles)
-        .pipe(less())
+        .pipe(lessCompiler)
         .pipe(cssnano())
         .pipe(concat("dashboard.min.css"))
         .pipe(gulp.dest("dist/css"));

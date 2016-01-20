@@ -6,9 +6,7 @@ import dispatcher from "../dispatchers/dispatcher";
 import requestConstants from "../constants/requestConstants"
 import statsConstants from "../constants/statsConstants";
 import history from "../history/history";
-/**
- *  Dispatches to the navStore that the sidebar has been toggled
- **/
+
 export function getStats(){
   $.ajax({
     url : "api/stats/me",
@@ -27,9 +25,7 @@ export function getStats(){
   });
 
 }
-/**
- *  replaces the state of the application's history (in other words, swaps pages)
- **/
+
 export function routeToPage(page){
   history.replaceState(null, page);
 }

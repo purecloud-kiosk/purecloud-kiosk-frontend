@@ -35,13 +35,21 @@ export default class Dash extends Component {
   }
   componentDidMount(){
     console.log("dash mounted");
-    statsStore.addListener(statsConstants.STATS_RETRIEVED, this.updateView.bind(this, "stats"));
-    eventsStore.addListener(eventsConstants.EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, "eventsManaging"));
-    eventsStore.addListener(eventsConstants.PUBLIC_EVENTS_RETRIEVED, this.updateView.bind(this, "publicEvents"));
+    this.state.statsListener = statsStore.addListener(statsConstants.STATS_RETRIEVED, this.updateView.bind(this, "stats"));
+    this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, "eventsManaging"));
+    this.state.publicEventsListener = eventsStore.addListener(eventsConstants.PUBLIC_EVENTS_RETRIEVED, this.updateView.bind(this, "publicEvents"));
+    this.state.privateEventsListener = eventsStore.addListener(eventsConstants.PRIVATE_EVENTS_RETRIEVED, this.updateView.bind(this, "privateEvents"));
     statsActions.getStats();
     eventsActions.getPublicEvents(0);
     eventsActions.getEventsManaging(0);
-
+    eventsActions.getPrivateEvents(0);
+  }
+  componentWillUnmount(){
+    console.log("dash unmounting...");
+    this.state.statsListener.remove();
+    this.state.eventsManagingListener.remove();
+    this.state.publicEventsListener.remove();
+    this.state.privateEventsListener.remove();
   }
   render(){
     var {stats, eventsManaging, publicEvents, privateEvents} = this.state;
@@ -82,9 +90,13 @@ export default class Dash extends Component {
         <EventsTableWidget title="All Public Events" faIcon="fa-users" events={publicEvents}/>
       </div>
     );
+    var myPrivateEvents = [];
+    for(var i = 0; i < privateEvents.length; i++){
+      myPrivateEvents.push(privateEvents[i].event);
+    }
     privateEventsTable = (
       <div className="col-md-6">
-        <EventsTableWidget title="Private Events Attending" faIcon="fa-user-secret" events={privateEvents}/>
+        <EventsTableWidget title="Private Events" faIcon="fa-user-secret" events={myPrivateEvents}/>
       </div>
     );
     return(
