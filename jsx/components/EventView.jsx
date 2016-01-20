@@ -12,10 +12,15 @@ export default class EventView extends Component {
     this.state = {event : eventsStore.getCurrentEvent()};
   }
   componentDidMount(){
-    eventsStore.addListener(eventsConstants.CURRENT_EVENT_SET, this.updateEvent.bind(this));
+    this.state.currentEventListener = eventsStore.addListener(eventsConstants.CURRENT_EVENT_SET, this.updateEvent.bind(this));
+  }
+  componentWillUnmount(){
+    this.state.currentEventListener.remove();
   }
   updateEvent(){
-    this.setState({event : eventsStore.getCurrentEvent()});
+    var state = this.state;
+    state.event = eventsStore.getCurrentEvent();
+    this.setState(state);
   }
   render(){
     var {event} = this.state;
@@ -44,7 +49,7 @@ export default class EventView extends Component {
               </div>
             </div>
           </div>
-          <div className="col-md-6">
+          <div className="col-sm-6">
             <div className="widget">
               <div className="widget-header">
                 <i className="fa fa-user"></i>

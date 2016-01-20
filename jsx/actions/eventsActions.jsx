@@ -5,9 +5,11 @@
 import dispatcher from "../dispatchers/dispatcher";
 import requestConstants from "../constants/requestConstants"
 import eventsConstants from "../constants/eventsConstants";
+
 /**
- *  Dispatches to the navStore that the sidebar has been toggled
+ *  NOTE : Requests should be moved into a Data access object 
  **/
+
 export function getPublicEvents(page){
   $.ajax({
     url : "api/events/public?page=" + page,
@@ -26,9 +28,6 @@ export function getPublicEvents(page){
   });
 }
 
-/**
- *  Dispatches to the navStore that the sidebar has been toggled
- **/
 export function getPrivateEvents(page){
   $.ajax({
     url : "api/events/private?page=" + page,
@@ -47,9 +46,6 @@ export function getPrivateEvents(page){
   });
 }
 
-/**
- *  Dispatches to the navStore that the sidebar has been toggled
- **/
 export function getEventsManaging(page){
   $.ajax({
     url : "api/events/managing?page=" + page,
@@ -74,9 +70,6 @@ export function setCurrentEvent(event){
     data : event
   });
 }
-/**
- *  Dispatches to the navStore that the sidebar has been toggled
- **/
 
 export function createEvent(event){
 	console.log("Data we are sending: ");
