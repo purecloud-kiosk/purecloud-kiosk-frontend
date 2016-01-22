@@ -40,8 +40,7 @@
     "setup": "npm install && bower install",
     "build": "gulp build",
     "start-dev": "gulp watch & nodemon server.js",
-    "start": "node server.js",
-    "test": "mocha tests"
+    "start": "node server.js"
   },
   "author": "Charlie Duong",
   "license": "ISC"

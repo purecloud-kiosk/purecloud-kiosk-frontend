@@ -76,13 +76,9 @@ export default class Dash extends Component {
         </div>
       );
     }
-    var managing = []
-    for(var i = 0; i < eventsManaging.length; i++){
-      managing.push(eventsManaging[i].event);
-    }
     eventsManagingTable = (
       <div className="col-md-6">
-        <EventsTableWidget title="Events Managing" faIcon="fa-user" events={managing}/>
+        <EventsTableWidget title="Events Managing" faIcon="fa-user" events={eventsManaging}/>
       </div>
     );
     publicEventsTable = (
@@ -90,13 +86,9 @@ export default class Dash extends Component {
         <EventsTableWidget title="All Public Events" faIcon="fa-users" events={publicEvents}/>
       </div>
     );
-    var myPrivateEvents = [];
-    for(var i = 0; i < privateEvents.length; i++){
-      myPrivateEvents.push(privateEvents[i].event);
-    }
     privateEventsTable = (
       <div className="col-md-6">
-        <EventsTableWidget title="Private Events" faIcon="fa-user-secret" events={myPrivateEvents}/>
+        <EventsTableWidget title="Private Events" faIcon="fa-user-secret" events={privateEvents}/>
       </div>
     );
     return(
