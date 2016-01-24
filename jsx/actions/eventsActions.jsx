@@ -7,12 +7,12 @@ import requestConstants from "../constants/requestConstants"
 import eventsConstants from "../constants/eventsConstants";
 
 /**
- *  NOTE : Requests should be moved into a Data access object 
+ *  NOTE : Requests should be moved into a Data access object
  **/
 
-export function getPublicEvents(page){
+export function getPublicEvents(limit, page){
   $.ajax({
-    url : "api/events/public?page=" + page,
+    url : "api/events/public?limit="+ limit +"&page=" + page,
     method : "GET",
     headers : {
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
@@ -28,9 +28,9 @@ export function getPublicEvents(page){
   });
 }
 
-export function getPrivateEvents(page){
+export function getPrivateEvents(limit, page){
   $.ajax({
-    url : "api/events/private?page=" + page,
+    url : "api/events/private?limit="+ limit +"&page=" + page,
     method : "GET",
     headers : {
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
@@ -46,9 +46,9 @@ export function getPrivateEvents(page){
   });
 }
 
-export function getEventsManaging(page){
+export function getEventsManaging(limit, page){
   $.ajax({
-    url : "api/events/managing?page=" + page,
+    url : "api/events/managing?limit="+ limit +"&page=" + page,
     method : "GET",
     headers : {
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN

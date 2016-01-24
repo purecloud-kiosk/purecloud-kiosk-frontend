@@ -3,40 +3,61 @@ import React, { Component } from "react";
 
 import * as dateConverter from "../utils/dateConverter";
 import * as eventActions from "../actions/eventsActions";
+import * as statsActions from "../actions/statsActions";
 import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
+import statsStore from "../stores/statsStore";
+import statsConstants from "../constants/statsConstants";
+import PieChartWidget from "./PieChartWidget";
+import TickerWidget from "./TickerWidget";
 
 export default class EventView extends Component {
   constructor(props){
     super(props);
-    this.state = {event : eventsStore.getCurrentEvent()};
+    this.state = {event : eventsStore.getCurrentEvent(), stats : null};
   }
   componentDidMount(){
-    this.state.currentEventListener = eventsStore.addListener(eventsConstants.CURRENT_EVENT_SET, this.updateEvent.bind(this));
+    this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
+    statsActions.getEventStats(this.state.event._id);
   }
   componentWillUnmount(){
-    this.state.currentEventListener.remove();
+    this.state.eventStatsListener.remove();
   }
-  updateEvent(){
+  updateStats(){
     var state = this.state;
-    state.event = eventsStore.getCurrentEvent();
+    state.stats = statsStore.getEventStats();
+    console.log("updating stats");
+    console.log(state);
     this.setState(state);
   }
   render(){
-    var {event} = this.state;
-    var view;
+    var {event, stats} = this.state;
+    var view, checkInWidget;
     var privacy = "public";
+    console.log(stats);
+
     if(event != null){
-      if(event.private)
+      if(event.private && stats != null){
         privacy = "private"
+        console.log("Rendering");
+        checkInWidget = (
+          <PieChartWidget checkedIn={stats.checkedIn} notCheckedIn={stats.notCheckedIn}/>
+        );
+      }
+      else if(stats != null){ // public, so show ticker instead
+        checkInWidget = (
+          <TickerWidget value={stats.checkedIn}/>
+        );
+      }
+
       view = (
-        <div>
+        <div className="animated fadeInUp">
           <div className="event-container">
-            <img className="banner" src="http://lorempixel.com/1200/700/"></img>
+            <img className="banner" src={event.image_url}></img>
             <div className="row">
               <div className="event-details-container">
                 <div className="pull-left thumbnail-container">
-                  <img className="thumbnail" src="http://lorempixel.com/500/500/"></img>
+                  <img className="thumbnail" src={event.thumbnail_url}></img>
                 </div>
                 <div className="event-details">
                   <div className="title">
@@ -49,7 +70,7 @@ export default class EventView extends Component {
               </div>
             </div>
           </div>
-          <div className="col-sm-6">
+          <div className="col-sm-6 col-md-4">
             <div className="widget">
               <div className="widget-header">
                 <i className="fa fa-user"></i>
@@ -58,16 +79,17 @@ export default class EventView extends Component {
                   <i className="fa fa-cog fa-lg"></i> Expand
                 </a>
               </div>
-              <div className="widget-body small no-padding">
+              <div className="widget-body medium no-padding">
                 <div className="text-body">
                   <p>{event.description}</p>
                 </div>
               </div>
             </div>
           </div>
-
+          <div className="col-sm-6 col-md-4">
+            {checkInWidget}
+          </div>
         </div>
-
       );
     }
     return(

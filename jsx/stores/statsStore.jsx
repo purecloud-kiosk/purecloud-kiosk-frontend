@@ -6,14 +6,21 @@ import { EventEmitter } from "fbemitter";
 import dispatcher from "../dispatchers/dispatcher";
 import statsConstants from "../constants/statsConstants";
 
-var stats = {};
-function setStats(statistics){
-  stats = statistics;
+var userStats = null, eventStats = {};
+
+function setUserStats(statistics){
+  userStats = statistics;
+}
+function setEventStats(statistics){
+  eventStats = statistics;
 }
 
 class NavStore extends EventEmitter{
-  getStats(){
-    return stats;
+  getUserStats(){
+    return userStats;
+  }
+  getEventStats(){
+    return eventStats;
   }
 }
 
@@ -22,8 +29,11 @@ var navStore = new NavStore();
 // register for data from dispatcher
 dispatcher.register(function(payload){
   switch(payload.actionType){
-    case statsConstants.STATS_RETRIEVED:
-      setStats(payload.data)
+    case statsConstants.USER_STATS_RETRIEVED:
+      setUserStats(payload.data);
+      break;
+    case statsConstants.EVENT_STATS_RETRIEVED:
+      setEventStats(payload.data);
       break;
   }
   navStore.emit(payload.actionType);

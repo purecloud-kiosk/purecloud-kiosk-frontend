@@ -33,7 +33,7 @@ export default class SideBar extends Component{
           </li>
           <li className="sidebar-list">
             <a href="javascript:void(0);" onClick={this.handleLinkClick.bind(this, "create")}>
-              Tables <span className="menu-icon fa fa-table"></span>
+              Create <span className="menu-icon fa fa-table"></span>
             </a>
           </li>
         </ul>

@@ -18,4 +18,5 @@ export function toggleSideBar(){
  **/
 export function routeToPage(page){
   history.replaceState(null, page);
+  $(".main-content").scrollTop(0);
 }

@@ -49,16 +49,17 @@ ul.sidebar .sidebar-list a:hover{
   }
 }
 
-.widget .widget-body .title {
+.widget {
+  margin-top : 10px;
+  margin-bottom : 10px;
+  .widget-body .title {
     font-size: 28px;
     display: block;
+  }
 }
 
 .text-body {
   padding : 5px;
-}
-.event-table{
-  margin-bottom : 20px;
 }
 
 /* Smartphones (portrait and landscape) ----------- */
@@ -157,5 +158,53 @@ and (min-width : 750px) {
         }
       }
     }
+  }
+}
+.chart-container {
+  overflow : hidden;
+  width : 100%;
+  height: 100%;
+}
+
+.ticker-container{
+  width : 100%;
+  height : 100%;
+  text-align: center;
+  .ticker{
+    .checked-in-odometer{
+      font-size : 4em;
+    }
+    position: relative;
+    top: 30%;
+  }
+}
+.loading-icon{
+  height : 100%;
+  width : 100%;
+  text-align: center;
+  .icon {
+    color : rgba(0, 0, 0, 0.2);
+    position : relative;
+    top : 40%;
+  }
+}
+
+#piechart {
+  height : 90%;
+  width : 100%;
+  display : inline-block;
+  margin : 0 auto;
+  overflow : hidden;
+}
+
+.pie-legend{
+  margin : 0;
+  li {
+    list-style: square;
+    display : inline;
+  }
+  li:before {
+    content: "• ";
+    color: red; /* or whatever color you prefer */
   }
 }

@@ -11,7 +11,7 @@ export default class HeaderBar extends Component {
   }
   componentDidMount(){
     console.log("header mounted");
-    this.state.statsListener = statsStore.addListener(statsConstants.STATS_RETRIEVED, this.updateStats.bind(this));
+    this.state.statsListener = statsStore.addListener(statsConstants.USER_STATS_RETRIEVED, this.updateStats.bind(this));
   }
   componentWillUnmount(){
     console.log("header ummounting...");
@@ -19,7 +19,7 @@ export default class HeaderBar extends Component {
   }
   updateStats(){
     var state = this.state;
-    state.stats = statsStore.getStats();
+    state.stats = statsStore.getUserStats();
     this.setState(state);
   }
   render(){
@@ -33,14 +33,14 @@ export default class HeaderBar extends Component {
           <div className="user pull-right">
             <div className="item dropdown">
               <a href="javascript:void(0);" className="dropdown-toggle" data-toggle="dropdown">
-                <img src="dist/img/avatar.jpg"/>
+                <img src={stats.image}/>
               </a>
               <ul className="dropdown-menu dropdown-menu-right">
                 <li className="dropdown-header">{stats.name}</li>
                 <li className="divider"></li>
                 <li className="link"><a href="https://apps.mypurecloud.com/directory/">Profile</a></li>
                 <li className="divider"></li>
-                <li className="link"><a href="#">Logout</a></li>
+                <li className="link"><a href="https://login.mypurecloud.com/logout">Logout</a></li>
               </ul>
             </div>
             <div className="item dropdown">

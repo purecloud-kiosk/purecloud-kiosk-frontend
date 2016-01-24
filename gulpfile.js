@@ -49,6 +49,7 @@ gulp.task("lib-css", function(){
     "bower_components/bootstrap/dist/css/bootstrap.min.css",
     "bower_components/font-awesome/css/font-awesome.min.css",
     "bower_components/rdash-ui/dist/css/rdash.min.css",
+    "bower_components/odometer/themes/odometer-theme-default.css"
   ];
   return gulp.src(files)
     .pipe(cssnano())
@@ -60,7 +61,8 @@ gulp.task("lib-js", function(){
   var files = [
     "jsx/cleanUrl.js",
     "bower_components/jquery/dist/jquery.min.js",
-    "bower_components/bootstrap/dist/js/bootstrap.min.js"
+    "bower_components/bootstrap/dist/js/bootstrap.min.js",
+    "bower_components/odometer/odometer.min.js"
   ];
   return gulp.src(files)
     .pipe(minifyJs())
@@ -113,6 +115,10 @@ function browserifyApp(){
 function bundle(b){
   return b.transform(babelify, {presets : ["es2015", "react"]})
     .bundle()
+    .on("error", function(error){
+      console.log(error);
+      this.emit("end");
+    })
     .pipe(source("bundle.min.js"))
     .pipe(buffer())
     .pipe(minifyJs())
