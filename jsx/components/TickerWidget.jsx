@@ -6,12 +6,15 @@ export default class TickerWidget extends Component {
     super(props);
   }
   componentDidMount(){
-    console.log("Ticker " + this.props.value);
+    var {value} = this.props;
     var odometer = new Odometer({
       el: document.querySelector(".checked-in-odometer"),
       value : 0
     });
-    odometer.update(this.props.value);
+    setTimeout( function(){
+      odometer.update(value);
+    }, 500);
+
   }
   render(){
     return(

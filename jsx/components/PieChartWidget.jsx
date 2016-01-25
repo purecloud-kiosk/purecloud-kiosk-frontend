@@ -28,15 +28,16 @@ export default class PieChartWidget extends Component {
       segmentShowStroke : true,
       segmentStrokeColor : "#fff",
       segmentStrokeWidth : 2,
-      //percentageInnerCutout : 50,
       animationEasing : "easeOutBounce",
       animateRotate : true,
       animateScale : false,
       maintainAspectRatio: false,
       responsive: true
     }
-    var pieChartCtx = $("#piechart").get(0).getContext("2d");
-    new Chart(pieChartCtx).Pie(data,options);
+    setTimeout( function(){ // this prevents it from having issues with being responsive
+      var pieChartCtx = $("#piechart").get(0).getContext("2d");
+      new Chart(pieChartCtx).Pie(data,options);
+    }, 500);
   }
   render(){
     return(
