@@ -93,3 +93,26 @@ export function createEvent(event){
 	    console.log(error);
 	  });
 }
+export function updateEvent(event){
+  console.log("updating: ");
+  console.log(event);
+  $.ajax({
+    url: "api/events/update",
+    method : "POST",
+    data : event,
+    headers : {
+      "Authorization" : "bearer" + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log("Response from Update : ");
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_UPDATED,
+      data : data
+    }).error(function(error){
+      console.log("ERROR : ");
+      console.log(error);
+    })
+  })
+
+}

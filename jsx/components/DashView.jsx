@@ -51,7 +51,7 @@ export default class Dash extends Component {
   }
   componentWillUnmount(){
     console.log("dash unmounting...");
-    this.state.userStatsListener.remove();
+    //this.state.userStatsListener.remove();
     this.state.eventsManagingListener.remove();
     this.state.publicEventsListener.remove();
     this.state.privateEventsListener.remove();

@@ -14,7 +14,9 @@
     "history": "^1.13.1",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
+    "react-popup": "^0.2.2",
     "react-router": "^1.0.2",
+    "react-time-picker": "^1.1.0",
     "request": "^2.67.0",
     "serve-favicon": "^2.3.0"
   },
