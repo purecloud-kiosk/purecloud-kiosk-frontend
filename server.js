@@ -51,7 +51,7 @@ app.use('/dist', express.static(__dirname + '/dist'));
  */
 app.use('/api/*', function(req, res){
   var path = url.parse(req.originalUrl).pathname;
-  var path = path.slice(4, path.length);
+  path = path.slice(4, path.length);
   console.log(path);
   var newUrl = req.originalUrl.slice(4, req.originalUrl.length);
   proxy.web(req, res, { 'target' : apiServer + path});
