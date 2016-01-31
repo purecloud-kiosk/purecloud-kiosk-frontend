@@ -5,7 +5,6 @@
  **/
 var express = require('express');
 var request = require('request');
-var bodyParser = require('body-parser');
 var compression = require('compression');
 var favicon = require('serve-favicon');
 var httpProxy = require('http-proxy');
@@ -18,10 +17,11 @@ var proxy = httpProxy.createProxyServer();
 var app = express();
 app.use(favicon(__dirname + '/img/favicon-bar-chart.ico'));
 app.use(compression());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended : true}));
+//app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({extended : true}));
 
 app.get('/', function(req, res){
+  console.log('got here');
   var token = req.query.client_token;
   if(token !== undefined){
     request({
@@ -53,7 +53,6 @@ app.use('/api/*', function(req, res){
   var path = url.parse(req.originalUrl).pathname;
   path = path.slice(4, path.length);
   console.log(path);
-  var newUrl = req.originalUrl.slice(4, req.originalUrl.length);
   proxy.web(req, res, { 'target' : apiServer + path});
 });
 
