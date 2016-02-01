@@ -52,6 +52,7 @@ gulp.task("lib-css", function(){
     "bower_components/odometer/themes/odometer-theme-default.css",
     "node_modules/react-date-picker/base.css",
     "node_modules/react-date-picker/theme/default.css",
+    //"node_modules/react-popup/examples/popup.example.css"
     //"node_modules/react-time-picker/"
   ];
   return gulp.src(files)
