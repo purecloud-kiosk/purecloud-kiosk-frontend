@@ -24,16 +24,18 @@ export default class HeaderBar extends Component {
   }
   render(){
     var {stats} = this.state;
-    if(stats == null){
-      stats = {name : "", organization : ""};
-    }
+    if(stats == null)
+      stats = {'name': '', 'organization' : '', 'image' : '/dist/img/avatar.jpg'};
+    else if(stats.image == null)
+      stats.image = '/dist/img/avatar.jpg';
+    console.log(stats.image);
     return (
       <div className="row header">
         <div className="col-xs-12">
           <div className="user pull-right">
             <div className="item dropdown">
               <a href="javascript:void(0);" className="dropdown-toggle" data-toggle="dropdown">
-                <img src={stats.image}/>
+                <img src={stats.image} onerror="this.onerror = null; this.src='/dist/img/avatar.jpg'"/>
               </a>
               <ul className="dropdown-menu dropdown-menu-right">
                 <li className="dropdown-header">{stats.name}</li>
