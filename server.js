@@ -17,11 +17,8 @@ var proxy = httpProxy.createProxyServer();
 var app = express();
 app.use(favicon(__dirname + '/img/favicon-bar-chart.ico'));
 app.use(compression());
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({extended : true}));
 
 app.get('/', function(req, res){
-  console.log('got here');
   var token = req.query.client_token;
   if(token !== undefined){
     request({
@@ -45,7 +42,7 @@ app.get('/', function(req, res){
 });
 
 app.use('/dist', express.static(__dirname + '/dist'));
-
+app.use('/img', express.static(__dirname + '/img'));
 /**
  *  Forward all other requests to api server
  */

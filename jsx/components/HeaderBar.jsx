@@ -25,9 +25,9 @@ export default class HeaderBar extends Component {
   render(){
     var {stats} = this.state;
     if(stats == null)
-      stats = {'name': '', 'organization' : '', 'image' : '/dist/img/avatar.jpg'};
+      stats = {'name': '', 'organization' : '', 'image' : '/img/avatar.jpg'};
     else if(stats.image == null)
-      stats.image = '/dist/img/avatar.jpg';
+      stats.image = '/img/avatar.jpg';
     console.log(stats.image);
     return (
       <div className="row header">

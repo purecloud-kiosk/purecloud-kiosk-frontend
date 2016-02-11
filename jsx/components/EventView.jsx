@@ -53,7 +53,7 @@ export default class EventView extends Component {
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
-            <img className="banner" src={event.imageUrl}></img>
+            <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
             <div className="row">
               <div className="event-details-container">
                 <div className="pull-left thumbnail-container">
