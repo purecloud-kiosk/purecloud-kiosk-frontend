@@ -1,14 +1,8 @@
 var gulp = require("gulp");
 var cssnano = require("gulp-cssnano");
-var watchify = require("watchify");
 var minifyJs = require("gulp-uglify");
-var less = require("gulp-less");
 var concat = require("gulp-concat");
 var rename = require("gulp-rename");
-var browserify = require("browserify");
-var babelify = require("babelify");
-var source = require("vinyl-source-stream");
-var buffer = require("vinyl-buffer");
 
 var watch;
 
@@ -31,18 +25,6 @@ gulp.task("custom-images", function() {
         .pipe(gulp.dest("dist/img"));
 });
 
-gulp.task("compile-less", function() {
-    var lessCompiler = less();
-    lessCompiler.on("error", function(){
-      console.log("error compiling less");
-      lessCompiler.end();
-    });
-    return gulp.src(paths.styles)
-        .pipe(lessCompiler)
-        .pipe(cssnano())
-        .pipe(concat("dashboard.min.css"))
-        .pipe(gulp.dest("dist/css"));
-});
 
 gulp.task("lib-css", function(){
   var files = [
@@ -76,62 +58,5 @@ gulp.task("lib-js", function(){
 
 // handle file watching
 
-gulp.task("browserify-watch", function(){
-  watch = true;
-  return browserifyApp();
-});
-
-gulp.task("browserify-no-watch", function(){
-  watch = false;
-  return browserifyApp().once("end", function(){
-    console.log("bundle created");
-    process.exit();
-  });
-})
-
-function browserifyApp(){
-  var options = {
-    entries : "./jsx/index.jsx",
-    extensions : [".jsx"]
-  }
-  var b;
-  if(watch){
-    options.cache = {};
-    options.packageCache = {};
-    options.plugin = [watchify];
-    b = browserify(options);
-    b = watchify(b);
-    bundle(b);
-    b.on("update", function(){
-      console.log("rebundling...");
-      bundle(b);
-    });
-    b.on("log", function(msg){
-      console.log("bundle created");
-      console.log(msg);
-    });
-  }
-  else{
-    b = browserify(options);
-    return bundle(b);
-  }
-}
-function bundle(b){
-  return b.transform(babelify, {presets : ["es2015", "react"]})
-    .bundle()
-    .on("error", function(error){
-      console.log(error);
-      this.emit("end");
-    })
-    .pipe(source("bundle.min.js"))
-    .pipe(buffer())
-    .pipe(minifyJs())
-    .pipe(gulp.dest("dist/js"));
-}
-
-gulp.task("compile-external", ["custom-images", "lib-css", "lib-js", "copy-bower_fonts"]);
-gulp.task("build", ["compile-external", "compile-less", "browserify-no-watch"]);
-gulp.task("watch", ["compile-external", "compile-less", "browserify-watch"], function(){
-  gulp.watch(paths.styles, ["compile-less"]);
-});
+gulp.task("build", ["custom-images", "lib-css", "lib-js", "copy-bower_fonts"]);
 gulp.task("default", ["build"]);

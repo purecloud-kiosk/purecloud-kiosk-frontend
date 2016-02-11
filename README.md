@@ -8,7 +8,7 @@ This repo is for the front-end dashboard of the PureCloud Kiosk System.
 
 ### Installation
 1. Clone this repo.
-2. Install the dependencies with `npm run setup`.
+2. Install the dependencies with `npm install`. If `postinstall` does not execute, run `bower install`,
 3. Start up an instance of the Backend API server, which can be found [here](https://github.com/purecloud-kiosk/purecloud-kiosk-backend)
 4. Start the server with `npm start` or `node server.js`.
 
