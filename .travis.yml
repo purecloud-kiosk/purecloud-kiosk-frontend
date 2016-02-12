@@ -2,7 +2,8 @@ language: node_js
 node_js:
   - "5.0"
 before_script:
-  - npm run setup
+  - npm install
+  - npm run postinstall
 cache:
   directories:
     - node_modules
