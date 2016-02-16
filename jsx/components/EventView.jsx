@@ -1,5 +1,6 @@
 "use strict";
 import React, { Component } from "react";
+import * as navActions from "../actions/navActions";
 
 import * as dateConverter from "../utils/dateConverter";
 import * as eventActions from "../actions/eventsActions";
@@ -30,6 +31,30 @@ export default class EventView extends Component {
     console.log(state);
     this.setState(state);
   }
+  handleEventUpdated(page){
+    //set flag = true
+    //var flag = true;
+    eventActions.setUpdateFlag(true);
+    /*
+    var state = this.state;
+    state.stats = statsStore.getEventStats();
+   React.createElement(Component, Object.assign({}, this.props, {event : {
+          title : "test passing",
+          date: 0,
+          location : "Erie, PA",
+          private : false,
+          description : "some jargon", 
+          image_url : "http://www.lorempixels.com/1024/960",
+          thumbnail_url : ''
+          }}));
+    console.log(state)
+    console.log("page");
+    //eventsConstants.EVENT_UPDATED;
+    */
+    navActions.routeToPage("create");
+    }
+     
+  
   render(){
     var {event, stats} = this.state;
     var view, checkInWidget;
@@ -53,11 +78,20 @@ export default class EventView extends Component {
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
+          <div className="update-button">
+                <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Events
+                {this.props.event}</button>
+              </div>
             <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
+            
             <div className="row">
+
               <div className="event-details-container">
+              
                 <div className="pull-left thumbnail-container">
+
                   <img className="thumbnail" src={event.thumbnailUrl}></img>
+
                 </div>
                 <div className="event-details">
                   <div className="title">
@@ -99,3 +133,7 @@ export default class EventView extends Component {
     );
   }
 }
+//<div className="update-button">
+//         <button type="button" className= "updateEvent" onClick=(onHandleChangeClick.bind(this))>
+//        </button>
+//     </div>
