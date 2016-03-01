@@ -19,6 +19,7 @@
     "jquery": "~2.1.4",
     "odometer": "~0.4.7",
     "animate.css": "~3.5.1",
-    "Chart.js": "~1.0.2"
+    "Chart.js": "~1.0.2",
+    "fullcalendar": "~2.6.1"
   }
 }

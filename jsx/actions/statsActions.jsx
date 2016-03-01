@@ -1,18 +1,18 @@
-"use strict";
+'use strict';
 /**
  *  Actions related to Navigation
  **/
-import dispatcher from "../dispatchers/dispatcher";
-import requestConstants from "../constants/requestConstants"
-import statsConstants from "../constants/statsConstants";
-import history from "../history/history";
+import dispatcher from '../dispatchers/dispatcher';
+import requestConstants from '../constants/requestConstants'
+import statsConstants from '../constants/statsConstants';
+import history from '../history/history';
 
 export function getUserStats(){
   $.ajax({
-    url : "api/stats/me",
-    method : "GET",
+    url : 'api/stats/me',
+    method : 'GET',
     headers : {
-      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
     console.log(data);
@@ -26,15 +26,15 @@ export function getUserStats(){
 }
 
 export function getEventStats(eventID){
-  console.log("eventID  = " + eventID);
+  console.log('eventID  = ' + eventID);
   $.ajax({
-    url : "api/stats/event?eventID=" + eventID,
-    method : "GET",
+    url : 'api/stats/event?eventID=' + eventID,
+    method : 'GET',
     headers : {
-      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
-    console.log("eventStats : ");
+    console.log('eventStats : ');
     console.log(data);
     dispatcher.dispatch({
       actionType : statsConstants.EVENT_STATS_RETRIEVED,

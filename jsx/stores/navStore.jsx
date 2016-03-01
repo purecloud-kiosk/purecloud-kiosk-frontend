@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 /**
  *  This is a pretty basic data store for handling the toggling of side bar.
  **/
-import { EventEmitter } from "fbemitter";
-import dispatcher from "../dispatchers/dispatcher";
-import navConstants from "../constants/navConstants";
+import { EventEmitter } from 'fbemitter';
+import dispatcher from '../dispatchers/dispatcher';
+import navConstants from '../constants/navConstants';
 
 var open = false;
 function toggleOpen(){

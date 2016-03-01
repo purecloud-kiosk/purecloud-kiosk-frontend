@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 /**
  *  This is a pretty basic data store for handling the toggling of side bar.
  **/
-import { EventEmitter } from "fbemitter";
-import dispatcher from "../dispatchers/dispatcher";
-import statsConstants from "../constants/statsConstants";
+import { EventEmitter } from 'fbemitter';
+import dispatcher from '../dispatchers/dispatcher';
+import statsConstants from '../constants/statsConstants';
 
 var userStats = null, eventStats = {};
 

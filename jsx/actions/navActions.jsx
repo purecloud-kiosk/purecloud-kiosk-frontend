@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 /**
  *  Actions related to Navigation
  **/
-import dispatcher from "../dispatchers/dispatcher";
-import navConstants from "../constants/navConstants";
-import history from "../history/history";
+import dispatcher from '../dispatchers/dispatcher';
+import navConstants from '../constants/navConstants';
+import history from '../history/history';
 /**
  *  Dispatches to the navStore that the sidebar has been toggled
  **/
@@ -18,5 +18,5 @@ export function toggleSideBar(){
  **/
 export function routeToPage(page){
   history.replaceState(null, page);
-  $(".main-content").scrollTop(0);
+  $('.main-content').scrollTop(0);
 }

@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 /**
  *  Actions related to Navigation
  **/
-import dispatcher from "../dispatchers/dispatcher";
-import requestConstants from "../constants/requestConstants"
-import eventsConstants from "../constants/eventsConstants";
+import dispatcher from '../dispatchers/dispatcher';
+import requestConstants from '../constants/requestConstants'
+import eventsConstants from '../constants/eventsConstants';
 
 /**
  *  NOTE : Requests should be moved into a Data access object
@@ -12,10 +12,10 @@ import eventsConstants from "../constants/eventsConstants";
 
 export function getPublicEvents(limit, page){
   $.ajax({
-    url : "api/events/public?limit="+ limit +"&page=" + page,
-    method : "GET",
+    url : 'api/events/public?limit='+ limit +'&page=' + page,
+    method : 'GET',
     headers : {
-      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
     console.log(data);
@@ -30,10 +30,10 @@ export function getPublicEvents(limit, page){
 
 export function getPrivateEvents(limit, page){
   $.ajax({
-    url : "api/events/private?limit="+ limit +"&page=" + page,
-    method : "GET",
+    url : 'api/events/private?limit='+ limit +'&page=' + page,
+    method : 'GET',
     headers : {
-      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
     console.log(data);
@@ -48,10 +48,10 @@ export function getPrivateEvents(limit, page){
 
 export function getEventsManaging(limit, page){
   $.ajax({
-    url : "api/events/managing?limit="+ limit +"&page=" + page,
-    method : "GET",
+    url : 'api/events/managing?limit='+ limit +'&page=' + page,
+    method : 'GET',
     headers : {
-      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
     console.log(data);
@@ -72,45 +72,45 @@ export function setCurrentEvent(event){
 }
 
 export function createEvent(event){
-	console.log("Data we are sending: ");
+	console.log('Data we are sending: ');
 	console.log(event);
 	 $.ajax({
-	    url : "api/events/create",
-	    method : "POST",
+	    url : 'api/events/create',
+	    method : 'POST',
 	    data : event,
 	    headers : {
-	      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+	      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
 	    }
 	  }).done(function(data){
-	  	console.log("Response from Create : ");
+	  	console.log('Response from Create : ');
 	    console.log(data);
 	    dispatcher.dispatch({
 	      actionType : eventsConstants.EVENT_CREATED,
 	      data : data
 	    });
 	  }).error(function(error){
-	  	console.log("ERROR : ");
+	  	console.log('ERROR : ');
 	    console.log(error);
 	  });
 }
 export function updateEvent(event){
-  console.log("updating: ");
+  console.log('updating: ');
   console.log(event);
   $.ajax({
-    url: "api/events/update",
-    method : "POST",
+    url: 'api/events/update',
+    method : 'POST',
     data : event,
     headers : {
-      "Authorization" : "bearer" + requestConstants.AUTH_TOKEN
+      'Authorization' : 'bearer' + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
-    console.log("Response from Update : ");
+    console.log('Response from Update : ');
     console.log(data);
     dispatcher.dispatch({
       actionType : eventsConstants.EVENT_UPDATED,
       data : data
     }).error(function(error){
-      console.log("ERROR : ");
+      console.log('ERROR : ');
       console.log(error);
     })
   })

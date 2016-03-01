@@ -6,9 +6,10 @@ import { EventEmitter } from "fbemitter";
 import dispatcher from "../dispatchers/dispatcher";
 import eventsConstants from "../constants/eventsConstants";
 
-var publicEvents = [];
-var privateEvents = [];
-var eventsManaging = [];
+// start out as null
+var publicEvents = null;
+var privateEvents = null;
+var eventsManaging = null;
 var currentEvent = null;
 
 function setPrivateEvents(events){

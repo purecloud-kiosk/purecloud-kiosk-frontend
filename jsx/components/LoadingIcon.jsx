@@ -1,5 +1,5 @@
-"use strict";
-import React, { Component } from "react";
+'use strict';
+import React, { Component } from 'react';
 
 export default class LoadingIcon extends Component {
   constructor(props){
@@ -7,8 +7,8 @@ export default class LoadingIcon extends Component {
   }
   render(){
     return(
-      <div className="loading-icon">
-        <i className="fa fa-refresh fa-spin fa-5x icon"></i>
+      <div className='loading-icon'>
+        <i className='fa fa-refresh fa-spin fa-5x icon'></i>
       </div>
     );
   }

@@ -11,6 +11,7 @@ import statsConstants from "../constants/statsConstants";
 import PieChartWidget from "./PieChartWidget";
 import TickerWidget from "./TickerWidget";
 
+
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -18,7 +19,22 @@ export default class EventView extends Component {
   }
   componentDidMount(){
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
-    statsActions.getEventStats(this.state.event._id);
+    statsActions.getEventStats(this.state.event.id);
+    console.log(this.state.event);
+    var self = this;
+    $('.banner').error(this.onBannerError.bind(this));
+    $('.thumbnail').error(this.onThumbnailError.bind(this));
+  }
+  onBannerError(){
+    console.log('error with image');
+    var state = this.state;
+    state.event.imageUrl = 'https://unsplash.it/1920/1080';
+    this.setState(state);
+  }
+  onThumbnailError(){
+    var state = this.state;
+    state.event.thumbnailUrl = 'https://unsplash.it/400/400';
+    this.setState(state);
   }
   componentWillUnmount(){
     this.state.eventStatsListener.remove();
@@ -26,20 +42,15 @@ export default class EventView extends Component {
   updateStats(){
     var state = this.state;
     state.stats = statsStore.getEventStats();
-    console.log("updating stats");
-    console.log(state);
     this.setState(state);
   }
   render(){
     var {event, stats} = this.state;
     var view, checkInWidget;
     var privacy = "public";
-    console.log(stats);
-
     if(event != null){
       if(event.private && stats != null){
-        privacy = "private"
-        console.log("Rendering");
+        privacy = "private";
         checkInWidget = (
           <PieChartWidget checkedIn={stats.checkedIn} notCheckedIn={stats.notCheckedIn}/>
         );
@@ -49,20 +60,23 @@ export default class EventView extends Component {
           <TickerWidget value={stats.checkedIn}/>
         );
       }
+      event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
+      event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
 
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
-            <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
+            <img className="banner" src={event.imageUrl}></img>
             <div className="row">
               <div className="event-details-container">
                 <div className="pull-left thumbnail-container">
-                  <img className="thumbnail" src={event.thumbnailUrl}></img>
+                  <img className="thumbnail" src={event.thumbnailUrl} ></img>
                 </div>
                 <div className="event-details">
                   <div className="title">
                     <h4>{event.title}</h4>
-                    <p>Date: {dateConverter.convertMillisToDate(event.date)}</p>
+                    <p>Start Date: {dateConverter.convertMillisToDate(event.startDate)}</p>
+                    <p>End Date: {dateConverter.convertMillisToDate(event.endDate)}</p>
                     <p>Location: {event.location}</p>
                     <p>This event is {privacy}</p>
                   </div>
