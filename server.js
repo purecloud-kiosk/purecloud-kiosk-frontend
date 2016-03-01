@@ -47,6 +47,7 @@ app.use('/img', express.static(__dirname + '/img'));
  *  Forward all other requests to api server
  */
 app.use('/api/*', function(req, res){
+  console.log(req);
   var path = url.parse(req.originalUrl).pathname;
   path = path.slice(4, path.length);
   console.log(path);

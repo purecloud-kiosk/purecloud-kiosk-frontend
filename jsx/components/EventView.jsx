@@ -42,12 +42,16 @@ export default class EventView extends Component {
   updateStats(){
     var state = this.state;
     state.stats = statsStore.getEventStats();
+    console.log("updating stats");
+    console.log(state);
     this.setState(state);
   }
   render(){
     var {event, stats} = this.state;
     var view, checkInWidget;
     var privacy = "public";
+    console.log(stats);
+
     if(event != null){
       if(event.private && stats != null){
         privacy = "private";

@@ -11,6 +11,7 @@ var publicEvents = null;
 var privateEvents = null;
 var eventsManaging = null;
 var currentEvent = null;
+var updateFlag = false;
 
 function setPrivateEvents(events){
   privateEvents = events;
@@ -29,6 +30,9 @@ function setCurrentEvent(event){
 function storeCreatedEvent(event){
   createEvent = event;
 }
+function setUpdateFlag(bool){
+  updateFlag = bool;
+}
 
 class EventsStore extends EventEmitter{
   getPublicEvents(){
@@ -42,6 +46,9 @@ class EventsStore extends EventEmitter{
   }
   getCurrentEvent(){
     return currentEvent;
+  }
+  updateIsSet(){
+    return updateFlag;
   }
 }
 
@@ -61,6 +68,10 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.CURRENT_EVENT_SET:
       setCurrentEvent(payload.data);
+      break;
+      //case event is being updated
+      case eventsConstants.FLAG_UPDATE_SET:
+      setUpdateFlag(payload.data);
       break;
     default:
       //no op
