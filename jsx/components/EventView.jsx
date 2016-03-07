@@ -70,11 +70,15 @@ export default class EventView extends Component {
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
-            <img className="banner" src={event.imageUrl}></img>
+          <div className="update-button">
+                <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
+                {this.props.event}</button>
+              </div>
+            <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
             <div className="row">
               <div className="event-details-container">
                 <div className="pull-left thumbnail-container">
-                  <img className="thumbnail" src={event.thumbnailUrl} ></img>
+                  <img className="thumbnail"  src={event.thumbnailUrl}></img>
                 </div>
                 <div className="event-details">
                   <div className="title">
@@ -92,8 +96,8 @@ export default class EventView extends Component {
             <div className="widget">
               <div className="widget-header">
                 <i className="fa fa-user"></i>
-                Description
-                <a className="btn btn-primary btn-sm pull-right text-center">
+                Description  
+                 <a className="btn btn-primary btn-sm pull-right text-center">
                   <i className="fa fa-cog fa-lg"></i> Expand
                 </a>
               </div>

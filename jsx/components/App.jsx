@@ -10,6 +10,8 @@ import HeaderBar from './HeaderBar';
 import DashView from './DashView';
 import EventView from './EventView';
 import CreateEventView from './Events';
+import EventSearch from "./EventSearch";
+
 export default class App extends Component{
   constructor(props){
     super(props);
@@ -39,9 +41,10 @@ export default class App extends Component{
               <Router history={history}>
                 <Route path='/'>
                   <IndexRoute component={DashView} />
-                  <Route path='dash' component={DashView}/>
-                  <Route path='event' component={EventView}/>
-                  <Route path='create' component={CreateEventView}/>
+                  <Route path="dash" component={DashView}/>
+                  <Route path="event" component={EventView}/>
+                  <Route path="create" component={CreateEventView}/>
+                  <Route path="search" component={EventSearch}/>
                 </Route>
               </Router>
             </div>

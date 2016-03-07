@@ -27,15 +27,15 @@ ul.sidebar .sidebar-list a:hover{
 
 .update-button {
           
-          position : relative;
+          position : absolute;
 
-          top: 35px;
+          top: 10px;
           
           z-index : 1;
           
           clear : both;
 
-          float : right;
+          right: 10px;
 
       }
 .page-content{
@@ -220,4 +220,9 @@ and (min-width : 750px) {
     content: '• ';
     color: red; /* or whatever color you prefer */
   }
+}
+
+/* Limit image width to avoid overflow the container */
+img {
+  max-width: 100%;
 }

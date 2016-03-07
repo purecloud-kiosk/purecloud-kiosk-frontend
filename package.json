@@ -7,14 +7,17 @@
     "app-module-path": "^1.0.5",
     "compression": "^1.6.0",
     "cookie-parser": "^1.4.0",
+    "css-loader": "^0.23.1",
     "express": "^4.13.3",
     "fbemitter": "^2.0.0",
     "flux": "^2.1.1",
     "history": "^1.13.1",
     "http-proxy": "^1.13.0",
     "react": "^0.14.3",
+    "react-cropper": "^0.6.0",
     "react-date-picker": "^4.0.7",
     "react-dom": "^0.14.3",
+    "react-file-input": "^0.2.5",
     "react-notification-system": "^0.2.6",
     "react-notify": "^2.0.1",
     "react-popup": "^0.2.2",
@@ -22,7 +25,8 @@
     "react-router": "^1.0.2",
     "react-time-picker": "^1.1.0",
     "request": "^2.69.0",
-    "serve-favicon": "^2.3.0"
+    "serve-favicon": "^2.3.0",
+    "style-loader": "^0.13.0"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",

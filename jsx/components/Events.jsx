@@ -9,15 +9,16 @@ var TimePicker = require('react-time-picker');
 //var ReactDOM = require('react-dom');
 var NotificationSystem = require('react-notification-system');
 export default class Events extends Component {
-
 	constructor(props) {
 		super(props);
 		var event = this.props.event;
 		this.notificationSystem = null;
     	this.state = {
+    		//outside the event variables important to time/date/success
     		initialTimeValue : '8:15:00',
     		initialDate : '',
     		success : false,
+    		//event variable
     		event : {
     			title : null,
     			startDate: 0,
@@ -37,8 +38,15 @@ export default class Events extends Component {
   		this.notificationSystem = this.refs.notificationSystem;
   	}
 
+  	handleEventUpdated(){
+  		//fill this in
+  		console.log("event successfully updated");
+  	}
+  	//function for create
   	handleEventCreatedSuccessfully(){
-  		console.log('event successfully created');
+  		
+  		console.log("event successfully created");
+  		//reset the state
   		var state = this.state;
   		state.success = true;
   		initialTimeValue : '8:15:00';
@@ -58,8 +66,9 @@ export default class Events extends Component {
     	 	message: 'Event successfully created',
      		position: 'bc',
      		level: 'success'
-    });
+    	});
   	}
+
 	handleChange(key) {
 		return function(event){
 			console.log(event.target.value);
@@ -68,7 +77,7 @@ export default class Events extends Component {
 			this.setState(state);
 		}.bind(this);
 	}
-
+	//function for the checkbox, so it changes privacy
 	handleCheckBoxChange(){
 		var state = this.state;
 		state.event.private = !state.event.private;
@@ -82,12 +91,30 @@ export default class Events extends Component {
 		console.log(event.startDate);
 		console.log('handleButtonClick');
 		eventsActions.createEvent(this.state.event);
+		if(eventsStore.updateIsSet()){
+			//handleEventUpdateEvent (){
+			console.log(this.state.event);
+			//event._id = Object._id;
+			console.log(this.state.event._id);
+			//set the event _id for accessing existing event
+			this.state.event.eventID = this.state.event._id;
+			eventsActions.updateEvent(this.state.event);
+			
+		}
+
+		else{
+			//else event is a new event and starts with a new _id
+			eventsActions.createEvent(this.state.event);
+		}
+			
 	}
 	dateOnChange(newDate, moment) {
 		console.log('DateOnChange');
 		//code goes here
+		//set state
 		var state = this.state;
 		console.log(newDate);
+		//send date back from date-picker
 		this.state.initialDate = newDate;
 		this.setState(state);
 	}
