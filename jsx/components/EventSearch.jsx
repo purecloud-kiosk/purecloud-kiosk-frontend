@@ -23,8 +23,8 @@ export default class EventSearch extends Component {
 		  }
 		});
 	}
-	
-	 
+
+
 	readURL(input) {
 		console.log('called');
 		console.log(input.target.files[0]);
@@ -52,10 +52,9 @@ export default class EventSearch extends Component {
 						<label className ="form-search">Event Search</label>
 						<input className="form-control" >
 						</input>
-						//<button type ="button" onClick={this.myFunction.bind(this)}>Try It</button> 
 						<div>
 							<FileInput accept=".png,.gif" onChange={this.readURL.bind(this)} />
-						
+
 							<img id="blah" src="#" alt="your image" />
 						</div>
 					</div>

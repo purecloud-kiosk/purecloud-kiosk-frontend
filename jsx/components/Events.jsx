@@ -44,7 +44,7 @@ export default class Events extends Component {
   	}
   	//function for create
   	handleEventCreatedSuccessfully(){
-  		
+
   		console.log("event successfully created");
   		//reset the state
   		var state = this.state;
@@ -89,8 +89,8 @@ export default class Events extends Component {
 	handleButtonClick(){
 		this.state.event.startDate = this.state.initialDate + ' ' + this.state.initialTimeValue;
 		console.log(event.startDate);
+		this.state.event.endDate = new Date(this.state.event.startDate).getTime() + (60*60*1000);
 		console.log('handleButtonClick');
-		eventsActions.createEvent(this.state.event);
 		if(eventsStore.updateIsSet()){
 			//handleEventUpdateEvent (){
 			console.log(this.state.event);
@@ -99,14 +99,14 @@ export default class Events extends Component {
 			//set the event _id for accessing existing event
 			this.state.event.eventID = this.state.event._id;
 			eventsActions.updateEvent(this.state.event);
-			
+
 		}
 
 		else{
 			//else event is a new event and starts with a new _id
 			eventsActions.createEvent(this.state.event);
 		}
-			
+
 	}
 	dateOnChange(newDate, moment) {
 		console.log('DateOnChange');
