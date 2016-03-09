@@ -144,7 +144,7 @@ export default class Events extends Component {
 	  }
 	}
 	date = Date.now();
-	
+
 	return (
 	//form with text boxes and button to submit
 

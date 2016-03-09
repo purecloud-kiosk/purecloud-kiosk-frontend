@@ -9,8 +9,7 @@ var compression = require('compression');
 var favicon = require('serve-favicon');
 var httpProxy = require('http-proxy');
 var url = require('url');
-
-var apiServer = 'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8080';
+var apiServer = 'http://localhost:8080';
 
 var proxy = httpProxy.createProxyServer();
 
