@@ -12,6 +12,7 @@ var privateEvents = null;
 var eventsManaging = null;
 var currentEvent = null;
 var updateFlag = false;
+var queryResults = null;
 
 function setPrivateEvents(events){
   privateEvents = events;
@@ -33,6 +34,9 @@ function storeCreatedEvent(event){
 function setUpdateFlag(bool){
   updateFlag = bool;
 }
+function setSearchResults(query){
+  queryResults = query;
+}
 
 class EventsStore extends EventEmitter{
   getPublicEvents(){
@@ -49,6 +53,9 @@ class EventsStore extends EventEmitter{
   }
   updateIsSet(){
     return updateFlag;
+  }
+  eventSearchResults(){
+    return queryResults;
   }
 }
 
@@ -72,6 +79,9 @@ dispatcher.register(function(payload){
       //case event is being updated
       case eventsConstants.FLAG_UPDATE_SET:
       setUpdateFlag(payload.data);
+      break;
+      case eventsConstants.EVENT_SEARCHED:
+      setSearchResults(payload.data);
       break;
     default:
       //no op

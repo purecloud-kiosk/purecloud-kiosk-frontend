@@ -125,3 +125,21 @@ export function updateEvent(event){
   });
 
 }
+export function eventSearchResults(query){
+  $.ajax({
+    url : 'api/events/searchEvents',
+    method : 'GET',
+    data: query,
+    headers : {
+      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_SEARCHED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log(error);
+  });
+}

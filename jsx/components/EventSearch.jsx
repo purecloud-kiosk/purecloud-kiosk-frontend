@@ -7,7 +7,142 @@ import eventsConstants from "../constants/eventsConstants";
 var FileInput = require('react-file-input');
 
 export default class EventSearch extends Component {
-	componentDidMount(){
+	constructor(props) {
+		super(props);
+    	this.state = {
+    		//outside the event variables important to time/date/success
+    		
+    		//success : false,
+    		//query variable
+    		query : {
+    			query : null,
+    			limit : 25,
+    			page : 0,
+    			private : false,
+    			upcoming : true,
+    			managing : true
+    		}
+
+    	};
+  	}
+  	setSearchResults(){
+  		//set the search results
+  		console.log("event successfully searched");
+  	}
+  	handleButtonClick(){
+
+			//handleEventUpdateEvent (){
+			console.log(this.state.query);
+			eventsActions.eventSearchResults(this.state.query);
+			//eventsActions.createEvent(this.state.event);
+	}
+  	componentDidMount(){
+  		var self = this;
+  		$('#option1').change(function(){
+  			self.state.query.private = null;
+  		});
+  		$('#option2').change(function(){
+  			self.state.query.private = true;
+  		});
+  		$('#option3').change(function(){
+  			self.state.query.private = false;
+  		});
+  		this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_SEARCHED, this.retrieveEventsSuccessfully.bind(this));
+  	}
+  	componentWillUnmount(){
+  		$('#option1').unbind();
+  		$('#option2').unbind();
+  		$('#option3').unbind();
+  		this.state.eventStatsListener.remove();
+  	}
+	retrieveEventsSuccessfully(){
+		console.log("event successfully retrieved");
+	}
+	// handleBtnChange(value){
+	// 	console.log("wow");
+	// 	var state = this.state;
+	// 	if (value != null) {
+	// 			state.query.private = value;
+	// 	} else {
+	// 		state.query.private = null;
+	// 	}
+	// 	console.log(state.query.private);
+
+	// }
+	handleRadio(){
+		console.log('radio');
+	}
+	handleChange(key) {
+		return function(query){
+			console.log(query);
+			console.log(this.state.query.private);
+			var state = this.state;
+			state.query[key] = query.target.value;
+			this.setState(state);
+		}.bind(this);
+	}
+	
+	render() { 
+		var {query, limit, page, upcoming, managing} = this.state.query;
+
+		return(
+
+			<div>
+				<form>
+					<div className="col-md-10">
+						<label className ="form-search">Event Search</label>
+							<div className='col-md-10'>
+								<label className ='form-query'>query</label>
+									<input className='form-control' value={query} onChange={this.handleChange('query')} >
+									</input>
+							</div>
+							<div className='col-md-10'>
+								<label className ='form-limit'>limit</label>
+									<input className='form-control' value={limit} onChange={this.handleChange('limit')} >
+									</input>
+							</div>
+							<div className='col-md-10'>
+								<label className ='form-page'>page</label>
+									<input className='form-control' value={page} onChange={this.handleChange('page')} >
+									</input>
+							</div>
+							<div className="btn-group" data-toggle= "buttons">
+								<label className ='btn btn-primary active'>
+									<input type="radio" name="Both" id="option1" value='both' defaultChecked={this.state.query.private === null}/> Both
+								  </label>
+								  <label className="btn btn-primary">
+								    <input type="radio" name="Both" id="option2" defaultChecked={this.state.query.private === true} /> Private
+								  </label>
+								  <label className="btn btn-primary">
+								    <input type="radio" name="Both" id="option3" defaultChecked={this.state.query.private === false}/> Public
+								  </label>
+							</div>
+							<div className='col-md-10'>
+								<label className = 'form-submit'></label>
+									<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
+							</div>
+					</div>
+				</form>
+			</div>
+			);
+	}
+}			
+
+/*
+							<div className='col-md-10'>
+								<label className ='form-upcoming'>Upcoming</label>
+									<input type = 'checkbox' defaultChecked={query.upcoming}  onClick={this.handleCheckBoxChange.bind(this)} />
+							</div>
+							<div className='col-md-10'>
+								<label className ='form-managing'>Managing</label>
+									<input type = 'checkbox' defaultChecked={query.managing}  onClick={this.handleCheckBoxChange.bind(this)} />
+							</div>
+							*/
+
+
+
+				/*
+				componentDidMount(){
 		$('#blah').cropper({
 			responsive:true,
   		aspectRatio: 16 / 9,
@@ -42,34 +177,14 @@ export default class EventSearch extends Component {
             reader.readAsDataURL(input.target.files[0]);
         }
     }
-	render() {
+							<div>
+								<FileInput accept=".png,.gif" onChange={this.readURL.bind(this)} />
 
-		return(
-
-			<div>
-				<form>
-					<div className="col-md-10">
-						<label className ="form-search">Event Search</label>
-						<input className="form-control" >
-						</input>
-						<div>
-							<FileInput accept=".png,.gif" onChange={this.readURL.bind(this)} />
-
-							<img id="blah" src="#" alt="your image" />
-						</div>
-					</div>
-				</form>
+								<img id="blah" src="#" alt="your image" />
+							</div>
 				<div>
 				<img id="image" src="img/avatar.jpg"/>
 				</div>
-			</div>
+				*/
 
 
-
-
-			);
-
-
-	}
-}
-//value={event} onChange={this.handleChange("title")}

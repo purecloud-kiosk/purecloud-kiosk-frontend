@@ -34,10 +34,30 @@ export default class Events extends Component {
   	}
   	// after component successfully rendered
   	componentDidMount(){
-  		eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
-  		this.notificationSystem = this.refs.notificationSystem;
+  		
+  		
+   		if(eventsStore.updateIsSet()){
+   			var event = eventsStore.getCurrentEvent();
+   			//add listener
+   			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_UPDATED, this.handleEventUpdatedSuccessfully.bind(this));
+   			this.notificationSystem = this.refs.notificationSystem;
+   			console.log(this.notificationSystem);
+   			//add event data
+   			var state = this.state;
+   			state.event = event;
+   			this.setState(state);
+   			
+   		}
+ 
+   		else{
+   			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
+   			this.notificationSystem = this.refs.notificationSystem;
+   			console.log(this.notificationSystem);
+   	}
   	}
-
+  	componentWillUnmount(){
+  		this.state.eventStatsListener.remove();
+  	}
   	handleEventUpdated(){
   		//fill this in
   		console.log("event successfully updated");
@@ -108,6 +128,31 @@ export default class Events extends Component {
 		}
 
 	}
+	handleEventUpdatedSuccessfully(){
+   		console.log("event successfully updated");
+   		var state = this.state;
+   		state.success = true;
+   		initialTimeValue : '8:15:00';
+     	initialDate : "";
+   		state.event = {
+ 			title : null,
+ 			date: 0,
+ 			location : null,
+ 			private : false,
+ 			description : null,
+			image_url : null,
+ 			thumbnail_url : null
+ 		}
+ 		//debugger;
+   		this.setState(state);
+   		//debugger;
+   		this.notificationSystem.addNotification({
+     	 	message: 'Event successfully updated',
+      		position: 'bc',
+     		level: 'success'
+     	});
+     	console.log('notification');
+    	}
 	dateOnChange(newDate, moment) {
 		console.log('DateOnChange');
 		//code goes here
@@ -139,6 +184,7 @@ export default class Events extends Component {
 	    success: { // Applied only to the success notification item
 	     // borderTop: '2px solid ' + defaultColors.success.hex,
 	     // backgroundColor: 'grey',
+	     borderTop: '2px solid ' + "#55A9C6",
 	      color: 'black'
 	    }
 	  }
@@ -194,7 +240,7 @@ export default class Events extends Component {
 				</div>
 				<div className='col-md-10'>
 				<label className = 'form-submit'></label>
-					<button type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
+					<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
 				</div>
 				<div>
       				  <NotificationSystem ref='notificationSystem' style={style}/>

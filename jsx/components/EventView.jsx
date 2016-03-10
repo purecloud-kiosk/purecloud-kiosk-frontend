@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import * as dateConverter from "../utils/dateConverter";
 import * as eventActions from "../actions/eventsActions";
 import * as statsActions from "../actions/statsActions";
+import * as navActions from "../actions/navActions";
 import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
 import statsStore from "../stores/statsStore";
@@ -24,6 +25,10 @@ export default class EventView extends Component {
     var self = this;
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
+  }
+  handleEventUpdated(page){
+    eventActions.setUpdateFlag(true);
+    navActions.routeToPage("create");
   }
   onBannerError(){
     console.log('error with image');
