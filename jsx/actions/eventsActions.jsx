@@ -13,7 +13,6 @@ export function setUpdateFlag(bool){
   dispatcher.dispatch({
       actionType : eventsConstants.FLAG_UPDATE_SET,
       data : bool
-
     });
 }
 export function getPublicEvents(limit, page){
@@ -142,4 +141,29 @@ export function eventSearchResults(query){
   }).fail(function(error){
     console.log(error);
   });
+}
+
+export function getCalendarEvents(before, after){
+  console.log('sending');
+  $.ajax({
+    url: 'api/events/getEvents',
+    method : 'GET',
+    data : {
+      'before' : before,
+      'after' : after
+    },
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.CAL_EVENTS_FETCHED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+
 }

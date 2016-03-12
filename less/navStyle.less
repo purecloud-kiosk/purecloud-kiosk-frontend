@@ -20,19 +20,32 @@ body {
 #notification, .row.header{
   color : white;
 }
+// make the modal scrollable
+// .modal {
+//   position: absolute;
+// }
+.modal {
+  .modal-body{
+    height : auto;
+    overflow : visible;
+    .clear {
+      clear: both;
+    }
+  }
+}
 
 ul.sidebar .sidebar-list a:hover{
   background-color: #12536e;
 }
 
 .update-button {
-          
+
           position : absolute;
 
           top: 10px;
-          
+
           z-index : 1;
-          
+
           clear : both;
 
           right: 10px;

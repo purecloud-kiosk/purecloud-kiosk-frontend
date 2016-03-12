@@ -9,9 +9,9 @@ import SideBar from './SideBar';
 import HeaderBar from './HeaderBar';
 import DashView from './DashView';
 import EventView from './EventView';
-import CreateEventView from './Events';
+import CreateEventView from './CreateEventForm';
 import EventSearch from "./EventSearch";
-
+import Calendar from "./Calendar";
 export default class App extends Component{
   constructor(props){
     super(props);
@@ -45,6 +45,7 @@ export default class App extends Component{
                   <Route path="event" component={EventView}/>
                   <Route path="create" component={CreateEventView}/>
                   <Route path="search" component={EventSearch}/>
+                  <Route path="calendar" component={Calendar}/>
                 </Route>
               </Router>
             </div>

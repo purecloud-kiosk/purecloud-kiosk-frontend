@@ -1,48 +1,50 @@
-body {
-  background-color: #F6F6F6;
-}
 .update-button{
 	padding-top: 5px;
 }
 
 /* Smartphones (portrait and landscape) ----------- */
+.form-container {
+  width : 100%;
+}
 @media only screen
 and (max-width : 749px) {
+
 	.form-all, .form-space {
   	//position: relative;
-  	float: both;
-    class: form-control;
-	width: 100%;
-	color: #000000;
-
-		.form-title, .form-date, .form-date-selected, .form-location, .form-image, .form-description, .form-private, .form-time, .form-submit {
+  	///float: both;
+    //class: form-control;
+  	width: 100%;
+  	color: #000000;
+    align-items: center;
+		.form-title, .form-date, .form-date-selected, .form-location,
+    .form-image, .form-description, .form-private, .form-time, .form-submit {
 			//position : fixed;
 			//display: -webkit-flex;
 			padding: 1px 1px 1px 1px;
     		margin: 15px 10px 15px 10px;
     	}
-      	
-      }	
+
+      }
   	}
-  
+
 
 /* Tablets and up */
 @media only screen
 and (min-width : 750px) {
 	.form-time, .form-all, .form-space {
-  	position: relative;
-  	float: both;
-    class: form-control;
-	width: 100%;
-	color: #000000;
-
-		.form-title, .form-date, .form-date-selected, .form-location, .form-image, .form-description, .form-private, .form-time, .form-submit {
+  	//position: relative;
+  	//float: both;
+    //class: form-control;
+	  width: 100%;
+	  color: #000000;
+		.form-title, .form-date, .form-date-selected, .form-location,
+    .form-image, .form-description, .form-private, .form-time, .form-submit {
 			//position : fixed;
 			//display: -webkit-flex;
 			padding: 1px 1px 1px 1px;
     		margin: 10px 5px 10px 5px;
     	}
-      	
+
   	}
 
 }

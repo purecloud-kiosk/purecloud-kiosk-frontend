@@ -13,6 +13,7 @@ var eventsManaging = null;
 var currentEvent = null;
 var updateFlag = false;
 var queryResults = null;
+var calendarEvents = null;
 
 function setPrivateEvents(events){
   privateEvents = events;
@@ -37,6 +38,9 @@ function setUpdateFlag(bool){
 function setSearchResults(query){
   queryResults = query;
 }
+function setCalendarEvents(events){
+  calendarEvents = events;
+}
 
 class EventsStore extends EventEmitter{
   getPublicEvents(){
@@ -56,6 +60,9 @@ class EventsStore extends EventEmitter{
   }
   eventSearchResults(){
     return queryResults;
+  }
+  getCalendarEvents(){
+    return calendarEvents;
   }
 }
 
@@ -80,8 +87,11 @@ dispatcher.register(function(payload){
       case eventsConstants.FLAG_UPDATE_SET:
       setUpdateFlag(payload.data);
       break;
-      case eventsConstants.EVENT_SEARCHED:
+    case eventsConstants.EVENT_SEARCHED:
       setSearchResults(payload.data);
+      break;
+    case eventsConstants.CAL_EVENTS_FETCHED:
+      setCalendarEvents(payload.data);
       break;
     default:
       //no op

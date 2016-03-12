@@ -26,9 +26,9 @@ export default class SideBar extends Component{
               Dashboard <span className='menu-icon fa fa-tachometer'></span>
             </a>
           </li>
-          <li className='sidebar-list'>
-            <a href='javascript:void(0);' onClick={this.handleLinkClick.bind(this, 'tables')}>
-              Tables <span className='menu-icon fa fa-table'></span>
+          <li className="sidebar-list">
+            <a href="javascript:void(0);" onClick={this.handleLinkClick.bind(this, "calendar")}>
+              Calendar<span className="menu-icon fa fa-table"></span>
             </a>
           </li>
           <li className='sidebar-list'>
@@ -44,7 +44,7 @@ export default class SideBar extends Component{
         </ul>
         <div className='sidebar-footer'>
           <div className='col-xs-6'>
-            <a href='https://github.com/charlieduong94/purecloud-kiosk'>
+            <a href='https://github.com/purecloud-kiosk/purecloud-kiosk'>
               Github
             </a>
           </div>
