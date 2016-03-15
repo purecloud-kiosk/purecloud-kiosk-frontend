@@ -11,7 +11,7 @@ export default class EventSearch extends Component {
 		super(props);
     	this.state = {
     		//outside the event variables important to time/date/success
-    		
+
     		//success : false,
     		//query variable
     		query : {
@@ -81,8 +81,8 @@ export default class EventSearch extends Component {
 			this.setState(state);
 		}.bind(this);
 	}
-	
-	render() { 
+
+	render() {
 		var {query, limit, page, upcoming, managing} = this.state.query;
 
 		return(
@@ -126,7 +126,7 @@ export default class EventSearch extends Component {
 			</div>
 			);
 	}
-}			
+}
 
 /*
 							<div className='col-md-10'>
@@ -186,5 +186,3 @@ export default class EventSearch extends Component {
 				<img id="image" src="img/avatar.jpg"/>
 				</div>
 				*/
-
-

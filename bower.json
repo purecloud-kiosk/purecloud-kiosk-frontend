@@ -20,6 +20,8 @@
     "odometer": "~0.4.7",
     "animate.css": "~3.5.1",
     "Chart.js": "~1.0.2",
-    "fullcalendar": "~2.6.1"
+    "fullcalendar": "~2.6.1",
+    "bootstrap-material-datetimepicker": "~2.5.3",
+    "bootstrap-switch": "~3.3.2"
   }
 }
