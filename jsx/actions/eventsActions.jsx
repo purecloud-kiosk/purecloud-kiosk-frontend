@@ -15,6 +15,7 @@ export function setUpdateFlag(bool){
       data : bool
     });
 }
+
 export function getPublicEvents(limit, page){
   $.ajax({
     url : 'api/events/public?limit='+ limit +'&page=' + page,
@@ -166,4 +167,27 @@ export function getCalendarEvents(before, after){
     console.log(error);
   });
 
+}
+export function deleteEvent(event){
+  console.log('deleting: ');
+  console.log(event);
+  console.log(requestConstants.AUTH_TOKEN);
+  $.ajax({
+    url: 'api/events/remove',
+    method : 'POST',
+    data : event,
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log('Response from Delete : ');
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_DELETED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
 }

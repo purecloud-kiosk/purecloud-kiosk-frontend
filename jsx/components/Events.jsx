@@ -3,7 +3,6 @@ import React, {Component} from 'react';
 import * as eventsActions from '../actions/eventsActions';
 import eventsStore from '../stores/eventsStore';
 import eventsConstants from '../constants/eventsConstants';
-import Modal from './Modal';
 //initialize variables
 var DatePicker = require('react-date-picker');
 var TimePicker = require('react-time-picker');
@@ -12,7 +11,7 @@ var NotificationSystem = require('react-notification-system');
 export default class Events extends Component {
 	constructor(props) {
 		super(props);
-		var event = this.props.event || {};
+		var event = this.props.event;
 		this.notificationSystem = null;
     	this.state = {
     		//outside the event variables important to time/date/success
@@ -21,40 +20,40 @@ export default class Events extends Component {
     		success : false,
     		//event variable
     		event : {
-    			title : event.title || null,
-    			startDate: event.startDate || 0,
-					endDate : event.endDate || 0,
-    			location : event.location || null,
-    			private : event.private || false,
-    			description : event.description || null,
-    			imageUrl :  event.image_url || null,
-    			thumbnailUrl : event.thumbnail_url || null
+    			title : null,
+    			startDate: 0,
+					endDate : 0,
+    			location : null,
+    			private : false,
+    			description : null,
+    			imageUrl : null,
+    			thumbnailUrl : null
     		}
-				//event : null
+
     	};
   	}
   	// after component successfully rendered
   	componentDidMount(){
-
-
+  		
+  		
    		if(eventsStore.updateIsSet()){
    			var event = eventsStore.getCurrentEvent();
    			//add listener
    			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_UPDATED, this.handleEventUpdatedSuccessfully.bind(this));
    			this.notificationSystem = this.refs.notificationSystem;
    			console.log(this.notificationSystem);
-   			//var event = eventsStore.getCurrentEvent();
    			//add event data
    			var state = this.state;
-
    			state.event = event;
    			this.setState(state);
+   			
    		}
+ 
    		else{
    			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
    			this.notificationSystem = this.refs.notificationSystem;
    			console.log(this.notificationSystem);
-   		}
+   	}
   	}
   	componentWillUnmount(){
   		this.state.eventStatsListener.remove();
@@ -118,7 +117,7 @@ export default class Events extends Component {
 			//event._id = Object._id;
 			console.log(this.state.event._id);
 			//set the event _id for accessing existing event
-			this.state.event.eventID = this.state.event.id;
+			this.state.event.eventID = this.state.event._id;
 			eventsActions.updateEvent(this.state.event);
 
 		}
@@ -153,7 +152,7 @@ export default class Events extends Component {
      		level: 'success'
      	});
      	console.log('notification');
-  }
+    	}
 	dateOnChange(newDate, moment) {
 		console.log('DateOnChange');
 		//code goes here
@@ -193,52 +192,64 @@ export default class Events extends Component {
 	date = Date.now();
 
 	return (
-		<div className='form-container'>
+	//form with text boxes and button to submit
+
+		<div>
 			<form className = 'form-all'>
-				<div >
-					<label className ='form-title'>Event Title</label>
-					<input id='eventTitleInput' className='form-control' value={event.title} onChange={this.handleChange('title')}/>
+				<div className='col-md-10'>
+				<label className ='form-title'>Event Title</label>
+					<input className='form-control' value={event.title} onChange={this.handleChange('title')} >
+					</input>
 				</div>
-				<div >
-					<label className ='form-date'>Date</label>
-					 <DatePicker minDate='2016-01-01' date={date} onChange={this.dateOnChange.bind(this)}/>
+				<div className='col-md-10'>
+				<label className ='form-date'>Date</label>
+					 <DatePicker minDate='2016-01-01' date={date} onChange={this.dateOnChange.bind(this)} >
+					</DatePicker>
 				</div>
-				<div >
-					<label className ='form-date-selected'>Date Selected</label>
-					 <input className='form-control' value={this.state.initialDate} onChange={this.handleChange('date')}/>
+				<div className='col-md-10'>
+				<label className ='form-date-selected'>Date Selected</label>
+					 <input className='form-control' value={this.state.initialDate} onChange={this.handleChange('date')} >
+					</input>
 				</div>
-				<div >
-					<label className ='form-time'>Time</label>
-					<TimePicker value={this.state.initialTimeValue} onChange={this.handleTimeChange.bind(this)}/>
+				<div className='col-md-10'>
+				<label className ='form-time'>Time</label>
+					<TimePicker value={this.state.initialTimeValue} onChange={this.handleTimeChange.bind(this)}>
+					</TimePicker>
 				</div>
-				<div >
-					<label className ='form-location'>Location</label>
-					<input className='form-control' value={event.location} onChange={this.handleChange('location')}/>
+				<div className='col-md-10'>
+				<label className ='form-location'>Location</label>
+					<input className='form-control' value={event.location} onChange={this.handleChange('location')} >
+					</input>
 				</div>
-				<div >
-					<label className= 'form-image'>Image</label>
-					<input className='form-control' value={event.image_url}  onChange={this.handleChange('imageUrl')}/>
+				<div className='col-md-10'>
+				<label className= 'form-image'>Image</label>
+					<input className='form-control' value={event.image_url}  onChange={this.handleChange('imageUrl')} >
+					</input>
 				</div>
-				<div >
-					<label className= 'form-space'></label>
+				<div className='col-md-10'>
+				<label className= 'form-space'></label>
 				</div>
-				<div >
-					<label className ='form-private'>Private</label>
+				<div className='col-md-10'>
+				<label className ='form-private'>Private</label>
 					<input type = 'checkbox' defaultChecked={event.private}  onClick={this.handleCheckBoxChange.bind(this)} />
 				</div>
-				<div >
-					<label className= 'form-description'>Description of Event</label>
-					<textarea className='form-control' rows='3' value={event.description}  onChange={this.handleChange('description')}/>
+				<div className='col-md-10'>
+				<label className= 'form-description'>Description of Event</label>
+					<textarea className='form-control' rows='3' value={event.description}  onChange={this.handleChange('description')}>
+					</textarea>
 				</div>
-				<div >
-					<label className = 'form-submit'></label>
+				<div className='col-md-10'>
+				<label className = 'form-submit'></label>
 					<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
 				</div>
 				<div>
-  				  <NotificationSystem ref='notificationSystem' style={style}/>
-  			</div>
+      				  <NotificationSystem ref='notificationSystem' style={style}/>
+      			</div>
 			</form>
+
 		</div>
+
+
 		);
-	}
+}
 }

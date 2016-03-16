@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 
 import * as dateConverter from "../utils/dateConverter";
-import * as eventActions from "../actions/eventsActions";
+import * as eventsActions from "../actions/eventsActions";
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
 import eventsStore from "../stores/eventsStore";
@@ -21,14 +21,26 @@ export default class EventView extends Component {
   componentDidMount(){
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     statsActions.getEventStats(this.state.event.id);
+    this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     console.log(this.state.event);
     var self = this;
+    //this.state.eventStatsListener = statsStore.addListener(eventsConstants.EVENT_DELETED, this.updateStats.bind(this));
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
   }
+  componentWillUnmount(){
+    this.state.eventStatsListener.remove();
+    //this.state.eventsStoreListener.remove();
+  }
   handleEventUpdated(page){
-    eventActions.setUpdateFlag(true);
+    eventsActions.setUpdateFlag(true);
     navActions.routeToPage("create");
+  }
+  
+  
+  handleDeleteButtonClick(){
+    this.state.event.eventID = this.state.event.id;
+    eventsActions.deleteEvent({'eventID': this.state.event.eventID});
   }
   onBannerError(){
     console.log('error with image');
@@ -41,9 +53,7 @@ export default class EventView extends Component {
     state.event.thumbnailUrl = 'https://unsplash.it/400/400';
     this.setState(state);
   }
-  componentWillUnmount(){
-    this.state.eventStatsListener.remove();
-  }
+  
   updateStats(){
     var state = this.state;
     state.stats = statsStore.getEventStats();
@@ -53,6 +63,7 @@ export default class EventView extends Component {
   }
   render(){
     var {event, stats} = this.state;
+    
     var view, checkInWidget;
     var privacy = "public";
     console.log(stats);
@@ -116,6 +127,10 @@ export default class EventView extends Component {
           <div className="col-sm-6 col-md-4">
             {checkInWidget}
           </div>
+          <div className="delete-button">
+                <button className= "btn btn-primary pull-right" onClick={this.handleDeleteButtonClick.bind(this)}> Delete Event
+                </button>
+              </div>
         </div>
       );
     }

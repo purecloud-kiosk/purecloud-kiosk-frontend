@@ -35,6 +35,7 @@ function storeCreatedEvent(event){
 function setUpdateFlag(bool){
   updateFlag = bool;
 }
+
 function setSearchResults(query){
   queryResults = query;
 }
@@ -64,6 +65,7 @@ class EventsStore extends EventEmitter{
   getCalendarEvents(){
     return calendarEvents;
   }
+  
 }
 
 var eventsStore = new EventsStore();
@@ -90,6 +92,7 @@ dispatcher.register(function(payload){
     case eventsConstants.EVENT_SEARCHED:
       setSearchResults(payload.data);
       break;
+    
     case eventsConstants.CAL_EVENTS_FETCHED:
       setCalendarEvents(payload.data);
       break;

@@ -5,11 +5,14 @@ import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
 //initialize variables
 var FileInput = require('react-file-input');
+import NumbersWidget from './NumbersWidget';
+import EventsTableWidget from './EventsTableWidget';
 
 export default class EventSearch extends Component {
 	constructor(props) {
 		super(props);
     	this.state = {
+    		eventSearchResults : [],
     		//outside the event variables important to time/date/success
     		
     		//success : false,
@@ -48,6 +51,10 @@ export default class EventSearch extends Component {
   			self.state.query.private = false;
   		});
   		this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_SEARCHED, this.retrieveEventsSuccessfully.bind(this));
+  		  this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
+
+  		statsActions.getUserStats();
+    	eventsActions.getEventsManaging(10, 0);
   	}
   	componentWillUnmount(){
   		$('#option1').unbind();
@@ -57,6 +64,9 @@ export default class EventSearch extends Component {
   	}
 	retrieveEventsSuccessfully(){
 		console.log("event successfully retrieved");
+		var state = this.state;
+		state.eventSearchResults = eventsStore.eventSearchResults();
+		this.setState(state);
 	}
 	// handleBtnChange(value){
 	// 	console.log("wow");
@@ -81,10 +91,21 @@ export default class EventSearch extends Component {
 			this.setState(state);
 		}.bind(this);
 	}
-	
+	updateView(field){
+    	var state = this.state;
+		state = eventsStore.eventSearchResults();
+
+    	this.setState(state);
+  }
 	render() { 
 		var {query, limit, page, upcoming, managing} = this.state.query;
-
+		var {stats, eventsFound} = this.state.query;
+    	var widgets, eventsSearchTable;
+		eventsSearchTable = (
+	      <div className='col-md-6'>
+	        <EventsTableWidget title='Search Results' faIcon='fa-user' events={this.state.eventSearchResults}/>
+	      </div>
+	    );
 		return(
 
 			<div>
@@ -121,6 +142,11 @@ export default class EventSearch extends Component {
 								<label className = 'form-submit'></label>
 									<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
 							</div>
+							<div className='tables'>
+					          {eventsSearchTable}
+					          
+					        </div>
+							
 					</div>
 				</form>
 			</div>
