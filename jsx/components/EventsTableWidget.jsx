@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import * as navActions from '../actions/navActions';
 import * as eventsActions from '../actions/eventsActions';
-import * as dateConverter from '../utils/dateConverter';
 
 import LoadingIcon from './LoadingIcon';
 
@@ -28,7 +27,7 @@ export default class EventsTable extends Component {
         rows.push(
           <tr className='animated fadeInLeft' key={events[i].title} onClick={this.handleRowClick.bind(this, i)}>
             <td>{events[i].title}</td>
-            <td>{dateConverter.convertMillisToDate(events[i].startDate)}</td>
+            <td>{moment(events[i].startDate).format('LT')}</td>
             <td>{events[i].location}</td>
           </tr>
         );

@@ -2,6 +2,8 @@
 // jquery was moved to cdn
 import '../bower_components/bootstrap/dist/js/bootstrap.min.js';
 import '../bower_components/odometer/odometer.min.js';
+import '../bower_components/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js';
+import '../bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js';
 // Chartjs also moved to a cdn
 //import '../bower_components/Chart.js/Chart.min.js';
 import React from 'react';

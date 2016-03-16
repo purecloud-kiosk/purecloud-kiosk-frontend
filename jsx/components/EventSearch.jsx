@@ -14,7 +14,7 @@ export default class EventSearch extends Component {
     	this.state = {
     		eventSearchResults : [],
     		//outside the event variables important to time/date/success
-    		
+
     		//success : false,
     		//query variable
     		query : {
@@ -91,6 +91,7 @@ export default class EventSearch extends Component {
 			this.setState(state);
 		}.bind(this);
 	}
+<<<<<<< HEAD
 	updateView(field){
     	var state = this.state;
 		state = eventsStore.eventSearchResults();
@@ -98,6 +99,10 @@ export default class EventSearch extends Component {
     	this.setState(state);
   }
 	render() { 
+=======
+
+	render() {
+>>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
 		var {query, limit, page, upcoming, managing} = this.state.query;
 		var {stats, eventsFound} = this.state.query;
     	var widgets, eventsSearchTable;
@@ -152,7 +157,7 @@ export default class EventSearch extends Component {
 			</div>
 			);
 	}
-}			
+}
 
 /*
 							<div className='col-md-10'>
@@ -212,5 +217,3 @@ export default class EventSearch extends Component {
 				<img id="image" src="img/avatar.jpg"/>
 				</div>
 				*/
-
-

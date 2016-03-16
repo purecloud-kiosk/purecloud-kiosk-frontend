@@ -1,8 +1,12 @@
 "use strict";
 import React, { Component } from "react";
+<<<<<<< HEAD
 
 import * as dateConverter from "../utils/dateConverter";
 import * as eventsActions from "../actions/eventsActions";
+=======
+import * as eventActions from "../actions/eventsActions";
+>>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
 import eventsStore from "../stores/eventsStore";
@@ -99,8 +103,8 @@ export default class EventView extends Component {
                 <div className="event-details">
                   <div className="title">
                     <h4>{event.title}</h4>
-                    <p>Start Date: {dateConverter.convertMillisToDate(event.startDate)}</p>
-                    <p>End Date: {dateConverter.convertMillisToDate(event.endDate)}</p>
+                    <p>Start Date: {moment(event.startDate).format('LLL')}</p>
+                    <p>End Date: {moment(event.endDate).format('LLL')}</p>
                     <p>Location: {event.location}</p>
                     <p>This event is {privacy}</p>
                   </div>
@@ -112,7 +116,7 @@ export default class EventView extends Component {
             <div className="widget">
               <div className="widget-header">
                 <i className="fa fa-user"></i>
-                Description  
+                Description
                  <a className="btn btn-primary btn-sm pull-right text-center">
                   <i className="fa fa-cog fa-lg"></i> Expand
                 </a>

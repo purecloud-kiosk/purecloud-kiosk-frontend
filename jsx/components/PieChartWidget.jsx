@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import * as navActions from '../actions/navActions';
 import * as eventsActions from '../actions/eventsActions';
-import * as dateConverter from '../utils/dateConverter';
+
 export default class PieChartWidget extends Component {
   constructor(props){
     super(props);

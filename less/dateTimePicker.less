@@ -1,0 +1,36 @@
+@import 'colors';
+.dtp{
+  .dtp-content{
+    .dtp-date-view{
+      header.dtp-header{
+          background : @primary;
+      }
+    }
+  }
+}
+.dtp div.dtp-date, .dtp div.dtp-time{
+  background : @secondary;
+}
+
+.dtp .p10>a{
+  color : @primary;
+}
+
+.dtp table.dtp-picker-days tr{
+  td{
+    a.selected{
+        background : @primary;
+    }
+  }
+}
+.dtp .dtp-picker-time{
+  a.dtp-select-hour.selected{
+      background : @primary;
+  }
+  a.dtp-select-minute.selected{
+    background : @primary;
+  }
+}
+.dtp .dtp-hand.on{
+  background : @primary;
+}

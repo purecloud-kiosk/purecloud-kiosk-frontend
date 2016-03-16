@@ -23,6 +23,8 @@ export default class Calendar extends Component{
     var self = this;
     $('#calendar').fullCalendar({
       'eventLimit' : 3,
+      'allDaySlot' : false,
+      'timezone' : 'local',
       'height' : $('.main-content').height() - 50,
       'windowResize': (view) => {
         $('#calendar').fullCalendar('option' , 'height',  $('.main-content').height() - 50);
@@ -72,23 +74,28 @@ export default class Calendar extends Component{
         navActions.routeToPage('event');
       },
       'dayClick' : (date) => {
-        console.log('clicked');
-        var state = self.state;
-        state.selectedDate = date.format();
-        self.setState(state);
-        $('#createEventModal').modal('show');
+        if(date.isAfter(moment().subtract(1, 'day'))){
+          var state = self.state;
+          state.selectedDate = date.format('LL') + '|' + date.format('LT');
+          self.setState(state);
+          console.log(self.state);
+          $('#createEventModal').modal('show');
+        }
+      },
+      'dayRender' :  (date, cell) => {
+        if(date.isAfter(moment())){
+          cell.css('background', '#FFFFFF');
+        }
       }
     });
 
     $('#createEventModal').on('hidden.bs.modal', () =>{
-      setTimeout(() => this.retrieveEvents(), 2000);
+      this.retrieveEvents();
     });
     $('#createEventModal').on('shown.bs.modal', (e) => {
       $('#eventTitleInput').focus();
     });
-    this.state.before = Date.now() + (24*14*60*60*1000);
-    this.state.after = Date.now() - (24*14*60*60*1000);
-    eventsActions.getCalendarEvents(this.state.before, this.state.after);
+    this.retrieveEvents();
     //$('#calendar').fullCalendar('changeView', 'basicWeek');
   }
   retrieveEvents(){
@@ -97,7 +104,6 @@ export default class Calendar extends Component{
     eventsActions.getCalendarEvents(view.end.format('MM/DD/YYYY'), view.start.format('MM/DD/YYYY'));
   }
   componentWillUnmount(){
-
     console.log(this.state.calendar);
     $('#calendar').fullCalendar('destroy');
     this.state.calendarEventListener.remove();
@@ -124,12 +130,15 @@ export default class Calendar extends Component{
     console.log($('#calendar').fullCalendar('getView'));
   }
   render(){
+    var {selectedDate} = this.state;
     var alert = (
       <div className="alert alert-info animated fadeInDown">
         <a href="#" className="close" data-dismiss="alert" aria-label="close">&times;</a>
         Click on an empty spot on the calendar to create an event.
       </div>
     );
+    console.log('rerendered');
+    console.log(selectedDate);
     return (
       <div className='calendar-content'>
         {alert}
@@ -137,7 +146,7 @@ export default class Calendar extends Component{
           <div id='calendar'></div>
         </div>
         <Modal id='createEventModal' title='Create Event'>
-          <CreateEventForm/>
+          <CreateEventForm startDate={selectedDate}/>
         </Modal>
       </div>
     );
