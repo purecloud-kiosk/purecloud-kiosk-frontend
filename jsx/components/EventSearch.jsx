@@ -91,18 +91,14 @@ export default class EventSearch extends Component {
 			this.setState(state);
 		}.bind(this);
 	}
-<<<<<<< HEAD
 	updateView(field){
     	var state = this.state;
-		state = eventsStore.eventSearchResults();
+			state = eventsStore.eventSearchResults();
 
     	this.setState(state);
   }
-	render() { 
-=======
-
 	render() {
->>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
+
 		var {query, limit, page, upcoming, managing} = this.state.query;
 		var {stats, eventsFound} = this.state.query;
     	var widgets, eventsSearchTable;
@@ -149,9 +145,9 @@ export default class EventSearch extends Component {
 							</div>
 							<div className='tables'>
 					          {eventsSearchTable}
-					          
+
 					        </div>
-							
+
 					</div>
 				</form>
 			</div>

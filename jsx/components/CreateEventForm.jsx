@@ -7,22 +7,15 @@ import DatePicker from './DatePicker';
 
 var NotificationSystem = require('react-notification-system');
 export default class Events extends Component {
-<<<<<<< HEAD
-	constructor(props) {
-		super(props);
-		var event = this.props.event || {};
-		this.notificationSystem = null;
-=======
 		constructor(props) {
 			super(props);
+			var event = this.props.event || {};
 			this.notificationSystem = null;
->>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
     	this.state = {
     		//outside the event variables important to time/date/success
     		success : false,
     		//event variable
     		event : {
-<<<<<<< HEAD
     			title : event.title || null,
     			startDate: event.startDate || 0,
 					endDate : event.endDate || 0,
@@ -31,27 +24,12 @@ export default class Events extends Component {
     			description : event.description || null,
     			imageUrl :  event.image_url || null,
     			thumbnailUrl : event.thumbnail_url || null
-=======
-    			title : null,
-    			startDate: props.startDate || 0,
-					endDate : props.endDate || 0,
-    			location : null,
-    			private : false,
-    			description : null,
-    			imageUrl : null,
-    			thumbnailUrl : null
->>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
     		}
 				//event : null
     	};
   	}
   	// after component successfully rendered
   	componentDidMount(){
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
    		if(eventsStore.updateIsSet()){
    			var event = eventsStore.getCurrentEvent();
    			//add listener
@@ -137,14 +115,6 @@ export default class Events extends Component {
 		this.state.event.endDate = new Date(this.state.event.startDate).getTime() + (60*60*1000);
 		console.log('handleButtonClick');
 		if(eventsStore.updateIsSet()){
-<<<<<<< HEAD
-			//handleEventUpdateEvent (){
-			console.log(this.state.event);
-			//event._id = Object._id;
-			console.log(this.state.event._id);
-			//set the event _id for accessing existing event
-=======
->>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
 			this.state.event.eventID = this.state.event.id;
 			eventsActions.updateEvent(this.state.event);
 		}

@@ -1,12 +1,7 @@
 "use strict";
 import React, { Component } from "react";
-<<<<<<< HEAD
 
-import * as dateConverter from "../utils/dateConverter";
 import * as eventsActions from "../actions/eventsActions";
-=======
-import * as eventActions from "../actions/eventsActions";
->>>>>>> 0c77ff8c842d4771e06fc10ce51840a207f7f36e
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
 import eventsStore from "../stores/eventsStore";
@@ -40,8 +35,8 @@ export default class EventView extends Component {
     eventsActions.setUpdateFlag(true);
     navActions.routeToPage("create");
   }
-  
-  
+
+
   handleDeleteButtonClick(){
     this.state.event.eventID = this.state.event.id;
     eventsActions.deleteEvent({'eventID': this.state.event.eventID});
@@ -57,7 +52,7 @@ export default class EventView extends Component {
     state.event.thumbnailUrl = 'https://unsplash.it/400/400';
     this.setState(state);
   }
-  
+
   updateStats(){
     var state = this.state;
     state.stats = statsStore.getEventStats();
@@ -67,7 +62,7 @@ export default class EventView extends Component {
   }
   render(){
     var {event, stats} = this.state;
-    
+
     var view, checkInWidget;
     var privacy = "public";
     console.log(stats);
