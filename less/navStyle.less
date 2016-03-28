@@ -133,7 +133,7 @@ and (min-width : 750px) {
   .btn-group{
     padding: 0 0 0 5;
   }
-  
+
   .event-container{
     position : relative;
     display : flex;
@@ -191,6 +191,10 @@ and (min-width : 750px) {
   overflow : hidden;
   width : 100%;
   height: 100%;
+  .chart{
+    height : 100%;
+    width: 100%;
+  }
 }
 
 .ticker-container{
@@ -198,11 +202,11 @@ and (min-width : 750px) {
   height : 100%;
   text-align: center;
   .ticker{
+    position: relative;
+    top: 25%;
     .checked-in-odometer{
       font-size : 5em;
     }
-    position: relative;
-    top: 25%;
   }
 }
 .loading-icon{
@@ -216,13 +220,6 @@ and (min-width : 750px) {
   }
 }
 
-#piechart {
-  height : 90%;
-  width : 100%;
-  display : inline-block;
-  margin : 0 auto;
-  overflow : hidden;
-}
 
 .pie-legend{
   margin : 0;

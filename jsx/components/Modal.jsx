@@ -12,7 +12,7 @@ export default class Modal extends Component{
     super(props);
   }
   render(){
-    var {id, title, content} = this.props;
+    var {id, title} = this.props;
     return (
       <div id={id} className="modal fade" role="dialog">
         <div className="modal-dialog">

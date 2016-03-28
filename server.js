@@ -9,7 +9,7 @@ var compression = require('compression');
 var favicon = require('serve-favicon');
 var httpProxy = require('http-proxy');
 var url = require('url');
-var apiServer = 'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8080';
+var apiServer = 'http://localhost:8080';//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8080';//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8080';
 
 var proxy = httpProxy.createProxyServer();
 
@@ -41,6 +41,7 @@ app.get('/', function(req, res){
 });
 
 app.use('/dist', express.static(__dirname + '/dist'));
+app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/img', express.static(__dirname + '/img'));
 /**
  *  Forward all other requests to api server

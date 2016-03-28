@@ -18,7 +18,7 @@ export default class TickerWidget extends Component {
   }
   render(){
     return(
-      <div className='widget animated fadeInUp'>
+      <div className='widget'>
         <div className='widget-header'>
           <i className='fa fa-ticket'></i>Checked In
         </div>

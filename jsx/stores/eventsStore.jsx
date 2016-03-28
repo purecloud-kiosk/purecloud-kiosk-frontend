@@ -14,6 +14,7 @@ var currentEvent = null;
 var updateFlag = false;
 var queryResults = null;
 var calendarEvents = null;
+var eventCheckIns = null;
 
 function setPrivateEvents(events){
   privateEvents = events;
@@ -42,6 +43,9 @@ function setSearchResults(query){
 function setCalendarEvents(events){
   calendarEvents = events;
 }
+function setCheckIns(checkIns){
+  eventCheckIns = checkIns;
+}
 
 class EventsStore extends EventEmitter{
   getPublicEvents(){
@@ -56,6 +60,9 @@ class EventsStore extends EventEmitter{
   getCurrentEvent(){
     return currentEvent;
   }
+  getCheckIns(){
+    return eventCheckIns;
+  }
   updateIsSet(){
     return updateFlag;
   }
@@ -65,7 +72,7 @@ class EventsStore extends EventEmitter{
   getCalendarEvents(){
     return calendarEvents;
   }
-  
+
 }
 
 var eventsStore = new EventsStore();
@@ -85,14 +92,15 @@ dispatcher.register(function(payload){
     case eventsConstants.CURRENT_EVENT_SET:
       setCurrentEvent(payload.data);
       break;
-      //case event is being updated
-      case eventsConstants.FLAG_UPDATE_SET:
+    case eventsConstants.FLAG_UPDATE_SET:
       setUpdateFlag(payload.data);
       break;
     case eventsConstants.EVENT_SEARCHED:
       setSearchResults(payload.data);
       break;
-    
+    case eventsConstants.EVENT_CHECKINS_RETRIEVED:
+      setCheckIns(payload.data);
+      break;
     case eventsConstants.CAL_EVENTS_FETCHED:
       setCalendarEvents(payload.data);
       break;

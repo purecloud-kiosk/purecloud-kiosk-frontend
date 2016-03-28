@@ -24,6 +24,7 @@ export default class Dash extends Component {
     var state = this.state;
     switch(field){
       case 'stats':
+        console.log(statsStore.getUserStats().totalPrivateEventsAvailable);
         state[field] = statsStore.getUserStats();
         break;
       case 'eventsManaging':
@@ -36,6 +37,8 @@ export default class Dash extends Component {
         state[field] = eventsStore.getPrivateEvents();
         break;
     }
+    console.log('updating view');
+    console.log(state['stats']);
     this.setState(state);
   }
   componentDidMount(){
@@ -44,6 +47,7 @@ export default class Dash extends Component {
     this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
     this.state.publicEventsListener = eventsStore.addListener(eventsConstants.PUBLIC_EVENTS_RETRIEVED, this.updateView.bind(this, 'publicEvents'));
     this.state.privateEventsListener = eventsStore.addListener(eventsConstants.PRIVATE_EVENTS_RETRIEVED, this.updateView.bind(this, 'privateEvents'));
+
     statsActions.getUserStats();
     eventsActions.getPublicEvents(10, 0);
     eventsActions.getEventsManaging(10, 0);
@@ -51,7 +55,7 @@ export default class Dash extends Component {
   }
   componentWillUnmount(){
     console.log('dash unmounting...');
-    //this.state.userStatsListener.remove();
+    this.state.userStatsListener.remove();
     this.state.eventsManagingListener.remove();
     this.state.publicEventsListener.remove();
     this.state.privateEventsListener.remove();
@@ -83,17 +87,17 @@ export default class Dash extends Component {
     }
     eventsManagingTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Events Managing' faIcon='fa-user' events={eventsManaging}/>
+        <EventsTableWidget title='Upcoming Events You Are Managing' faIcon='fa-user' events={eventsManaging}/>
       </div>
     );
     publicEventsTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='All Public Events' faIcon='fa-users' events={publicEvents}/>
+        <EventsTableWidget title='Upcoming Public Events' faIcon='fa-users' events={publicEvents}/>
       </div>
     );
     privateEventsTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Private Events' faIcon='fa-user-secret' events={privateEvents}/>
+        <EventsTableWidget title='Upcoming Private Events' faIcon='fa-user-secret' events={privateEvents}/>
       </div>
     );
     return(

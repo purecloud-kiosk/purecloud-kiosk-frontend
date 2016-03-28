@@ -4,17 +4,40 @@ import React, { Component } from 'react';
 export default class Widget extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      'id' : props.id,
+      'value' : props.value,
+      'text' : props.text,
+      'color' : props.color,
+      'faIcon' : props.faIcon,
+    };
   }
   componentDidMount(){
-    console.log('Ticker ' + this.props.value);
     var odometer = new Odometer({
-      el: document.querySelector('#numberWidget' + this.props.id),
+      el: document.querySelector('#numberWidget' + this.state.id),
       value : 0
     });
-    odometer.update(this.props.value);
+    var state = this.state;
+    state.odometer = odometer;
+    odometer.update(this.state.value);
+    this.setState(state);
+  }
+  componentWillReceiveProps(newProps){
+    console.log('recieved new props!!!!');
+    console.log(newProps);
+    var state = this.state;
+    state.id = newProps.id;
+    state.faIcon = newProps.faIcon;
+    state.value = newProps.value;
+    state.text = newProps.text;
+    state.color = newProps.color;
+    state.odometer.update(state.value);
+    this.setState(state);
+
   }
   render(){
-    var {text, faIcon, color, id} = this.props;
+    var {text, faIcon, color, id} = this.state;
+    console.log('rendered');
     return(
       <div className='widget animated fadeInDown'>
         <div className='widget-body'>

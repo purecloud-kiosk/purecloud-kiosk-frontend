@@ -70,7 +70,8 @@ export default class Events extends Component {
 					this.state.event.private = state;
 				}
 			});
-
+			// seems to not render properly without this...
+			$('#privacy-checkbox').bootstrapSwitch('_width');
   	}
   	componentWillUnmount(){
   		this.state.eventStatsListener.remove();
@@ -158,8 +159,7 @@ export default class Events extends Component {
  		this.setState(state);
 	}
 	componentWillReceiveProps(newProps){
-		console.log('got some new props yo');
-		if(newProps.startDate !== null){
+		if(newProps.startDate !== undefined){
 			var date = newProps.startDate.split('|');
 			this.state.startDate = date[0];
 			this.state.startTime = date[1];
@@ -182,10 +182,6 @@ export default class Events extends Component {
 	    }
 	  }
 	}
-	if(moment(startDate).isBefore(moment())){
-		console.log('invalid date bruh');
-	}
-	console.log('privacy ' + event.private)
 	return (
 		<div className='form-container'>
 			<form className = 'form-all'>
@@ -199,7 +195,6 @@ export default class Events extends Component {
 					<div id='switch-wrapper'>
 						<input type='checkbox' id='privacy-checkbox' checked={event.private}/>
 					</div>
-
 				</div>
 				<div >
 					<label className ='form-date'>Start Date</label>

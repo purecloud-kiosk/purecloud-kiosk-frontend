@@ -78,7 +78,6 @@ export function setCurrentEvent(event){
 }
 
 export function createEvent(event){
-	console.log('Data we are sending: ');
 	console.log(event);
 	 $.ajax({
 	    url : 'api/events/create',
@@ -184,6 +183,25 @@ export function deleteEvent(event){
     console.log(data);
     dispatcher.dispatch({
       actionType : eventsConstants.EVENT_DELETED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
+
+export function getEventCheckIns(event){
+  $.ajax({
+    url: 'api/events/getEventCheckIns?eventID=' + event,
+    method : 'GET',
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_CHECKINS_RETRIEVED,
       data : data
     });
   }).fail(function(error){
