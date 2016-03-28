@@ -10,6 +10,7 @@ import statsStore from "../stores/statsStore";
 import statsConstants from "../constants/statsConstants";
 import PieChartWidget from "./PieChartWidget";
 import TickerWidget from "./TickerWidget";
+import InviteTableWidget from "./InviteTableWidget";
 
 
 export default class EventView extends Component {
@@ -62,11 +63,13 @@ export default class EventView extends Component {
   }
   render(){
     var {event, stats} = this.state;
-
+    var inviteWidget;
     var view, checkInWidget;
     var privacy = "public";
     console.log(stats);
-
+    inviteWidget = (
+        <InviteTableWidget />
+      );
     if(event != null){
       if(event.private && stats != null){
         privacy = "private";
@@ -125,6 +128,9 @@ export default class EventView extends Component {
           </div>
           <div className="col-sm-6 col-md-4">
             {checkInWidget}
+          </div>
+          <div className="col-sm-6 col-md-4">
+              {inviteWidget}
           </div>
           <div className="delete-button">
                 <button className= "btn btn-primary pull-right" onClick={this.handleDeleteButtonClick.bind(this)}> Delete Event

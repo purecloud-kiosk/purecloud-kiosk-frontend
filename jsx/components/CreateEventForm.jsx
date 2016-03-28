@@ -4,6 +4,7 @@ import * as eventsActions from '../actions/eventsActions';
 import eventsStore from '../stores/eventsStore';
 import eventsConstants from '../constants/eventsConstants';
 import DatePicker from './DatePicker';
+import ImageCropper from './ImageCropper';
 
 var NotificationSystem = require('react-notification-system');
 export default class Events extends Component {
@@ -126,7 +127,8 @@ export default class Events extends Component {
  		console.log("event successfully updated");
  		this.clear();
  		//debugger;
- 		this.setState(state);
+
+ 		//this.setState(state);
  		//debugger;
  		this.notificationSystem.addNotification({
    	 	message: 'Event successfully updated',
@@ -167,8 +169,36 @@ export default class Events extends Component {
 			this.clear();
 		}
 	}
+	//method to save image
+	saveImage(){
+		//do that son!
+		console.log($('#blah').cropper('getCroppedCanvas'));
+		$('#blah').cropper('getCroppedCanvas').toBlob(function (blob) {
+		  var formData = new FormData();
+		  console.log(blob);
+		  formData.append('file', blob);
+		  console.log(formData);
+		  $.ajax('/api/events/uploadImage', {
+		    method: "POST",
+		    data: formData,
+		    processData: false,
+		    contentType: false,
+		    success: function (data) {
+		    	console.log(data);
+		      console.log('Upload success');
+		    },
+		    error: function () {
+		      console.log('Upload error');
+		    }
+		  });
+		}, "image/png");
+	}
 	render(){
 		var {event, success, date, mode, format, inputFormat, startDate} = this.state;
+		var iCropper;
+		iCropper = (
+				<ImageCropper />
+			);
 		var style = {
 	  		NotificationItem: { // Override the notification item
 	   		DefaultStyle: { // Applied to every notification, regardless of the notification level
@@ -217,11 +247,12 @@ export default class Events extends Component {
 					<label className= 'form-image'>Image</label>
 					<input className='form-control' value={event.image_url}  onChange={this.handleChange('imageUrl')}/>
 				</div>
+				
 				<div >
 					<label className= 'form-description'>Description of Event</label>
 					<textarea className='form-control' rows='3' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
-				<div >
+				<div>
 					<label className = 'form-submit'></label>
 					<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
 				</div>
@@ -229,6 +260,11 @@ export default class Events extends Component {
   				  <NotificationSystem ref='notificationSystem' style={style}/>
   			</div>
 			</form>
+			<div className = "col-sm-6 col-md-4">
+					{iCropper}
+					<button className="button" type = "button" onClick={this.saveImage}>Save Image</button>
+
+			</div>
 		</div>
 		);
 	}
