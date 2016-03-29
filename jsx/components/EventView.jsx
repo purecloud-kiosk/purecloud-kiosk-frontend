@@ -29,7 +29,9 @@ export default class EventView extends Component {
         'maintainAspectRatio': false,
         'responsive': true,
         'scaleType' : 'date',
-        'bezierCurveTension' : 0.1
+        'bezierCurveTension' : 0.1,
+        'useUTC' : false,
+        'scaleStartValue' : 1
       }
     };
   }
