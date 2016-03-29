@@ -178,19 +178,7 @@ export default class Events extends Component {
 		  console.log(blob);
 		  formData.append('file', blob);
 		  console.log(formData);
-		  $.ajax('/api/events/uploadImage', {
-		    method: "POST",
-		    data: formData,
-		    processData: false,
-		    contentType: false,
-		    success: function (data) {
-		    	console.log(data);
-		      console.log('Upload success');
-		    },
-		    error: function () {
-		      console.log('Upload error');
-		    }
-		  });
+			eventsActions.uploadImage(formData);
 		}, "image/png");
 	}
 	render(){
@@ -247,7 +235,7 @@ export default class Events extends Component {
 					<label className= 'form-image'>Image</label>
 					<input className='form-control' value={event.image_url}  onChange={this.handleChange('imageUrl')}/>
 				</div>
-				
+
 				<div >
 					<label className= 'form-description'>Description of Event</label>
 					<textarea className='form-control' rows='3' value={event.description}  onChange={this.handleChange('description')}/>

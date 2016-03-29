@@ -191,3 +191,22 @@ export function deleteEvent(event){
     console.log(error);
   });
 }
+
+export function uploadImage(formData){
+  $.ajax('/api/events/uploadImage', {
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    },
+    success: function (data) {
+      console.log(data);
+      console.log('Upload success');
+    },
+    error: function () {
+      console.log('Upload error');
+    }
+  });
+}
