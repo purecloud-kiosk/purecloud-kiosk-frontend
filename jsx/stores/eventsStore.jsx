@@ -18,6 +18,8 @@ var calendarEvents = null;
 var eventCheckIns = null;
 var checkInCountArray = null;
 var eventFiles = null;
+var ThumbImage = null;
+var UrlImage = null;
 function setPrivateEvents(events){
   privateEvents = events;
 }
@@ -49,6 +51,12 @@ function setCalendarEvents(events){
 }
 function setCheckIns(checkIns){
   eventCheckIns = checkIns;
+}
+function setImageThumbCrop(tempImage){
+  ThumbImage = tempImage;
+}
+function setImageUrlCrop(tempImage){
+  UrlImage = tempImage;
 }
 
 function setCheckInCountArray(countArray){
@@ -92,6 +100,13 @@ class EventsStore extends EventEmitter{
   getEventFiles(){
     return eventFiles;
   }
+  getThumbImageCrop(){
+    return ThumbImage;
+  }
+  getUrlImageCrop(){
+    return UrlImage;
+  }
+
 }
 
 var eventsStore = new EventsStore();
@@ -132,6 +147,12 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.CAL_EVENTS_FETCHED:
       setCalendarEvents(payload.data);
+      break;
+    case eventsConstants.IMAGE_THUMB_STORED:
+      setImageThumbCrop(payload.data.imageUrl);
+      break;
+      case eventsConstants.IMAGE_URL_STORED:
+      setImageUrlCrop(payload.data.imageUrl);
       break;
     default:
       //no op

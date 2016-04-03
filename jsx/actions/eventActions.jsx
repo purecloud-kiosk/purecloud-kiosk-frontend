@@ -9,6 +9,7 @@ import eventsConstants from '../constants/eventsConstants';
 /**
  *  NOTE : Requests should be moved into a Data access object
  **/
+ var temporaryImage;
 export function setUpdateFlag(bool){
   dispatcher.dispatch({
       actionType : eventsConstants.FLAG_UPDATE_SET,
@@ -263,7 +264,7 @@ export function getEventFiles(eventID){
     console.log(error);
   })
 }
-export function uploadImage(formData){
+export function uploadImage(formData, fileType){
   $.ajax('/api/events/uploadImage', {
     method: "POST",
     data: formData,
@@ -274,7 +275,21 @@ export function uploadImage(formData){
     },
     success: function (data) {
       console.log(data);
+      //temporaryImage = data;
       console.log('Upload success');
+      if (fileType == "banner"){
+        dispatcher.dispatch({
+        actionType: eventsConstants.IMAGE_URL_STORED,
+        data: data
+      });
+      }
+      else{
+        dispatcher.dispatch({
+        actionType: eventsConstants.IMAGE_THUMB_STORED,
+        data: data
+      });
+      }
+
     },
     error: function () {
       console.log('Upload error');

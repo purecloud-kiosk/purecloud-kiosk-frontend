@@ -11,6 +11,9 @@ export default class Modal extends Component{
   constructor(props){
     super(props);
   }
+  onClosePressed(){
+    $('#' + this.props.id).modal('hide');
+  }
   render(){
     var {id, title} = this.props;
     return (
@@ -18,7 +21,7 @@ export default class Modal extends Component{
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <button type="button" className="close" data-dismiss="modal">&times;</button>
+              <button type="button" className="close" onClick={this.onClosePressed.bind(this)}>&times;</button>
               <h4 className="modal-title">{title}</h4>
             </div>
             <div className="modal-body">
@@ -26,7 +29,7 @@ export default class Modal extends Component{
               <div className='clear'></div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" className="btn btn-default" onClick={this.onClosePressed.bind(this)}>Close</button>
             </div>
           </div>
         </div>

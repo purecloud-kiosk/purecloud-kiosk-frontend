@@ -12,7 +12,7 @@ import Chart from "./Chart";
 import TickerWidget from "./TickerWidget";
 import Modal from "./Modal";
 import InviteTableWidget from "./InviteTableWidget";
-
+import Modal from "./Modal";
 
 export default class EventView extends Component {
   constructor(props){
@@ -39,6 +39,8 @@ export default class EventView extends Component {
     };
   }
   componentDidMount(){
+    console.log('current event in event view');
+    console.log(this.state.event);
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
