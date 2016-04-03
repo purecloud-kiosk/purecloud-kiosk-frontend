@@ -14,6 +14,8 @@ var currentEvent = null;
 var updateFlag = false;
 var queryResults = null;
 var calendarEvents = null;
+var ThumbImage = null;
+var UrlImage = null;
 
 function setPrivateEvents(events){
   privateEvents = events;
@@ -42,6 +44,12 @@ function setSearchResults(query){
 function setCalendarEvents(events){
   calendarEvents = events;
 }
+function setImageThumbCrop(tempImage){
+  ThumbImage = tempImage;
+}
+function setImageUrlCrop(tempImage){
+  UrlImage = tempImage;
+}
 
 class EventsStore extends EventEmitter{
   getPublicEvents(){
@@ -65,7 +73,12 @@ class EventsStore extends EventEmitter{
   getCalendarEvents(){
     return calendarEvents;
   }
-  
+  getThumbImageCrop(){
+    return ThumbImage;
+  }
+  getUrlImageCrop(){
+    return UrlImage;
+  }
 }
 
 var eventsStore = new EventsStore();
@@ -92,9 +105,14 @@ dispatcher.register(function(payload){
     case eventsConstants.EVENT_SEARCHED:
       setSearchResults(payload.data);
       break;
-    
     case eventsConstants.CAL_EVENTS_FETCHED:
       setCalendarEvents(payload.data);
+      break;
+    case eventsConstants.IMAGE_THUMB_STORED:
+      setImageThumbCrop(payload.data.imageUrl);
+      break;
+      case eventsConstants.IMAGE_URL_STORED:
+      setImageUrlCrop(payload.data.imageUrl);
       break;
     default:
       //no op

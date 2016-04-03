@@ -11,7 +11,7 @@ import statsConstants from "../constants/statsConstants";
 import PieChartWidget from "./PieChartWidget";
 import TickerWidget from "./TickerWidget";
 import InviteTableWidget from "./InviteTableWidget";
-
+import Modal from "./Modal";
 
 export default class EventView extends Component {
   constructor(props){
@@ -19,10 +19,12 @@ export default class EventView extends Component {
     this.state = {event : eventsStore.getCurrentEvent(), stats : null};
   }
   componentDidMount(){
+    console.log('current event in event view');
+    console.log(this.state.event);
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     statsActions.getEventStats(this.state.event.id);
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
-    console.log(this.state.event);
+    
     var self = this;
     //this.state.eventStatsListener = statsStore.addListener(eventsConstants.EVENT_DELETED, this.updateStats.bind(this));
     $('.banner').error(this.onBannerError.bind(this));
@@ -63,6 +65,8 @@ export default class EventView extends Component {
   }
   render(){
     var {event, stats} = this.state;
+    console.log('on initial render ');
+    console.log(event);
     var inviteWidget;
     var view, checkInWidget;
     var privacy = "public";
@@ -82,8 +86,8 @@ export default class EventView extends Component {
           <TickerWidget value={stats.checkedIn}/>
         );
       }
-      event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
-      event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
+      //event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
+      //event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
 
       view = (
         <div className="animated fadeInUp">
@@ -142,6 +146,9 @@ export default class EventView extends Component {
     return(
       <div>
         {view}
+        <Modal>
+
+        </Modal>
       </div>
     );
   }

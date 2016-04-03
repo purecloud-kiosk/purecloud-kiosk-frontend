@@ -5,6 +5,7 @@ import eventsStore from '../stores/eventsStore';
 import eventsConstants from '../constants/eventsConstants';
 import DatePicker from './DatePicker';
 import ImageCropper from './ImageCropper';
+import Modal from "./Modal";
 
 var NotificationSystem = require('react-notification-system');
 export default class Events extends Component {
@@ -23,15 +24,15 @@ export default class Events extends Component {
     			location : event.location || null,
     			private : event.private || false,
     			description : event.description || null,
-    			imageUrl :  event.image_url || null,
-    			thumbnailUrl : event.thumbnail_url || null
+    			imageUrl :  event.imageUrl || null,
+    			thumbnailUrl : event.thumbnailUrl || null
     		}
 				//event : null
     	};
   	}
   	// after component successfully rendered
   	componentDidMount(){
-   		if(eventsStore.updateIsSet()){
+  		if(eventsStore.updateIsSet()){
    			var event = eventsStore.getCurrentEvent();
    			//add listener
 				console.log('updating');
@@ -58,6 +59,8 @@ export default class Events extends Component {
 				console.log('form rerendered');
 				this.setState(state);
    		}
+   		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));   		
+		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));	
 			$('#privacy-checkbox').bootstrapSwitch({
 				'onText' : 'Private',
 				'offText' : 'Public',
@@ -74,6 +77,7 @@ export default class Events extends Component {
 
   	}
   	componentWillUnmount(){
+  		this.state.eventsStoreListener.remove();
   		this.state.eventStatsListener.remove();
 			$("#privacy-checkbox").bootstrapSwitch('destroy');
   	}
@@ -92,6 +96,37 @@ export default class Events extends Component {
      		position: 'bc',
      		level: 'success'
     	});
+  	}
+  	handleImageThumbUploadedSuccessfully(){
+
+  		console.log("image successfully uploaded");
+  		//reset the state
+  		//this.clear();
+  		var state = this.state;
+  		state.event.thumbnailUrl = eventsStore.getThumbImageCrop();
+  		this.setState(state);
+  		this.notificationSystem.addNotification({
+    	 	message: 'Image successfully uploaded',
+     		position: 'bc',
+     		level: 'success'
+    	});
+    	$("#blah").attr("src", "");
+  	}
+  	handleImageUrlUploadedSuccessfully(){
+
+  		console.log("image successfully uploaded");
+  		//reset the state
+  		//this.clear();
+  		var state = this.state;
+  		state.event.imageUrl = eventsStore.getUrlImageCrop();
+  		this.setState(state);
+  		this.notificationSystem.addNotification({
+    	 	message: 'Image successfully uploaded',
+     		position: 'bc',
+     		level: 'success'
+    	});
+    	console.log($('#blah'));
+    	$("#blah").attr("src", "");
   	}
 
 	handleChange(key) {
@@ -115,6 +150,8 @@ export default class Events extends Component {
 		this.state.event.startDate = moment(this.state.startDate + " " +  this.state.startTime).format();
 		this.state.event.endDate = new Date(this.state.event.startDate).getTime() + (60*60*1000);
 		console.log('handleButtonClick');
+		console.log('this is the event data that is getting sent off');
+		console.log(this.state.event);
 		if(eventsStore.updateIsSet()){
 			this.state.event.eventID = this.state.event.id;
 			eventsActions.updateEvent(this.state.event);
@@ -173,20 +210,31 @@ export default class Events extends Component {
 	saveImage(){
 		//do that son!
 		console.log($('#blah').cropper('getCroppedCanvas'));
-		$('#blah').cropper('getCroppedCanvas').toBlob(function (blob) {
+		$('#blah').cropper('getCroppedCanvas').toBlob((blob) => {
 		  var formData = new FormData();
+		  formData.append('fileType', this.state.imageType);
 		  console.log(blob);
 		  formData.append('file', blob);
 		  console.log(formData);
-			eventsActions.uploadImage(formData);
+			eventsActions.uploadImage(formData, this.state.imageType);
 		}, "image/png");
+
 	}
+	// openDescModal(){
+ //    $('#imageModal').modal('show');
+	//   }
+	  openImageModal(type){
+	    setTimeout(()=>{
+	      window.dispatchEvent(new Event('resize'));
+	    },500);
+	    this.state.imageType = type;
+	    console.log(this.state.imageType);
+	    $('#imageModal').modal('show');
+	  }
 	render(){
 		var {event, success, date, mode, format, inputFormat, startDate} = this.state;
 		var iCropper;
-		iCropper = (
-				<ImageCropper />
-			);
+		var temporaryImage;
 		var style = {
 	  		NotificationItem: { // Override the notification item
 	   		DefaultStyle: { // Applied to every notification, regardless of the notification level
@@ -199,9 +247,6 @@ export default class Events extends Component {
 	      color: 'black'
 	    }
 	  }
-	}
-	if(moment(startDate).isBefore(moment())){
-		console.log('invalid date bruh');
 	}
 	console.log('privacy ' + event.private)
 	return (
@@ -231,11 +276,26 @@ export default class Events extends Component {
 					<label className ='form-location'>Location</label>
 					<input className='form-control' value={event.location} onChange={this.handleChange('location')}/>
 				</div>
-				<div >
-					<label className= 'form-image'>Image</label>
-					<input className='form-control' value={event.image_url}  onChange={this.handleChange('imageUrl')}/>
-				</div>
-
+				
+				
+			    <div className= 'form-image-thumb'>
+			      <label className='form-image-thumb'>Thumbnail Image</label>
+			      <div className='input-group'>
+				      <input type="text" className="form-control" value={event.thumbnailUrl} onChange={this.handleChange('thumbnailUrl')}/>
+				      <span className="input-group-btn">
+				        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'thumbnail')}>Crop Image</button>
+				      </span>
+			      </div>
+			    </div>
+				<div className= 'form-image-banner'>
+			      <label className='form-image-banner'>Banner Image</label>
+			      <div className='input-group'>
+				      <input type="text" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
+				      <span className="input-group-btn">
+				        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'banner')}>Crop Image</button>
+				      </span>
+			      </div>
+			    </div>  				
 				<div >
 					<label className= 'form-description'>Description of Event</label>
 					<textarea className='form-control' rows='3' value={event.description}  onChange={this.handleChange('description')}/>
@@ -248,12 +308,20 @@ export default class Events extends Component {
   				  <NotificationSystem ref='notificationSystem' style={style}/>
   			</div>
 			</form>
-			<div className = "col-sm-6 col-md-4">
-					{iCropper}
-					<button className="button" type = "button" onClick={this.saveImage}>Save Image</button>
+			<Modal id='imageModal' title="Thumbnail">
+		          <div id='selectImage' style={{'width' : '100%', 'height' : '400px'}}>
+		            <div>
+					<ImageCropper />
+					<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this)}>Save Image</button>
 
-			</div>
+					</div>
+		          </div>
+		    </Modal>
 		</div>
 		);
 	}
 }
+					// <div>
+					// 	<a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openImageModal.bind(this)}>Crop Image
+					// 	</a>
+					// </div>
