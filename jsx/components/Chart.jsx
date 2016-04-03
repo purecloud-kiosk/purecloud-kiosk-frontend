@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import navStore from '../stores/navStore';
-import * as eventsActions from '../actions/eventsActions';
+import * as eventActions from '../actions/eventActions';
 import navConstants from '../constants/navConstants';
 
 export default class PieChartWidget extends Component {
@@ -25,6 +25,9 @@ export default class PieChartWidget extends Component {
   componentWillReceiveProps(newProps){
     this.renderChart(newProps);
   }
+  componentDidUpdate(){
+    this.state.chart.update();
+  }
   componentWillUnmount(){
     this.state.chart.destroy();
   }
@@ -32,6 +35,7 @@ export default class PieChartWidget extends Component {
     console.log('rendering!');
     const {type, chartData, options} = props;
     var optns;
+    let state = this.state;
     if(options === undefined){
       optns = {
         segmentShowStroke : true,
@@ -41,22 +45,22 @@ export default class PieChartWidget extends Component {
         animateRotate : true,
         animateScale : false,
         maintainAspectRatio: false,
-        responsive: true
+        responsive: true,
+        labelLength : 7
       }
     }
     else{
       optns = options;
     }
-    if(this.state.chart !== undefined){
-      this.state.chart.destroy();
-      $('#' + this.state.id).off('click');
+    if(state.chart !== undefined){
+      state.chart.destroy();
+      $('#' + state.id).off('click');
     }
-    let pieChartCtx = $('#' + this.state.id).get(0).getContext('2d');
+    let pieChartCtx = $('#' + state.id).get(0).getContext('2d');
     switch(type){
       case 'scatter':
-        this.state.chart = new Chart(pieChartCtx).Scatter(chartData, optns);
-        var self = this;
-        $('#' + this.state.id).click((evt) => {
+        state.chart = new Chart(pieChartCtx).Scatter(chartData, optns);
+        $('#' + state.id).click((evt) => {
           console.log(self.state.chart);
           var activePoints = self.state.chart.getPointsAtEvent(evt);
           if(activePoints[0] !== undefined){
@@ -65,12 +69,17 @@ export default class PieChartWidget extends Component {
         });
         break;
       case 'doughnut':
-        this.state.chart = new Chart(pieChartCtx).Doughnut(chartData, optns);
+        state.chart = new Chart(pieChartCtx).Doughnut(chartData, optns);
+        break;
+      case 'bar':
+        state.chart = new Chart(pieChartCtx).Bar(chartData, optns);
         break;
       default:
-        this.state.chart = new Chart(pieChartCtx).Pie(chartData, optns);
+        state.chart = new Chart(pieChartCtx).Pie(chartData, optns);
     }
+    this.setState(state);
   }
+
   render(){
     return(
       <div className='chart-container'>

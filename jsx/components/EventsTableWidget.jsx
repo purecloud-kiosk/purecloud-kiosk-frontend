@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import * as navActions from '../actions/navActions';
-import * as eventsActions from '../actions/eventsActions';
+import * as eventActions from '../actions/eventActions';
 
 import LoadingIcon from './LoadingIcon';
 
@@ -13,7 +13,7 @@ export default class EventsTable extends Component {
      $('[data-toggle="tooltip"]').tooltip();
   }
   handleRowClick(eventNum){
-    eventsActions.setCurrentEvent(this.props.events[eventNum]);
+    eventActions.setCurrentEvent(this.props.events[eventNum]);
     navActions.routeToPage('event');
   }
   render(){

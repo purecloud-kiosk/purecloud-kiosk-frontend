@@ -1,7 +1,7 @@
 "use strict";
 import React, { Component } from "react";
 
-import * as eventsActions from "../actions/eventsActions";
+import * as eventActions from "../actions/eventActions";
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
 import eventsStore from "../stores/eventsStore";
@@ -40,7 +40,7 @@ export default class EventView extends Component {
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
     statsActions.getEventStats(this.state.event.id);
-    eventsActions.getEventCheckIns(this.state.event.id);
+    eventActions.getEventCheckIns(this.state.event.id);
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
   }
@@ -49,7 +49,7 @@ export default class EventView extends Component {
     //this.state.eventsStoreListener.remove();
   }
   handleEventUpdated(page){
-    eventsActions.setUpdateFlag(true);
+    eventActions.setUpdateFlag(true);
     navActions.routeToPage("create");
   }
 
@@ -59,7 +59,7 @@ export default class EventView extends Component {
 
   handleDeleteButtonClick(){
     this.state.event.eventID = this.state.event.id;
-    eventsActions.deleteEvent({'eventID': this.state.event.eventID});
+    eventActions.deleteEvent({'eventID': this.state.event.eventID});
   }
   onBannerError(){
     let state = this.state;

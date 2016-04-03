@@ -2,22 +2,25 @@
 import React, { Component } from 'react';
 
 import * as statsActions from '../actions/statsActions';
-import * as eventsActions from '../actions/eventsActions';
+import * as eventActions from '../actions/eventActions';
 import statsStore from '../stores/statsStore';
 import eventsStore from '../stores/eventsStore';
 import statsConstants from '../constants/statsConstants';
 import eventsConstants from '../constants/eventsConstants';
 import NumbersWidget from './NumbersWidget';
 import EventsTableWidget from './EventsTableWidget';
+import Chart from './Chart';
 
 export default class Dash extends Component {
   constructor(props){
     super(props);
     this.state = {
       stats : statsStore.getUserStats(),
-      eventsManaging : eventsStore.getEventsManaging(),
+      eventsManaging : eventsStore.getUpcomingEventsManaging(),
       publicEvents : eventsStore.getPublicEvents(),
-      privateEvents : eventsStore.getPrivateEvents()
+      privateEvents : eventsStore.getPrivateEvents(),
+      barChartData : null,
+      showChart : false
     };
   }
   updateView(field){
@@ -27,8 +30,18 @@ export default class Dash extends Component {
         console.log(statsStore.getUserStats().totalPrivateEventsAvailable);
         state[field] = statsStore.getUserStats();
         break;
+      case 'pastEventsManaged':
+        state[field] = eventsStore.getPastEventsManaged();
+        let mostRecentEvents = eventsStore.getPastEventsManaged();
+        let eventIDs = '';
+        mostRecentEvents.forEach((event) => {
+          eventIDs = eventIDs.concat(event.id + ',')
+        });
+        console.log(eventIDs);
+        eventActions.getMultipleEventCheckInCounts(eventIDs);
+        break;
       case 'eventsManaging':
-        state[field] = eventsStore.getEventsManaging();
+        state[field] = eventsStore.getUpcomingEventsManaging();
         break;
       case 'publicEvents':
         state[field] = eventsStore.getPublicEvents();
@@ -36,33 +49,68 @@ export default class Dash extends Component {
       case 'privateEvents':
         state[field] = eventsStore.getPrivateEvents();
         break;
+      case 'barChartData':
+        console.log('bar chart data retrieved');
+        var chartData = {
+          labels: [],
+          datasets: [
+            {
+                label: "Check In Counts",
+                fillColor: "#0F465D",
+                strokeColor: "#0F465D",
+                highlightFill: "#5AD3D1",
+                highlightStroke: "#5AD3D1",
+                data: []
+            },
+          ]
+        };
+        console.log('Check In Count');
+        let checkInCountArray = eventsStore.getCheckInCountArray();
+        console.log(checkInCountArray);
+        for(let i = 0; i < checkInCountArray.length; i++){
+          console.log(this.state.pastEventsManaged[i]);
+          chartData.labels.push(this.state.pastEventsManaged[i].title);
+          console.log('here?')
+          chartData.datasets[0].data.push(checkInCountArray[i].checkInCount);
+          console.log('nope, here');
+        }
+        console.log(chartData);
+        state[field] = chartData;
+        break;
     }
-    console.log('updating view');
-    console.log(state['stats']);
     this.setState(state);
   }
   componentDidMount(){
     console.log('dash mounted');
     this.state.userStatsListener = statsStore.addListener(statsConstants.USER_STATS_RETRIEVED, this.updateView.bind(this, 'stats'));
-    this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
+    this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.UPCOMING_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
+    this.state.pastEventsManagedListener = eventsStore.addListener(eventsConstants.PAST_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'pastEventsManaged'));
     this.state.publicEventsListener = eventsStore.addListener(eventsConstants.PUBLIC_EVENTS_RETRIEVED, this.updateView.bind(this, 'publicEvents'));
     this.state.privateEventsListener = eventsStore.addListener(eventsConstants.PRIVATE_EVENTS_RETRIEVED, this.updateView.bind(this, 'privateEvents'));
-
+    this.state.checkInCountsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKIN_COUNTS_RETRIEVED, this.updateView.bind(this, 'barChartData'));
     statsActions.getUserStats();
-    eventsActions.getPublicEvents(10, 0);
-    eventsActions.getEventsManaging(10, 0);
-    eventsActions.getPrivateEvents(10, 0);
+    eventActions.getPublicEvents(10, 0);
+    eventActions.getUpcomingEventsManaging(10, 0);
+    eventActions.getPrivateEvents(10, 0);
+    eventActions.getPastEventsManaged(10,0);
+  }
+  componentDidUpdate(){
+    console.log('update');
+    window.dispatchEvent(new Event('resize'));
   }
   componentWillUnmount(){
     console.log('dash unmounting...');
     this.state.userStatsListener.remove();
     this.state.eventsManagingListener.remove();
+    this.state.pastEventsManagedListener.remove();
     this.state.publicEventsListener.remove();
     this.state.privateEventsListener.remove();
+    this.state.checkInCountsListener.remove();
   }
+
   render(){
-    var {stats, eventsManaging, publicEvents, privateEvents} = this.state;
-    var widgets, eventsManagingTable, publicEventsTable, privateEventsTable;
+    const {stats, eventsManaging, publicEvents, privateEvents, barChartData} = this.state;
+    var widgets, eventsManagingTable, publicEventsTable, privateEventsTable, barChart;
     if(stats != null){
       widgets = (
         <div className='row'>
@@ -100,12 +148,32 @@ export default class Dash extends Component {
         <EventsTableWidget title='Upcoming Private Events' faIcon='fa-user-secret' events={privateEvents}/>
       </div>
     );
+    if(barChartData !== null){
+      console.log('chartData');
+      console.log(barChartData);
+      if(barChartData.datasets[0].data.length !== 0){
+        barChart = (
+          <div className="col-sm-12">
+            <div className='widget'>
+              <div className='widget-header'>
+                Bar Chart
+              </div>
+              <div className='widget-body large no-padding'>
+                  <Chart type='bar' chartData={barChartData}/>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      console.log('able to render bar chart');
+    }
     return(
       <div>
         <div className='widgets'>
           {widgets}
         </div>
         <div className='tables'>
+          {barChart}
           {eventsManagingTable}
           {publicEventsTable}
           {privateEventsTable}

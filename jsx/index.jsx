@@ -1,5 +1,5 @@
  // React app entry point
-// jquery was moved to cdn
+// TODO: Move these imports to another file
 import '../bower_components/bootstrap/dist/js/bootstrap.min.js';
 import '../bower_components/odometer/odometer.min.js';
 import '../bower_components/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js';

@@ -10,12 +10,13 @@ import eventsConstants from "../constants/eventsConstants";
 var publicEvents = null;
 var privateEvents = null;
 var eventsManaging = null;
+var pastEventsManaged = null;
 var currentEvent = null;
 var updateFlag = false;
 var queryResults = null;
 var calendarEvents = null;
 var eventCheckIns = null;
-
+var checkInCountArray = null;
 function setPrivateEvents(events){
   privateEvents = events;
 }
@@ -25,7 +26,9 @@ function setPublicEvents(events){
 function setEventsManaging(events){
   eventsManaging = events;
 }
-
+function setPastEventsManaged(events){
+  pastEventsManaged = events;
+}
 function setCurrentEvent(event){
   currentEvent = event;
 }
@@ -47,6 +50,10 @@ function setCheckIns(checkIns){
   eventCheckIns = checkIns;
 }
 
+function setCheckInCountArray(countArray){
+  checkInCountArray = countArray;
+}
+
 class EventsStore extends EventEmitter{
   getPublicEvents(){
     return publicEvents;
@@ -54,8 +61,11 @@ class EventsStore extends EventEmitter{
   getPrivateEvents(){
     return privateEvents;
   }
-  getEventsManaging(){
+  getUpcomingEventsManaging(){
     return eventsManaging;
+  }
+  getPastEventsManaged(){
+    return pastEventsManaged;
   }
   getCurrentEvent(){
     return currentEvent;
@@ -72,7 +82,9 @@ class EventsStore extends EventEmitter{
   getCalendarEvents(){
     return calendarEvents;
   }
-
+  getCheckInCountArray(){
+    return checkInCountArray;
+  }
 }
 
 var eventsStore = new EventsStore();
@@ -80,8 +92,12 @@ var eventsStore = new EventsStore();
 // register for data from dispatcher
 dispatcher.register(function(payload){
   switch(payload.actionType){
-    case eventsConstants.EVENTS_MANAGING_RETRIEVED:
+    case eventsConstants.UPCOMING_EVENTS_MANAGING_RETRIEVED:
       setEventsManaging(payload.data);
+      break;
+    case eventsConstants.PAST_EVENTS_MANAGING_RETRIEVED:
+      console.log('past events right here yo');
+      setPastEventsManaged(payload.data);
       break;
     case eventsConstants.PUBLIC_EVENTS_RETRIEVED:
       setPublicEvents(payload.data);
@@ -100,6 +116,9 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.EVENT_CHECKINS_RETRIEVED:
       setCheckIns(payload.data);
+      break;
+    case eventsConstants.EVENT_CHECKIN_COUNTS_RETRIEVED:
+      setCheckInCountArray(payload.data);
       break;
     case eventsConstants.CAL_EVENTS_FETCHED:
       setCalendarEvents(payload.data);

@@ -1,6 +1,6 @@
 "use strict";
 import React, {Component} from "react";
-import * as eventsActions from "../actions/eventsActions";
+import * as eventActions from "../actions/eventActions";
 import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
 //initialize variables
@@ -14,7 +14,6 @@ export default class EventSearch extends Component {
     	this.state = {
     		eventSearchResults : [],
     		//outside the event variables important to time/date/success
-
     		//success : false,
     		//query variable
     		query : {
@@ -36,8 +35,8 @@ export default class EventSearch extends Component {
 
 			//handleEventUpdateEvent (){
 			console.log(this.state.query);
-			eventsActions.eventSearchResults(this.state.query);
-			//eventsActions.createEvent(this.state.event);
+			eventActions.eventSearchResults(this.state.query);
+			//eventActions.createEvent(this.state.event);
 	}
   	componentDidMount(){
   		var self = this;
@@ -51,10 +50,10 @@ export default class EventSearch extends Component {
   			self.state.query.private = false;
   		});
   		this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_SEARCHED, this.retrieveEventsSuccessfully.bind(this));
-  		  this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
+  		  this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.UPCOMING_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
 
   		statsActions.getUserStats();
-    	eventsActions.getEventsManaging(10, 0);
+    	eventActions.getUpcomingEventsManaging(10, 0);
   	}
   	componentWillUnmount(){
   		$('#option1').unbind();

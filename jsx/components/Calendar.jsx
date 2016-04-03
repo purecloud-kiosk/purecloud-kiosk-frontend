@@ -4,7 +4,7 @@ import Modal from './Modal';
 import CreateEventForm from './CreateEventForm';
 import * as navActions from '../actions/navActions';
 import history from '../history/history';
-import * as eventsActions from "../actions/eventsActions";
+import * as eventActions from "../actions/eventActions";
 import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
 export default class Calendar extends Component{
@@ -17,7 +17,8 @@ export default class Calendar extends Component{
   }
 
   componentDidMount(){
-    this.state.calendarEventListener = eventsStore.addListener(eventsConstants.CAL_EVENTS_FETCHED, this.loadEvents.bind(this));
+    this.state.calendarEventListener =
+      eventsStore.addListener(eventsConstants.CAL_EVENTS_FETCHED, this.loadEvents.bind(this));
 
     console.log('init calendar');
     var self = this;
@@ -70,7 +71,7 @@ export default class Calendar extends Component{
       },
       'eventClick' : (calEvent, jsEvent, view) => {
         console.log(calEvent.title);
-        eventsActions.setCurrentEvent(calEvent.event);
+        eventActions.setCurrentEvent(calEvent.event);
         navActions.routeToPage('event');
       },
       'dayClick' : (date) => {
@@ -101,7 +102,7 @@ export default class Calendar extends Component{
   retrieveEvents(){
     $('#calendar').fullCalendar('removeEvents');
     var view = $('#calendar').fullCalendar('getView');
-    eventsActions.getCalendarEvents(view.end.format('MM/DD/YYYY'), view.start.format('MM/DD/YYYY'));
+    eventActions.getCalendarEvents(view.end.format('MM/DD/YYYY'), view.start.format('MM/DD/YYYY'));
   }
   componentWillUnmount(){
     console.log(this.state.calendar);

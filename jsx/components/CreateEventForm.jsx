@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component} from 'react';
-import * as eventsActions from '../actions/eventsActions';
+import * as eventActions from '../actions/eventActions';
 import eventsStore from '../stores/eventsStore';
 import eventsConstants from '../constants/eventsConstants';
 import DatePicker from './DatePicker';
@@ -117,10 +117,10 @@ export default class Events extends Component {
 		console.log('handleButtonClick');
 		if(eventsStore.updateIsSet()){
 			this.state.event.eventID = this.state.event.id;
-			eventsActions.updateEvent(this.state.event);
+			eventActions.updateEvent(this.state.event);
 		}
 		else{
-			eventsActions.createEvent(this.state.event);
+			eventActions.createEvent(this.state.event);
 		}
 	}
 	handleEventUpdatedSuccessfully(){

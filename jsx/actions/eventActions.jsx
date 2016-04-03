@@ -52,9 +52,9 @@ export function getPrivateEvents(limit, page){
   });
 }
 
-export function getEventsManaging(limit, page){
+export function getUpcomingEventsManaging(limit, page){
   $.ajax({
-    url : 'api/events/managing?limit='+ limit +'&page=' + page,
+    url : 'api/events/managing?upcoming=true&limit='+ limit +'&page=' + page,
     method : 'GET',
     headers : {
       'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
@@ -62,14 +62,30 @@ export function getEventsManaging(limit, page){
   }).done(function(data){
     console.log(data);
     dispatcher.dispatch({
-      actionType : eventsConstants.EVENTS_MANAGING_RETRIEVED,
+      actionType : eventsConstants.UPCOMING_EVENTS_MANAGING_RETRIEVED,
       data : data
     });
   }).fail(function(error){
     console.log(error);
   });
 }
-
+export function getPastEventsManaged(limit, page){
+  $.ajax({
+    url : 'api/events/managing?upcoming=false&sort=desc&limit='+ limit +'&page=' + page,
+    method : 'GET',
+    headers : {
+      'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.PAST_EVENTS_MANAGING_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log(error);
+  });
+}
 export function setCurrentEvent(event){
   dispatcher.dispatch({
     actionType : eventsConstants.CURRENT_EVENT_SET,
@@ -202,6 +218,25 @@ export function getEventCheckIns(event){
     console.log(data);
     dispatcher.dispatch({
       actionType : eventsConstants.EVENT_CHECKINS_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
+
+export function getMultipleEventCheckInCounts(eventIDs){
+  $.ajax({
+    url: 'api/events/getMultipleEventCheckInCounts?eventIDs=' + eventIDs,
+    method : 'GET',
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_CHECKIN_COUNTS_RETRIEVED,
       data : data
     });
   }).fail(function(error){
