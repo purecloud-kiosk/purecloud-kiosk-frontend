@@ -11,6 +11,8 @@ import statsConstants from "../constants/statsConstants";
 import Chart from "./Chart";
 import TickerWidget from "./TickerWidget";
 import Modal from "./Modal";
+import InviteTableWidget from "./InviteTableWidget";
+
 
 export default class EventView extends Component {
   constructor(props){
@@ -110,6 +112,9 @@ export default class EventView extends Component {
     console.log(files);
     let view, checkInWidget, inviteWidget, lineWidget, fileWidget;
     let privacy = "public";
+    inviteWidget = (
+        <InviteTableWidget />
+    );
     if(event != null){
       if(event.private && stats != null){
         privacy = "private";
@@ -305,6 +310,9 @@ export default class EventView extends Component {
                   {lineWidget}
               </div>
             </div>
+          </div>
+          <div className="col-sm-6 col-md-4">
+              {inviteWidget}
           </div>
           <div className="delete-button">
             <button className= "btn btn-primary pull-right" onClick={this.handleDeleteButtonClick.bind(this)}> Delete Event

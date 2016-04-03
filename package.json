@@ -23,6 +23,7 @@
     "react-popup": "^0.2.2",
     "react-popups": "^1.2.2",
     "react-router": "^1.0.2",
+    "react-tabs": "^0.5.3",
     "react-time-picker": "^1.1.0",
     "request": "^2.69.0",
     "serve-favicon": "^2.3.0",
