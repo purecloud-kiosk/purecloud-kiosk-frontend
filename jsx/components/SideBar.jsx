@@ -4,7 +4,6 @@ import * as navActions from '../actions/navActions';
 
 export default class SideBar extends Component{
   handleToggleBarClick(){
-    console.log('clicked');
     navActions.toggleSideBar();
   }
   handleLinkClick(page){

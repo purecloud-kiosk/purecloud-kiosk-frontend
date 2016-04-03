@@ -27,7 +27,6 @@ export default class Dash extends Component {
     var state = this.state;
     switch(field){
       case 'stats':
-        console.log(statsStore.getUserStats().totalPrivateEventsAvailable);
         state[field] = statsStore.getUserStats();
         break;
       case 'pastEventsManaged':
@@ -37,7 +36,6 @@ export default class Dash extends Component {
         mostRecentEvents.forEach((event) => {
           eventIDs = eventIDs.concat(event.id + ',')
         });
-        console.log(eventIDs);
         eventActions.getMultipleEventCheckInCounts(eventIDs);
         break;
       case 'eventsManaging':
@@ -50,7 +48,6 @@ export default class Dash extends Component {
         state[field] = eventsStore.getPrivateEvents();
         break;
       case 'barChartData':
-        console.log('bar chart data retrieved');
         var chartData = {
           labels: [],
           datasets: [
@@ -64,24 +61,17 @@ export default class Dash extends Component {
             },
           ]
         };
-        console.log('Check In Count');
         let checkInCountArray = eventsStore.getCheckInCountArray();
-        console.log(checkInCountArray);
         for(let i = 0; i < checkInCountArray.length; i++){
-          console.log(this.state.pastEventsManaged[i]);
           chartData.labels.push(this.state.pastEventsManaged[i].title);
-          console.log('here?')
           chartData.datasets[0].data.push(checkInCountArray[i].checkInCount);
-          console.log('nope, here');
         }
-        console.log(chartData);
         state[field] = chartData;
         break;
     }
     this.setState(state);
   }
   componentDidMount(){
-    console.log('dash mounted');
     this.state.userStatsListener = statsStore.addListener(statsConstants.USER_STATS_RETRIEVED, this.updateView.bind(this, 'stats'));
     this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.UPCOMING_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
     this.state.pastEventsManagedListener = eventsStore.addListener(eventsConstants.PAST_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'pastEventsManaged'));
@@ -95,11 +85,9 @@ export default class Dash extends Component {
     eventActions.getPastEventsManaged(10,0);
   }
   componentDidUpdate(){
-    console.log('update');
     window.dispatchEvent(new Event('resize'));
   }
   componentWillUnmount(){
-    console.log('dash unmounting...');
     this.state.userStatsListener.remove();
     this.state.eventsManagingListener.remove();
     this.state.pastEventsManagedListener.remove();
@@ -149,11 +137,9 @@ export default class Dash extends Component {
       </div>
     );
     if(barChartData !== null){
-      console.log('chartData');
-      console.log(barChartData);
       if(barChartData.datasets[0].data.length !== 0){
         barChart = (
-          <div className="col-sm-12">
+          <div className="col-md-12">
             <div className='widget'>
               <div className='widget-header'>
                 Bar Chart
@@ -165,7 +151,6 @@ export default class Dash extends Component {
           </div>
         );
       }
-      console.log('able to render bar chart');
     }
     return(
       <div>

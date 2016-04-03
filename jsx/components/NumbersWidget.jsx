@@ -23,8 +23,6 @@ export default class Widget extends Component {
     this.setState(state);
   }
   componentWillReceiveProps(newProps){
-    console.log('recieved new props!!!!');
-    console.log(newProps);
     var state = this.state;
     state.id = newProps.id;
     state.faIcon = newProps.faIcon;

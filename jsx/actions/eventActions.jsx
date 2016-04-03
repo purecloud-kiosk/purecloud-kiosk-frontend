@@ -244,3 +244,22 @@ export function getMultipleEventCheckInCounts(eventIDs){
     console.log(error);
   });
 }
+
+export function getEventFiles(eventID){
+  $.ajax({
+    url: 'api/file/getEventFiles?eventID=' + eventID,
+    method : 'GET',
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_FILES_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}

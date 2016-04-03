@@ -61,8 +61,8 @@ export default class PieChartWidget extends Component {
       case 'scatter':
         state.chart = new Chart(pieChartCtx).Scatter(chartData, optns);
         $('#' + state.id).click((evt) => {
-          console.log(self.state.chart);
-          var activePoints = self.state.chart.getPointsAtEvent(evt);
+          console.log(this.state.chart);
+          var activePoints = this.state.chart.getPointsAtEvent(evt);
           if(activePoints[0] !== undefined){
             console.log(chartData[0].data[activePoints[0].value - 1].checkIn);
           }
@@ -73,6 +73,13 @@ export default class PieChartWidget extends Component {
         break;
       case 'bar':
         state.chart = new Chart(pieChartCtx).Bar(chartData, optns);
+        $('#' + state.id).click((evt) => {
+          var activePoints = this.state.chart.getBarsAtEvent(evt);
+          if(activePoints[0] !== undefined){
+            console.log('bar clicked');
+            console.log(activePoints[0]);
+          }
+        });
         break;
       default:
         state.chart = new Chart(pieChartCtx).Pie(chartData, optns);

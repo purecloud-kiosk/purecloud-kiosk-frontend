@@ -62,7 +62,6 @@ export default class EventSearch extends Component {
   		this.state.eventStatsListener.remove();
   	}
 	retrieveEventsSuccessfully(){
-		console.log("event successfully retrieved");
 		var state = this.state;
 		state.eventSearchResults = eventsStore.eventSearchResults();
 		this.setState(state);

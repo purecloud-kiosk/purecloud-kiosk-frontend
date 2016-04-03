@@ -17,6 +17,7 @@ var queryResults = null;
 var calendarEvents = null;
 var eventCheckIns = null;
 var checkInCountArray = null;
+var eventFiles = null;
 function setPrivateEvents(events){
   privateEvents = events;
 }
@@ -54,6 +55,9 @@ function setCheckInCountArray(countArray){
   checkInCountArray = countArray;
 }
 
+function setEventFiles(files){
+  eventFiles = files;
+}
 class EventsStore extends EventEmitter{
   getPublicEvents(){
     return publicEvents;
@@ -85,6 +89,9 @@ class EventsStore extends EventEmitter{
   getCheckInCountArray(){
     return checkInCountArray;
   }
+  getEventFiles(){
+    return eventFiles;
+  }
 }
 
 var eventsStore = new EventsStore();
@@ -96,7 +103,6 @@ dispatcher.register(function(payload){
       setEventsManaging(payload.data);
       break;
     case eventsConstants.PAST_EVENTS_MANAGING_RETRIEVED:
-      console.log('past events right here yo');
       setPastEventsManaged(payload.data);
       break;
     case eventsConstants.PUBLIC_EVENTS_RETRIEVED:
@@ -119,6 +125,10 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.EVENT_CHECKIN_COUNTS_RETRIEVED:
       setCheckInCountArray(payload.data);
+      break;
+    case eventsConstants.EVENT_FILES_RETRIEVED:
+      console.log('right here');
+      setEventFiles(payload.data);
       break;
     case eventsConstants.CAL_EVENTS_FETCHED:
       setCalendarEvents(payload.data);

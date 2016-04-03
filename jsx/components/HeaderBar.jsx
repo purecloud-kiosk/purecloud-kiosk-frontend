@@ -10,11 +10,9 @@ export default class HeaderBar extends Component {
     this.state = {stats : null};
   }
   componentDidMount(){
-    console.log('header mounted');
     this.state.statsListener = statsStore.addListener(statsConstants.USER_STATS_RETRIEVED, this.updateStats.bind(this));
   }
   componentWillUnmount(){
-    console.log('header ummounting...');
     this.state.statsListener.remove();
   }
   updateStats(){

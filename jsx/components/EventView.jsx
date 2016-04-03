@@ -17,6 +17,7 @@ export default class EventView extends Component {
     super(props);
     this.state = {
       'event' : eventsStore.getCurrentEvent(),
+      'files' : [],
       'stats' : null,
       'checkIns' : null,
       'chartOptions' : {
@@ -39,27 +40,37 @@ export default class EventView extends Component {
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
+    this.state.eventFilesListener = eventsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
     statsActions.getEventStats(this.state.event.id);
     eventActions.getEventCheckIns(this.state.event.id);
+    eventActions.getEventFiles(this.state.event.id);
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
   }
+  updateEventFiles(){
+    let state = this.state;
+    console.log(eventsStore.getEventFiles());
+    state.files = eventsStore.getEventFiles();
+    console.log('GOT SUM IFLES');
+    console.log(state.files);
+    this.setState(state);
+
+  }
   componentWillUnmount(){
     this.state.eventStatsListener.remove();
-    //this.state.eventsStoreListener.remove();
+    this.state.eventsStoreListener.remove();
+    this.state.getEventCheckInsListener.remove();
+    this.state.eventFilesListener.remove();
   }
   handleEventUpdated(page){
     eventActions.setUpdateFlag(true);
     navActions.routeToPage("create");
   }
-
   handleEditButtonClicked(){
 
   }
-
   handleDeleteButtonClick(){
-    this.state.event.eventID = this.state.event.id;
-    eventActions.deleteEvent({'eventID': this.state.event.eventID});
+    eventActions.deleteEvent({'eventID': this.state.event.id});
   }
   onBannerError(){
     let state = this.state;
@@ -75,14 +86,11 @@ export default class EventView extends Component {
   updateStats(){
     let state = this.state;
     state.stats = statsStore.getEventStats();
-    console.log("updating stats");
-    console.log(state);
     this.setState(state);
   }
   updateCheckIns(){
     let state = this.state;
     state.checkIns = eventsStore.getCheckIns();
-    console.log(state);
     this.setState(state);
   }
   openDescModal(){
@@ -94,11 +102,14 @@ export default class EventView extends Component {
     },500);
     $('#scatterChartModal').modal('show');
   }
+
   render(){
-    let {event, stats, checkIns, chartOptions} = this.state;
-    let view, checkInWidget, inviteWidget, lineWidget;
+    let {event, files, stats, checkIns, chartOptions} = this.state;
+    console.log('about to render');
+    console.log(event);
+    console.log(files);
+    let view, checkInWidget, inviteWidget, lineWidget, fileWidget;
     let privacy = "public";
-    console.log(stats);
     if(event != null){
       if(event.private && stats != null){
         privacy = "private";
@@ -187,10 +198,7 @@ export default class EventView extends Component {
       if(checkIns !== null){
         let count = 1;
         checkIns.forEach((checkIn) => {
-          console.log(checkIn);
           if(checkIn.timestamp !== undefined){
-            console.log(new Date(checkIn.timestamp));
-            console.log(new Date());
             lineData[0].data.push({
               'x' : new Date(checkIn.timestamp),
               'y' : count,
@@ -199,12 +207,43 @@ export default class EventView extends Component {
           }
           count++;
         });
-        console.log(lineData[0]);
       }
       lineWidget = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData} options={chartOptions}/>)
       event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
       event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
-
+      if(files.length > 0){
+        var rows = [];
+        files.forEach((file)=> {
+          rows.push(
+            <tr className='animated fadeInLeft' key={file.title}>
+              <td><a href={file.url} download>{file.fileName}</a></td>
+              <td>{moment(file.uploadDate).format('LT')}</td>
+            </tr>
+          )
+        })
+        fileWidget = (
+          <div className="col-sm-6 col-md-4">
+            <div className='widget'>
+              <div className='widget-header'>
+                Event Files
+              </div>
+              <div className='widget-body medium no-padding'>
+                <table className='table table-hover'>
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Upload Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+      }
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
@@ -230,6 +269,7 @@ export default class EventView extends Component {
               </div>
             </div>
           </div>
+          {fileWidget}
           <div className="col-sm-6 col-md-4">
             <div className="widget">
               <div className="widget-header">
