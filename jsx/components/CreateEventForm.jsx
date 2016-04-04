@@ -212,11 +212,12 @@ export default class Events extends Component {
 		console.log($('#blah').cropper('getCroppedCanvas'));
 		$('#blah').cropper('getCroppedCanvas').toBlob((blob) => {
 		  var formData = new FormData();
+			formData.append('fileName', this.state.imageType);
 		  formData.append('fileType', this.state.imageType);
 		  console.log(blob);
 		  formData.append('file', blob);
 		  console.log(formData);
-			eventsActions.uploadImage(formData, this.state.imageType);
+			eventActions.uploadImage(formData, this.state.imageType);
 		}, "image/png");
 
 	}

@@ -12,7 +12,6 @@ import Chart from "./Chart";
 import TickerWidget from "./TickerWidget";
 import Modal from "./Modal";
 import InviteTableWidget from "./InviteTableWidget";
-import Modal from "./Modal";
 
 export default class EventView extends Component {
   constructor(props){
@@ -112,11 +111,9 @@ export default class EventView extends Component {
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, inviteWidget, lineWidget, fileWidget;
+    let view, checkInWidget, inviteWidget, invitedCheckInsWidget, lineWidget, fileWidget, manageButton;
     let privacy = "public";
-    inviteWidget = (
-        <InviteTableWidget />
-    );
+
     if(event != null){
       if(event.private && stats != null){
         privacy = "private";
@@ -161,6 +158,9 @@ export default class EventView extends Component {
                 'label': 'Possibly Attending'
             }
           ];
+          invitedCheckInsWidget = (
+              <InviteTableWidget />
+          );
           inviteWidget = (
             <div className="col-sm-6 col-md-4">
               <div className='widget'>
@@ -172,7 +172,6 @@ export default class EventView extends Component {
                 </div>
               </div>
             </div>
-
           );
         }
         checkInWidget = (
@@ -195,6 +194,18 @@ export default class EventView extends Component {
           </div>
         );
       }
+      if(stats !== null){
+        console.log(stats);
+        if(stats.userType === 'admin' || stats.userIsManager){
+          manageButton = (
+            <div className="update-button">
+              <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
+              {this.props.event}</button>
+            </div>
+          );
+        }
+      }
+
       let lineData = [{
         'label' : 'Check In',
         'strokeColor' : '#5AD3D1',
@@ -254,10 +265,7 @@ export default class EventView extends Component {
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
-            <div className="update-button">
-              <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
-              {this.props.event}</button>
-            </div>
+            {manageButton}
             <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
             <div className="row">
               <div className="event-details-container">
@@ -298,7 +306,6 @@ export default class EventView extends Component {
             </div>
           </div>
           {checkInWidget}
-          {inviteWidget}
           <div className="col-sm-6 col-md-4">
             <div className='widget'>
               <div className='widget-header'>
@@ -314,7 +321,7 @@ export default class EventView extends Component {
             </div>
           </div>
           <div className="col-sm-6 col-md-4">
-              {inviteWidget}
+              {invitedCheckInsWidget}
           </div>
           <div className="delete-button">
             <button className= "btn btn-primary pull-right" onClick={this.handleDeleteButtonClick.bind(this)}> Delete Event

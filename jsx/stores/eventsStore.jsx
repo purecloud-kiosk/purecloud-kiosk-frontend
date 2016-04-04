@@ -149,10 +149,10 @@ dispatcher.register(function(payload){
       setCalendarEvents(payload.data);
       break;
     case eventsConstants.IMAGE_THUMB_STORED:
-      setImageThumbCrop(payload.data.imageUrl);
+      setImageThumbCrop(payload.data.fileUrl);
       break;
       case eventsConstants.IMAGE_URL_STORED:
-      setImageUrlCrop(payload.data.imageUrl);
+      setImageUrlCrop(payload.data.fileUrl);
       break;
     default:
       //no op

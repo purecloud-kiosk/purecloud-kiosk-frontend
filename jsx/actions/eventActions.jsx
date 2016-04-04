@@ -265,7 +265,7 @@ export function getEventFiles(eventID){
   })
 }
 export function uploadImage(formData, fileType){
-  $.ajax('/api/events/uploadImage', {
+  $.ajax('/api/file/upload', {
     method: "POST",
     data: formData,
     processData: false,
@@ -277,19 +277,17 @@ export function uploadImage(formData, fileType){
       console.log(data);
       //temporaryImage = data;
       console.log('Upload success');
+      let actionType;
       if (fileType == "banner"){
-        dispatcher.dispatch({
-        actionType: eventsConstants.IMAGE_URL_STORED,
-        data: data
-      });
+        actionType = eventsConstants.IMAGE_URL_STORED;
       }
       else{
-        dispatcher.dispatch({
-        actionType: eventsConstants.IMAGE_THUMB_STORED,
+        actionType = eventsConstants.IMAGE_THUMB_STORED;
+      }
+      dispatcher.dispatch({
+        actionType: actionType,
         data: data
       });
-      }
-
     },
     error: function () {
       console.log('Upload error');

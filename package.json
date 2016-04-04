@@ -58,7 +58,7 @@
     "watch-less": "watch 'npm run less' less",
     "build": "npm run move-fonts && npm run less && npm run build-js",
     "watch": "npm run move-fonts && concurrently -k 'npm run watch-js' 'npm run watch-less'",
-    "start-dev": "npm run build && concurrently -k 'npm run watch' 'nodemon server.js'",
+    "start-dev": "concurrently -k 'npm run watch' 'nodemon server.js'",
     "start": "node server.js"
   },
   "author": "Charlie Duong",
