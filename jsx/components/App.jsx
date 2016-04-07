@@ -12,12 +12,14 @@ import EventView from './EventView';
 import CreateEventView from './CreateEventForm';
 import EventSearch from "./EventSearch";
 import Calendar from "./Calendar";
+import requestConstants from '../constants/requestConstants';
 export default class App extends Component{
   constructor(props){
     super(props);
     this.state = {
       isOpen : navStore.sideBarIsOpen()
     };
+
   }
   updateToggle(){
     console.log('listener called');
@@ -29,6 +31,27 @@ export default class App extends Component{
   componentDidMount(){
     navStore.addListener(navConstants.SIDEBAR_TOGGLED, this.updateToggle.bind(this));
     $('.dropdown-toggle').dropdown();
+    // init socket connection
+    var socket = io('http://localhost:8080/ws');
+    socket.on('connect', ()=>{
+      console.log('connected');
+      socket.emit('auth', {'token': requestConstants.AUTH_TOKEN});
+      setTimeout(() => {
+        socket.emit('sub', '570191f469105817273dbabf');
+      }, 5000);
+      socket.on('subResponse', ()=> {
+        console.log('subbed');
+      });
+      socket.on('error', (error)=> {
+        console.log(error);
+      });
+      socket.on('disconnect', () => {
+        console.log('disconnected');
+      });
+      socket.on('reconnect', () => {
+        console.log('reconnected');
+      });
+    });
   }
   render(){
     return (

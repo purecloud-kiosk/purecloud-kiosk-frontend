@@ -26,10 +26,10 @@ export default class PieChartWidget extends Component {
     this.renderChart(newProps);
   }
   componentDidUpdate(){
-    this.state.chart.update();
+
   }
   componentWillUnmount(){
-    this.state.chart.destroy();
+
   }
   renderChart(props){
     console.log('rendering!');
@@ -56,42 +56,134 @@ export default class PieChartWidget extends Component {
       state.chart.destroy();
       $('#' + state.id).off('click');
     }
-    let pieChartCtx = $('#' + state.id).get(0).getContext('2d');
+    //let pieChartCtx = $('#' + state.id).get(0).getContext('2d');
+    let chartOptions = null;
     switch(type){
       case 'scatter':
-        state.chart = new Chart(pieChartCtx).Scatter(chartData, optns);
-        $('#' + state.id).click((evt) => {
-          console.log(this.state.chart);
-          var activePoints = this.state.chart.getPointsAtEvent(evt);
-          if(activePoints[0] !== undefined){
-            console.log(chartData[0].data[activePoints[0].value - 1].checkIn);
-          }
-        });
-        break;
-      case 'doughnut':
-        state.chart = new Chart(pieChartCtx).Doughnut(chartData, optns);
+        console.log('chart data for scatter');
+        console.log(chartData);
+        chartOptions = {
+            chart: {
+              'type' : 'scatter'
+            },
+            title: {
+                text: 'Check In Chart'
+            },
+            subtitle: {
+                text: null
+            },
+            xAxis: {
+                type: 'datetime',
+            },
+            yAxis: {
+                title: {
+                    text: 'Check In Times'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        radius: 2
+                    },
+                    states: {
+                        hover: {
+                            enabled : true
+                        }
+                    }
+                }
+            },
+            tooltip: {
+                formatter: function(){
+                  return 'Check In: <b>' + new Date(this.x) + '</b>';
+                }
+            },
+            series: [{
+                name: 'Check In',
+                data: chartData.data
+            }]
+        };
+        console.log(chartData.data);
         break;
       case 'bar':
-        state.chart = new Chart(pieChartCtx).Bar(chartData, optns);
-        $('#' + state.id).click((evt) => {
-          var activePoints = this.state.chart.getBarsAtEvent(evt);
-          if(activePoints[0] !== undefined){
-            console.log('bar clicked');
-            console.log(activePoints[0]);
-          }
-        });
+        chartOptions = {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Most Recent Event Outcomes'
+            },
+            xAxis: {
+                categories: chartData.categories,
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Check In Counts'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y} check ins</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Check Ins',
+                data: chartData.data
+            }]
+        };
         break;
       default:
-        state.chart = new Chart(pieChartCtx).Pie(chartData, optns);
+        chartOptions = {
+          chart: {
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false,
+              type: 'pie'
+          },
+          title: {
+              text: null//'Browser market shares January, 2015 to May, 2015'
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: true,
+                  cursor: 'pointer',
+                  dataLabels: {
+                      enabled: true,
+                      format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                      style: {
+                          color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                      }
+                  },
+                  'showInLegend' : true
+              }
+          },
+          series: chartData
+      };
     }
+    $('#' + this.state.id).highcharts(chartOptions);
     this.setState(state);
   }
 
   render(){
+    // <canvas id={this.state.id} className='chart'></canvas>
     return(
-      <div className='chart-container'>
-        <canvas id={this.state.id} className='chart'></canvas>
-      </div>
+      <div id={this.state.id} className='chart-container'/>
     );
   }
 }

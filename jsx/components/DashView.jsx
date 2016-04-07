@@ -49,22 +49,13 @@ export default class Dash extends Component {
         break;
       case 'barChartData':
         var chartData = {
-          labels: [],
-          datasets: [
-            {
-                label: "Check In Counts",
-                fillColor: "#0F465D",
-                strokeColor: "#0F465D",
-                highlightFill: "#5AD3D1",
-                highlightStroke: "#5AD3D1",
-                data: []
-            },
-          ]
+          categories: [],
+          data: []
         };
         let checkInCountArray = eventsStore.getCheckInCountArray();
         for(let i = 0; i < checkInCountArray.length; i++){
-          chartData.labels.push(this.state.pastEventsManaged[i].title);
-          chartData.datasets[0].data.push(checkInCountArray[i].checkInCount);
+          chartData.categories.push(this.state.pastEventsManaged[i].title);
+          chartData.data.push(checkInCountArray[i].checkInCount);
         }
         state[field] = chartData;
         break;
@@ -137,7 +128,7 @@ export default class Dash extends Component {
       </div>
     );
     if(barChartData !== null){
-      if(barChartData.datasets[0].data.length !== 0){
+      if(barChartData.data[0].length !== 0){
         barChart = (
           <div className="col-md-12">
             <div className='widget'>

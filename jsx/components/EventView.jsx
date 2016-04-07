@@ -52,10 +52,7 @@ export default class EventView extends Component {
   }
   updateEventFiles(){
     let state = this.state;
-    console.log(eventsStore.getEventFiles());
     state.files = eventsStore.getEventFiles();
-    console.log('GOT SUM IFLES');
-    console.log(state.files);
     this.setState(state);
 
   }
@@ -117,47 +114,49 @@ export default class EventView extends Component {
     if(event != null){
       if(event.private && stats != null){
         privacy = "private";
-        let chartData = [
-          {
-              'value': stats.checkInStats.notCheckedIn,
-              'color':'#FF3333',
-              'highlight': '#FF0000',
-              'label': 'Not Checked In'
-          },
-          {
-              'value': stats.checkInStats.checkedIn,
-              'color': '#0F465D',
-              'highlight': '#5AD3D1',
-              'label': 'Checked In'
-          }
-        ];
+        let chartData = [{
+            name: 'Percentage',
+            colorByPoint: true,
+            data: [
+              {
+                name: 'Not Checked In',
+                y: stats.checkInStats.notCheckedIn
+              },
+              {
+                name: 'Checked In',
+                y: stats.checkInStats.checkedIn,
+                sliced: true,
+                selected: true
+              }
+            ]
+        }];
         if(stats.inviteStats !== undefined){
-          let inviteData = [
-            {
-                'value': stats.inviteStats.unknown,
-                'color':'#666666',
-                'highlight': '#4D4D4D',
-                'label': 'Pending'
-            },
-            {
-                'value': stats.inviteStats.yes,
-                'color': '#0F465D',
-                'highlight': '#5AD3D1',
-                'label': 'Attending'
-            },
-            {
-                'value': stats.inviteStats.no,
-                'color': '#FF3333',
-                'highlight': '#FF0000',
-                'label': 'Not attending'
-            },
-            {
-                'value': stats.inviteStats.maybe,
-                'color': '#ff9933',
-                'highlight': '#ff6600',
-                'label': 'Possibly Attending'
-            }
-          ];
+          let inviteData = [{
+              name: 'Percentage',
+              colorByPoint: true,
+              data: [
+                {
+                  name: 'Yes',
+                  y: stats.inviteStats.yes,
+                  sliced: true,
+                  selected: true
+                },
+                {
+                  name: 'No',
+                  y: stats.inviteStats.no
+                },
+                {
+                  name: 'Maybe',
+                  y: stats.inviteStats.maybe
+                },
+                {
+                  name: 'Pending',
+                  y: stats.inviteStats.unknown,
+                  sliced: true,
+                  selected: true
+                }
+              ]
+          }];
           invitedCheckInsWidget = (
               <InviteTableWidget />
           );
@@ -206,27 +205,21 @@ export default class EventView extends Component {
         }
       }
 
-      let lineData = [{
-        'label' : 'Check In',
-        'strokeColor' : '#5AD3D1',
-        'pointColor' : '#5AD3D1',
-        'pointStrokeColor' : '#5AD3D1',
-        'data' : []
-      }];
+      let lineData = {
+        data : []
+      };
       if(checkIns !== null){
         let count = 1;
         checkIns.forEach((checkIn) => {
           if(checkIn.timestamp !== undefined){
-            lineData[0].data.push({
-              'x' : new Date(checkIn.timestamp),
-              'y' : count,
-              'checkIn' : checkIn
-            });
+            lineData.data.push([
+              new Date(checkIn.timestamp).getTime() / 1000, count
+            ]);
           }
           count++;
         });
       }
-      lineWidget = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData} options={chartOptions}/>)
+      lineWidget = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>)
       event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
       event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
       if(files.length > 0){
@@ -235,7 +228,7 @@ export default class EventView extends Component {
           rows.push(
             <tr className='animated fadeInLeft' key={file.title}>
               <td><a href={file.url} download>{file.fileName}</a></td>
-              <td>{moment(file.uploadDate).format('LT')}</td>
+              <td>{moment(file.uploadDate).format('LL')}</td>
             </tr>
           )
         })
@@ -306,6 +299,7 @@ export default class EventView extends Component {
             </div>
           </div>
           {checkInWidget}
+          {inviteWidget}
           <div className="col-sm-6 col-md-4">
             <div className='widget'>
               <div className='widget-header'>
