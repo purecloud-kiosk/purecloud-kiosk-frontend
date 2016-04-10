@@ -31,37 +31,39 @@ export default class InviteTable extends Component {
           <h4>This Contains how many people have not responded</h4>                   
         );
 		return(
-
+      
       <div className='Attendees-table'>
         <div className='widget animated fadeInDown'>
-          <div className='widget-header'>
-      			 <Tabs
-                    onSelect={this.handleSelect}
-                    selectedIndex={1}
-                  > 
-                    <TabList>
-                      <Tab>Yes</Tab>
-                      <Tab>No</Tab>
-                      <Tab>Maybe</Tab>
-                      <Tab>Unknown</Tab>
-                    </TabList>
-                    <TabPanel> 
-                      <div>This is people who have said yes</div>
-                      <div>Some garbage Data that fills in the space </div>
-                    </TabPanel>
-                    <TabPanel>
-                      <div>This is people who have said no</div>
-                      <div>Some garbage Data that fills in the space </div>
-                    </TabPanel>
-                    <TabPanel>
-                      <div>This is people who have said maybe</div>
-                      <div>Some garbage Data that fills in the space </div>>
-                    </TabPanel>
-                    <TabPanel>
-                      <div>This is people who have not decided</div>
-                      <div>Some garbage Data that fills in the space </div>
-                    </TabPanel>
-              </Tabs>
+          <div className=''>
+            <div className="nav-tabs">
+        			 <Tabs
+                      onSelect={this.handleSelect}
+                      selectedIndex={1}
+                    > 
+                      <TabList>
+                        <Tab>Yes</Tab>
+                        <Tab>No</Tab>
+                        <Tab>Maybe</Tab>
+                        <Tab>Unknown</Tab>
+                      </TabList>
+                      <TabPanel> 
+                        <div>This is people who have said yes</div>
+                        <div>Some garbage Data that fills in the space </div>
+                      </TabPanel>
+                      <TabPanel>
+                        <div>This is people who have said no</div>
+                        <div>Some garbage Data that fills in the space </div>
+                      </TabPanel>
+                      <TabPanel>
+                        <div>This is people who have said maybe</div>
+                        <div>Some garbage Data that fills in the space </div>>
+                      </TabPanel>
+                      <TabPanel>
+                        <div>This is people who have not decided</div>
+                        <div>Some garbage Data that fills in the space </div>
+                      </TabPanel>
+                </Tabs>
+              </div>
             </div>  
           </div>
         </div>

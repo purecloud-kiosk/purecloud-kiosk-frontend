@@ -7,12 +7,22 @@ import eventsConstants from "../constants/eventsConstants";
 var FileInput = require('react-file-input');
 import NumbersWidget from './NumbersWidget';
 import EventsTableWidget from './EventsTableWidget';
-
+var IType = "thumbnail";
 export default class ImageCropper extends Component {
 	constructor(props){
 		super(props);
-		this.state = {imgUrl : "img/avatar.jpg"};
+		this.state = {imgUrl : "img/avatar.jpg"};	
 	}
+	componentWillReceiveProps(newProps) {
+    console.log('got some better props', newProps);
+    if (newProps.type == "banner"){
+    	IType = newProps.type;
+    } 
+    else{
+    	IType=newProps.type;
+    }
+    
+  }
 	componentDidMount(){
 
 		// $('#blah').cropper({
@@ -56,7 +66,7 @@ export default class ImageCropper extends Component {
         if (input.target.files && input.target.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-            	console.log(e.target.result);
+            	//console.log(e.target.result);
     //         	$('#blah').cropper({
 				//  	responsive:true,
     //        		 	aspectRatio: 16 / 9,
@@ -72,12 +82,27 @@ export default class ImageCropper extends Component {
 				//     ("replace", e.target.result);
 				//   }
 				// });
-				$('#blah').cropper({
+				console.log("called image type");
+				if (IType == "banner"){
+					$('#blah').cropper("replace", "avatar.jpg");
+					$('#blah').cropper("setAspectRatio", 1.618);
+					$('#blah').cropper({
+					responsive: true,
+					aspectRatio: 16/9,
+					scaleX: .5,
+					scaleY: .5
+					});
+				} else {
+					$('#blah').cropper("replace", "avatar.jpg");
+					$('#blah').cropper("setAspectRatio", 1.00);
+					$('#blah').cropper({
 					responsive: true,
 					aspectRatio: 1/1,
 					scaleX: .5,
 					scaleY: .5
-				});
+					});
+				}
+				
                 $('#blah').cropper("replace", e.target.result);
             };
             reader.readAsDataURL(input.target.files[0]);

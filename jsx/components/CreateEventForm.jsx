@@ -13,6 +13,7 @@ export default class Events extends Component {
 			super(props);
 			var event = this.props.event || {};
 			this.notificationSystem = null;
+			var imageEither = null;
     	this.state = {
     		//outside the event variables important to time/date/success
     		success : false,
@@ -104,6 +105,7 @@ export default class Events extends Component {
   		//this.clear();
   		var state = this.state;
   		state.event.thumbnailUrl = eventsStore.getThumbImageCrop();
+  		
   		this.setState(state);
   		this.notificationSystem.addNotification({
     	 	message: 'Image successfully uploaded',
@@ -119,6 +121,7 @@ export default class Events extends Component {
   		//this.clear();
   		var state = this.state;
   		state.event.imageUrl = eventsStore.getUrlImageCrop();
+  		
   		this.setState(state);
   		this.notificationSystem.addNotification({
     	 	message: 'Image successfully uploaded',
@@ -197,7 +200,7 @@ export default class Events extends Component {
  		this.setState(state);
 	}
 	componentWillReceiveProps(newProps){
-		console.log('got some new props yo');
+		//console.log('got some new props yo');
 		if(newProps.startDate !== null){
 			var date = newProps.startDate.split('|');
 			this.state.startDate = date[0];
@@ -228,6 +231,8 @@ export default class Events extends Component {
 	      window.dispatchEvent(new Event('resize'));
 	    },500);
 	    this.state.imageType = type;
+	    this.setState(this.state);
+
 	    console.log(this.state.imageType);
 	    $('#imageModal').modal('show');
 	  }
@@ -311,7 +316,7 @@ export default class Events extends Component {
 			<Modal id='imageModal' title="Thumbnail">
 		          <div id='selectImage' style={{'width' : '100%', 'height' : '400px'}}>
 		            <div>
-					<ImageCropper />
+					<ImageCropper type = {this.state.imageType}/>
 					<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this)}>Save Image</button>
 
 					</div>

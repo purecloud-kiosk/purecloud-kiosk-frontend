@@ -63,6 +63,16 @@ export default class EventView extends Component {
     console.log(state);
     this.setState(state);
   }
+  openManageModal(){
+      console.log("this was called");
+      setTimeout(()=>{
+        window.dispatchEvent(new Event('resize'));
+      },500);
+      $('#manageModal').modal('show');
+    }
+  handleInvites(){
+    console.log("invites will be mailed");
+  }
   render(){
     var {event, stats} = this.state;
     console.log('on initial render ');
@@ -95,7 +105,10 @@ export default class EventView extends Component {
           <div className="update-button">
                 <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
                 {this.props.event}</button>
-              </div>
+            </div>
+            <div className = "Manage-Events">
+                <button className = "btn btn-primary" type="button" onClick={this.openManageModal.bind()}>Manage Events</button>
+            </div>
             <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
             <div className="row">
               <div className="event-details-container">
@@ -146,8 +159,19 @@ export default class EventView extends Component {
     return(
       <div>
         {view}
-        <Modal>
-
+        <Modal id="manageModal" title = "Manage Events">
+            <div id='selectManage' style={{'width' : '100%', 'height' : '400px'}}>
+                <div>
+                  <div className="modal-body">
+                    <div>The purpose of this modal is to allow for management of events</div>
+                    <div>  
+                      Please attend the events you are asked to attend.
+                    </div>
+                    <InviteTableWidget/>
+                    <button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick = {this.handleInvites.bind(this)}>Invite Org Attendees</button>
+                  </div>
+                </div>
+              </div>
         </Modal>
       </div>
     );
