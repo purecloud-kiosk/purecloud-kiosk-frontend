@@ -15,6 +15,8 @@ export default class Events extends Component {
 			this.notificationSystem = null;
 			var imageEither = null;
     	this.state = {
+    		startDate : moment(event.startDate).format('LL') || null,
+    		startTime : moment(event.startTime).format('LT') || null,
     		//outside the event variables important to time/date/success
     		success : false,
     		//event variable
@@ -188,7 +190,8 @@ export default class Events extends Component {
  		state.success = true;
  		state.event = {
  			'title' : null,
- 			'date': 0,
+ 			'stateDate': null,
+ 			'endDate' : null,
  			'location' : null,
 			'description' : '',
  			'private' : false,
@@ -303,7 +306,7 @@ export default class Events extends Component {
 			    </div>  				
 				<div >
 					<label className= 'form-description'>Description of Event</label>
-					<textarea className='form-control' rows='3' value={event.description}  onChange={this.handleChange('description')}/>
+					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
 				<div>
 					<label className = 'form-submit'></label>

@@ -47,20 +47,28 @@ export default class InviteTable extends Component {
                         <Tab>Unknown</Tab>
                       </TabList>
                       <TabPanel> 
-                        <div>This is people who have said yes</div>
-                        <div>Some garbage Data that fills in the space </div>
+                        <div>Yes Responses</div>
+                        <ul>
+                          <li>none </li>
+                        </ul>
                       </TabPanel>
                       <TabPanel>
-                        <div>This is people who have said no</div>
-                        <div>Some garbage Data that fills in the space </div>
+                        <div>No Responses</div>
+                        <ul>
+                          <li>none </li>
+                        </ul>
                       </TabPanel>
                       <TabPanel>
-                        <div>This is people who have said maybe</div>
-                        <div>Some garbage Data that fills in the space </div>>
+                        <div>Maybe Responses</div>
+                        <ul>
+                          <li>none </li>
+                        </ul>
                       </TabPanel>
                       <TabPanel>
-                        <div>This is people who have not decided</div>
-                        <div>Some garbage Data that fills in the space </div>
+                        <div>Not Responsed Yet</div>
+                        <ul>
+                          <li>none </li>
+                        </ul>
                       </TabPanel>
                 </Tabs>
               </div>
@@ -70,3 +78,11 @@ export default class InviteTable extends Component {
 		);
 	 }
 }
+// <div className="search-org">
+//             <ul className="list-of-people">
+//               <div> Organization List of People </div>
+//               <li> John Doe</li>
+//               <li> Jack L</li>
+//               <li> Beth P</li>
+//             </ul>
+//           </div>

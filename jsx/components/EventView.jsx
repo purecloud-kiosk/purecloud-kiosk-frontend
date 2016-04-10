@@ -12,7 +12,7 @@ import PieChartWidget from "./PieChartWidget";
 import TickerWidget from "./TickerWidget";
 import InviteTableWidget from "./InviteTableWidget";
 import Modal from "./Modal";
-
+import CreateEventForm from './CreateEventForm';
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -34,15 +34,32 @@ export default class EventView extends Component {
     this.state.eventStatsListener.remove();
     //this.state.eventsStoreListener.remove();
   }
-  handleEventUpdated(page){
+  handleEventUpdated(){
     eventsActions.setUpdateFlag(true);
-    navActions.routeToPage("create");
-  }
-
+    // open modal here
+      setTimeout(()=>{
+        window.dispatchEvent(new Event('resize'));
+      },500);
+      $('#updateModal').modal('show');
+    }
 
   handleDeleteButtonClick(){
+    console.log(this.state.event.id);
     this.state.event.eventID = this.state.event.id;
+    $('#deleteModal').modal('hide');
+    $('#manageModal').modal('hide');
     eventsActions.deleteEvent({'eventID': this.state.event.eventID});
+
+  }
+  openDeleteModal(){
+      console.log("this was called");
+      setTimeout(()=>{
+        window.dispatchEvent(new Event('resize'));
+      },500);
+      $('#deleteModal').modal('show');
+    }
+  handleChangedMind(){
+    console.log("ok");
   }
   onBannerError(){
     console.log('error with image');
@@ -149,10 +166,6 @@ export default class EventView extends Component {
           <div className="col-sm-6 col-md-4">
               {inviteWidget}
           </div>
-          <div className="delete-button">
-                <button className= "btn btn-primary pull-right" onClick={this.handleDeleteButtonClick.bind(this)}> Delete Event
-                </button>
-              </div>
         </div>
       );
     }
@@ -161,15 +174,34 @@ export default class EventView extends Component {
         {view}
         <Modal id="manageModal" title = "Manage Events">
             <div id='selectManage' style={{'width' : '100%', 'height' : '400px'}}>
-                <div>
-                  <div className="modal-body">
-                    <div>The purpose of this modal is to allow for management of events</div>
-                    <div>  
-                      Please attend the events you are asked to attend.
-                    </div>
-                    <InviteTableWidget/>
-                    <button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick = {this.handleInvites.bind(this)}>Invite Org Attendees</button>
+              <div>
+                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.openDeleteModal.bind(this)}> Delete Event</button>
+                <button className = "btn btn-primary btn-sm text-center" type = "button" onClick = {this.handleEventUpdated.bind(this)}> Update Event</button>
+                
+                  <div>The purpose of this modal is to allow for management of events</div>
+                  <div>  
+                    Please attend the events you are asked to attend.
                   </div>
+                  <InviteTableWidget/>
+                  <button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick = {this.handleInvites.bind(this)}>Invite Org Attendees</button>
+                </div>
+              
+            </div>
+        </Modal>
+        <Modal id="deleteModal" title = "Delete Event">
+            <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>
+                <div>
+                  <div> Do you want to delete this event?</div>
+                  <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleDeleteButtonClick.bind(this)}> Yes</button>
+                  <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleChangedMind()}> NO</button>
+                  
+                </div>
+              </div>
+        </Modal>
+        <Modal id="updateModal" title = "Update Event">
+            <div id='selectUpdate' style={{'width' : '100%', 'height' : '625px'}}>
+                <div>
+                  <CreateEventForm event={this.state.event}/>
                 </div>
               </div>
         </Modal>
