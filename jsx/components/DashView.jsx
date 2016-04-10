@@ -70,10 +70,12 @@ export default class Dash extends Component {
     this.state.privateEventsListener = eventsStore.addListener(eventsConstants.PRIVATE_EVENTS_RETRIEVED, this.updateView.bind(this, 'privateEvents'));
     this.state.checkInCountsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKIN_COUNTS_RETRIEVED, this.updateView.bind(this, 'barChartData'));
     statsActions.getUserStats();
-    eventActions.getPublicEvents(10, 0);
-    eventActions.getUpcomingEventsManaging(10, 0);
-    eventActions.getPrivateEvents(10, 0);
     eventActions.getPastEventsManaged(10,0);
+    setTimeout(() => {
+      eventActions.getPublicEvents(10, 0);
+      eventActions.getUpcomingEventsManaging(10, 0);
+      eventActions.getPrivateEvents(10, 0);
+    }, 1000);
   }
   componentDidUpdate(){
     window.dispatchEvent(new Event('resize'));

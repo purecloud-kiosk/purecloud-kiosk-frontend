@@ -13,6 +13,7 @@
     "flux": "^2.1.1",
     "history": "^1.13.1",
     "http-proxy": "^1.13.0",
+    "pm2": "^1.1.1",
     "react": "^0.14.3",
     "react-cropper": "^0.6.0",
     "react-date-picker": "^4.0.7",

@@ -17,6 +17,48 @@ body {
 #notification, .row.header{
   color : white;
 }
+.notification-message{
+  word-wrap: break-word;
+}
+#notification-count {
+  color : white;
+  margin-top: 2.2em;
+  margin-left: 1em;
+}
+
+.notification-menu{
+  width : 400px;
+  max-height : 500px;
+  overflow: auto;
+  padding: 0 5px 5px 5px;
+}
+.word-break-all{
+  word-break: break-all;
+}
+@media only screen and (max-height : 330px){
+  .notification-menu{
+    max-height : 240px;
+  }
+}
+@media only screen
+and (max-width : 500px) {
+  .notification-menu{
+    width : 330px;
+  }
+}
+@media only screen
+and (max-width : 400px) {
+  .notification-menu{
+    width : 280px;
+  }
+}
+@media only screen
+and (max-width : 330px) {
+  .notification-menu{
+    width : 240px;
+  }
+}
+
 // make the modal scrollable
 // .modal {
 //   position: absolute;

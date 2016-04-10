@@ -7,6 +7,8 @@ import * as navActions from "../actions/navActions";
 import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
 import statsStore from "../stores/statsStore";
+import navStore from "../stores/navStore";
+import navConstants from "../constants/navConstants";
 import statsConstants from "../constants/statsConstants";
 import Chart from "./Chart";
 import TickerWidget from "./TickerWidget";
@@ -40,15 +42,24 @@ export default class EventView extends Component {
   componentDidMount(){
     console.log('current event in event view');
     console.log(this.state.event);
+
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
     this.state.eventFilesListener = eventsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
+    this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
+    this.refreshView();
+    $('.banner').error(this.onBannerError.bind(this));
+    $('.thumbnail').error(this.onThumbnailError.bind(this));
+  }
+  refreshView(){
+    console.log('refreshing');
+    var state = this.state;
+    state.event = eventsStore.getCurrentEvent();
+    this.setState(state);
     statsActions.getEventStats(this.state.event.id);
     eventActions.getEventCheckIns(this.state.event.id);
     eventActions.getEventFiles(this.state.event.id);
-    $('.banner').error(this.onBannerError.bind(this));
-    $('.thumbnail').error(this.onThumbnailError.bind(this));
   }
   updateEventFiles(){
     let state = this.state;
@@ -267,10 +278,10 @@ export default class EventView extends Component {
                 </div>
                 <div className="event-details">
                   <div className="title">
-                    <h4>{event.title}</h4>
+                    <h4 className='word-break-all'>{event.title}</h4>
                     <p>Start Date: {moment(event.startDate).format('LLL')}</p>
                     <p>End Date: {moment(event.endDate).format('LLL')}</p>
-                    <p>Location: {event.location}</p>
+                    <p className='word-break-all'>Location: {event.location}</p>
                     <p>This event is {privacy}</p>
                   </div>
                 </div>

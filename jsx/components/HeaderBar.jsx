@@ -2,15 +2,27 @@
 import React, { Component } from 'react';
 import * as statsActions from '../actions/statsActions';
 import statsStore from '../stores/statsStore';
+import navStore from '../stores/navStore';
+import navConstants from '../constants/navConstants';
 import statsConstants from '../constants/statsConstants';
 
 export default class HeaderBar extends Component {
   constructor(props){
     super(props);
-    this.state = {stats : null};
+    this.state = {'stats' : null, 'notificationMessages' : []};
   }
   componentDidMount(){
     this.state.statsListener = statsStore.addListener(statsConstants.USER_STATS_RETRIEVED, this.updateStats.bind(this));
+    this.state.notificationListener =
+          navStore.addListener(navConstants.NOTIFICATION_RECIEVED, this.addNotification.bind(this));
+    this.state.initialNotificationListener =
+          navStore.addListener(navConstants.NOTIFICATIONS_RETRIEVED, this.addNotification.bind(this));
+  }
+  addNotification(){
+    console.log('adding notifications');
+    let state = this.state;
+    state.notificationMessages = navStore.getNotifications();
+    this.setState(state);
   }
   componentWillUnmount(){
     this.state.statsListener.remove();
@@ -20,13 +32,63 @@ export default class HeaderBar extends Component {
     state.stats = statsStore.getUserStats();
     this.setState(state);
   }
+  resetCount(){
+    let state = this.state;
+    console.log(state.notificationMessages);
+    state.notificationMessages.forEach((notification) => {
+      notification.viewed = true;
+    });
+    this.setState(state);
+  }
   render(){
-    var {stats} = this.state;
-    if(stats == null)
+    let {stats, notificationMessages} = this.state;
+    let notifications= [];
+    let newNotificationCount = null;
+    if(stats == null) // fill with empty data if null
       stats = {'name': '', 'organization' : '', 'image' : '/img/avatar.jpg'};
     else if(stats.image == null)
       stats.image = '/img/avatar.jpg';
     console.log(stats.image);
+    // make notifications
+    if(notificationMessages.length === 0){
+      notifications.push(
+        <li className='notification-message'>
+          <a href='javascript:void(0);'>
+            No new notifications
+          </a>
+        </li>
+      );
+    }
+    else{
+      newNotificationCount = 0;
+      notificationMessages.forEach((notification) => {
+        let nMsg;
+        if(notification.viewed === false){
+          newNotificationCount++;
+          /*
+          <li className='notification-message'>
+            <a href='javascript:void(0);'>
+          </a>
+        </li>
+          */
+          nMsg = (
+              <a className='notification-message' href='javascript:void(0);'>An event with the title <strong>{notification.message.content.title}</strong> has been created</a>
+          );
+        }
+        else{
+          nMsg = (
+              <a className='notification-message' href='javascript:void(0);'>
+                <strong>New:</strong>
+                An event with the title <strong>{notification.content.title}</strong> has been created
+              </a>
+          );
+        }
+        notifications.push(nMsg);
+        notifications.push(<li className='divider'></li>);
+      });
+      notifications.pop(); // pop that last divider off
+      newNotificationCount = newNotificationCount === 0 ? null : newNotificationCount;
+    }
     return (
       <div className='row header'>
         <div className='col-xs-12'>
@@ -44,13 +106,16 @@ export default class HeaderBar extends Component {
               </ul>
             </div>
             <div className='item dropdown'>
-             <a href='javascript:void(0);' className='dropdown-toggle' data-toggle='dropdown'>
-                <i id='notification' className='fa fa-bell-o'></i>
+             <a id='notification-anchor' href='javascript:void(0);' className='dropdown-toggle col-sm-8' data-toggle='dropdown'>
+               <span className='fa-stack'>
+                 <i id='notification' className='fa fa-bell-o'></i>
+                 <strong id='notification-count' className='fa-stack-1x'>{newNotificationCount}</strong>
+               </span>
               </a>
-              <ul className='dropdown-menu dropdown-menu-right'>
+              <ul className='notification-menu dropdown-menu dropdown-menu-right'>
                 <li className='dropdown-header'>Notifications</li>
                 <li className='divider'></li>
-                <li><a href='javascript:void(0);'>Server Down!</a></li>
+                {notifications}
               </ul>
             </div>
           </div>
