@@ -11,17 +11,17 @@ var IType = "thumbnail";
 export default class ImageCropper extends Component {
 	constructor(props){
 		super(props);
-		this.state = {imgUrl : "img/avatar.jpg"};	
+		this.state = {imgUrl : "img/avatar.jpg"};
 	}
 	componentWillReceiveProps(newProps) {
     console.log('got some better props', newProps);
     if (newProps.type == "banner"){
     	IType = newProps.type;
-    } 
+    }
     else{
     	IType=newProps.type;
     }
-    
+
   }
 	componentDidMount(){
 
@@ -62,7 +62,7 @@ export default class ImageCropper extends Component {
 
 	readURL(input) {
 		console.log('called');
-		
+
         if (input.target.files && input.target.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
@@ -102,24 +102,23 @@ export default class ImageCropper extends Component {
 					scaleY: .5
 					});
 				}
-				
+
                 $('#blah').cropper("replace", e.target.result);
             };
             reader.readAsDataURL(input.target.files[0]);
         }
 	}
 
-	render() { 
+	render() {
 
     	var image;
 		return(
 			<div>
-			
 				<div className="col-md-10">
 					<div>
 						<FileInput accept=".png,.gif" onChange={this.readURL.bind(this)} />
 						<img id="blah" width='100%' height='400px' src={this.state.imgUrl} alt="your image" />
-					</div>						
+					</div>
 				</div>
 			</div>
 			);

@@ -16,7 +16,7 @@ export default class Events extends Component {
 			var imageEither = null;
     	this.state = {
     		startDate : moment(event.startDate).format('LL') || null,
-    		startTime : moment(event.startTime).format('LT') || null,
+    		startTime : moment(event.startDate).format('LT') || null,
     		//outside the event variables important to time/date/success
     		success : false,
     		//event variable
@@ -225,21 +225,16 @@ export default class Events extends Component {
 		  console.log(formData);
 			eventActions.uploadImage(formData, this.state.imageType);
 		}, "image/png");
-
 	}
-	// openDescModal(){
- //    $('#imageModal').modal('show');
-	//   }
-	  openImageModal(type){
-	    setTimeout(()=>{
-	      window.dispatchEvent(new Event('resize'));
-	    },500);
-	    this.state.imageType = type;
-	    this.setState(this.state);
-
-	    console.log(this.state.imageType);
-	    $('#imageModal').modal('show');
-	  }
+  openImageModal(type){
+    setTimeout(()=>{
+      window.dispatchEvent(new Event('resize'));
+    },500);
+    this.state.imageType = type;
+    this.setState(this.state);
+    console.log(this.state.imageType);
+    $('#imageModal').modal('show');
+  }
 	render(){
 		var {event, success, date, mode, format, inputFormat, startDate} = this.state;
 		var iCropper;
@@ -259,19 +254,18 @@ export default class Events extends Component {
 	}
 	return (
 		<div className='form-container'>
-			<form className = 'form-all'>
+			<form className='form-all'>
 				<div>
 					<label className ='form-title'>Title</label>
 					<input id='eventTitleInput' className='form-control' value={event.title} onChange={this.handleChange('title')}/>
 				</div>
-				<br/>
 				<div>
 					<label className='form-title'>Privacy</label>
 					<div id='switch-wrapper'>
 						<input type='checkbox' id='privacy-checkbox' checked={event.private}/>
 					</div>
 				</div>
-				<div >
+				<div>
 					<label className ='form-date'>Start Date</label>
 					<DatePicker id='startDate' type='date' date={this.state.startDate} onChange={this.handleDateChange.bind(this, 'startDate', 'LL')}/>
 				</div>
@@ -283,27 +277,25 @@ export default class Events extends Component {
 					<label className ='form-location'>Location</label>
 					<input className='form-control' value={event.location} onChange={this.handleChange('location')}/>
 				</div>
-
-
-			    <div className= 'form-image-thumb'>
-			      <label className='form-image-thumb'>Thumbnail Image</label>
-			      <div className='input-group'>
-				      <input type="text" className="form-control" value={event.thumbnailUrl} onChange={this.handleChange('thumbnailUrl')}/>
-				      <span className="input-group-btn">
-				        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'thumbnail')}>Crop Image</button>
-				      </span>
-			      </div>
-			    </div>
+		    <div className= 'form-image-thumb'>
+		      <label className='form-image-thumb'>Thumbnail Image</label>
+		      <div className='input-group'>
+			      <input type="text" className="form-control" value={event.thumbnailUrl} onChange={this.handleChange('thumbnailUrl')}/>
+			      <span className="input-group-btn">
+			        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'thumbnail')}>Crop Image</button>
+			      </span>
+		      </div>
+		    </div>
 				<div className= 'form-image-banner'>
-			      <label className='form-image-banner'>Banner Image</label>
-			      <div className='input-group'>
-				      <input type="text" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
-				      <span className="input-group-btn">
-				        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'banner')}>Crop Image</button>
-				      </span>
-			      </div>
-			    </div>
-				<div >
+		      <label className='form-image-banner'>Banner Image</label>
+		      <div className='input-group'>
+			      <input type="text" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
+			      <span className="input-group-btn">
+			        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'banner')}>Crop Image</button>
+			      </span>
+		      </div>
+		    </div>
+				<div>
 					<label className= 'form-description'>Description of Event</label>
 					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
@@ -316,14 +308,11 @@ export default class Events extends Component {
   			</div>
 			</form>
 			<Modal id='imageModal' title="Thumbnail">
-		          <div id='selectImage' style={{'width' : '100%', 'height' : '400px'}}>
-		            <div>
+        <div id='selectImage' style={{'width' : '100%', 'height' : '400px'}}>
 					<ImageCropper type = {this.state.imageType}/>
 					<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this)}>Save Image</button>
-
-					</div>
-		          </div>
-		    </Modal>
+        </div>
+	    </Modal>
 		</div>
 		);
 	}

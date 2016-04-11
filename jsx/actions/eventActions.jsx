@@ -265,6 +265,7 @@ export function getEventFiles(eventID){
 }
 
 export function getEventFeed(eventID){
+  console.log('GETTING FEED');
   $.ajax({
     url: 'api/notification/event?eventID=' + eventID,
     method : 'GET',
@@ -272,6 +273,7 @@ export function getEventFeed(eventID){
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
+    console.log('GOT THE DATA!!!!!');
     dispatcher.dispatch({
       actionType : eventsConstants.EVENT_FEED_RETRIEVED,
       data : data

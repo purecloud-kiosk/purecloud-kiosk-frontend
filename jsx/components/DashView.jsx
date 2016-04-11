@@ -133,7 +133,7 @@ export default class Dash extends Component {
       if(barChartData.data[0].length !== 0){
         barChart = (
           <div className="col-md-12">
-            <div className='widget animated fadeInDown'>
+            <div className='widget animate fadeInDown'>
               <div className='widget-header'>
                 Bar Chart
               </div>
