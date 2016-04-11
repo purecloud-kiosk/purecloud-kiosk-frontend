@@ -7,6 +7,7 @@ import statsStore from '../stores/statsStore';
 import eventsStore from '../stores/eventsStore';
 import statsConstants from '../constants/statsConstants';
 import eventsConstants from '../constants/eventsConstants';
+import navConstants from '../constants/navConstants';
 import NumbersWidget from './NumbersWidget';
 import EventsTableWidget from './EventsTableWidget';
 import Chart from './Chart';
@@ -63,6 +64,7 @@ export default class Dash extends Component {
     this.setState(state);
   }
   componentDidMount(){
+    this.state.notificationListener = statsStore.addListener(navConstants.NOTIFICATION_RECIEVED, this.updateView.bind(this, 'stats'));
     this.state.userStatsListener = statsStore.addListener(statsConstants.USER_STATS_RETRIEVED, this.updateView.bind(this, 'stats'));
     this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.UPCOMING_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
     this.state.pastEventsManagedListener = eventsStore.addListener(eventsConstants.PAST_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'pastEventsManaged'));

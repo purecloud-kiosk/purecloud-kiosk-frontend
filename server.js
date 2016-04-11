@@ -9,7 +9,7 @@ var compression = require('compression');
 var favicon = require('serve-favicon');
 var httpProxy = require('http-proxy');
 var url = require('url');
-var apiServer = process.env.NODE_ENV === 'production' ?  'http://localhost:8000': 'http://localhost:8080';//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000';
+var apiServer = 'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000';//process.env.NODE_ENV === 'production' ?  'http://localhost:8000': 'http://localhost:8080';//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000';
 // localhost
 var proxy = httpProxy.createProxyServer();
 

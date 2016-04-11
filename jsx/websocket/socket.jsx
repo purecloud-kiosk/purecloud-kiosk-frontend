@@ -6,7 +6,7 @@ import statsStore from '../stores/statsStore';
 // init this.socket connection and handle all routing of events here
 class WebSocket{
   constructor(){
-    this.socket =  io('http://localhost:8080/ws');
+    this.socket =  io('http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000/ws');
   }
   init(notificationSystem){
     this.notificationSystem = notificationSystem;
@@ -29,7 +29,8 @@ class WebSocket{
       // org wide message, so just push to notification bar
       console.log(data);
       console.log(statsStore.getUserStats());
-      if(data.posterID !== statsStore.getUserStats().personID){
+      if(data.posterID !== statsStore.getUserStats().personID &&
+      moment(new Date()).isBefore(new Date(data.message.content.endDate))){
         navActions.dispatchOrgNotification(data);
         this.notificationSystem.addNotification({
           'message': 'A new event was created!',

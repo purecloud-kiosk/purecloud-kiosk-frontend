@@ -312,3 +312,34 @@ export function dispatchEventMessage(message){
     data: message
   });
 }
+
+export function uploadImage(formData, fileType){
+  $.ajax('/api/file/upload', {
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    },
+    success: function (data) {
+      console.log(data);
+      //temporaryImage = data;
+      console.log('Upload success');
+      let actionType;
+      if (fileType == "banner"){
+        actionType = eventsConstants.IMAGE_URL_STORED;
+      }
+      else{
+        actionType = eventsConstants.IMAGE_THUMB_STORED;
+      }
+      dispatcher.dispatch({
+        actionType: actionType,
+        data: data
+      });
+    },
+    error: function () {
+      console.log('Upload error');
+    }
+  });
+}

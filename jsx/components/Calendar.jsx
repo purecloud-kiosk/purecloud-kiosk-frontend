@@ -19,7 +19,6 @@ export default class Calendar extends Component{
   componentDidMount(){
     this.state.calendarEventListener =
       eventsStore.addListener(eventsConstants.CAL_EVENTS_FETCHED, this.loadEvents.bind(this));
-
     console.log('init calendar');
     var self = this;
     $('#calendar').fullCalendar({
@@ -28,7 +27,7 @@ export default class Calendar extends Component{
       'timezone' : 'local',
       'height' : $('.main-content').height() - 50,
       'windowResize': (view) => {
-        $('#calendar').fullCalendar('option' , 'height',  $('.main-content').height() - 50);
+        $('#calendar').fullCalendar('option' , 'height',  $('.main-content').height() + 100);
       },
       'customButtons' : {
         'customPrev' : {

@@ -5,7 +5,7 @@
 import { EventEmitter } from 'fbemitter';
 import dispatcher from '../dispatchers/dispatcher';
 import statsConstants from '../constants/statsConstants';
-
+import navConstants from '../constants/navConstants';
 var userStats = null, eventStats = {};
 
 function setUserStats(statistics){
@@ -34,6 +34,17 @@ dispatcher.register(function(payload){
       break;
     case statsConstants.EVENT_STATS_RETRIEVED:
       setEventStats(payload.data);
+      break;
+    case navConstants.NOTIFICATION_RECIEVED:
+      console.log('stats store got this too');
+      console.log(payload);
+      if(payload.data.message.action === 'EVENT_CREATED'){ // public event
+          console.log('incremented');
+          userStats.totalPublicEventsAvailable++;
+      }
+      else if (payload.data.message.action === 'EVENT_INVITE'){ // private event
+          userStats.totalPrivateEventsAvailable++;
+      }
       break;
   }
   statsStore.emit(payload.actionType);
