@@ -16,7 +16,7 @@ import FeedInput from './FeedInput';
 import Modal from "./Modal";
 import InviteTableWidget from "./InviteTableWidget";
 import webSocket from '../websocket/socket';
-
+import CreateEventForm from './CreateEventForm';
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -87,12 +87,32 @@ export default class EventView extends Component {
     this.state.eventFilesListener.remove();
     this.state.refreshListener.remove();
   }
-  handleEventUpdated(page){
-    eventActions.setUpdateFlag(true);
-    navActions.routeToPage("create");
-  }
+  handleEventUpdated(){
+    eventsActions.setUpdateFlag(true);
+    // open modal here
+      setTimeout(()=>{
+        window.dispatchEvent(new Event('resize'));
+      },500);
+      $('#updateModal').modal('show');
+    }
+
   handleDeleteButtonClick(){
-    eventActions.deleteEvent({'eventID': this.state.event.id});
+    console.log(this.state.event.id);
+    this.state.event.eventID = this.state.event.id;
+    $('#deleteModal').modal('hide');
+    $('#manageModal').modal('hide');
+    eventsActions.deleteEvent({'eventID': this.state.event.eventID});
+
+  }
+  openDeleteModal(){
+      console.log("this was called");
+      setTimeout(()=>{
+        window.dispatchEvent(new Event('resize'));
+      },500);
+      $('#deleteModal').modal('show');
+    }
+  handleChangedMind(){
+    console.log("ok");
   }
   onBannerError(){
     let state = this.state;
@@ -128,6 +148,17 @@ export default class EventView extends Component {
   openFeedModal(){
     $('#feedModal').modal('show');
   }
+  openManageModal(){
+      console.log("this was called");
+      setTimeout(()=>{
+        window.dispatchEvent(new Event('resize'));
+      },500);
+      $('#manageModal').modal('show');
+    }
+  handleInvites(){
+    console.log("invites will be mailed");
+  }
+
   render(){
     let {event, files, stats, checkIns, chartOptions, feed} = this.state;
     console.log('about to render');
@@ -318,7 +349,13 @@ export default class EventView extends Component {
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
-            {manageButton}
+          <div className="update-button">
+                <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
+                {this.props.event}</button>
+            </div>
+            <div className = "Manage-Events">
+                <button className = "btn btn-primary" type="button" onClick={this.openManageModal.bind()}>Manage Events</button>
+            </div>
             <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
             <div className="row">
               <div className="event-details-container">
@@ -378,10 +415,6 @@ export default class EventView extends Component {
           <div className="col-sm-6 col-md-4">
               {invitedCheckInsWidget}
           </div>
-          <div className="delete-button">
-            <button className= "btn btn-primary pull-right" onClick={this.handleDeleteButtonClick.bind(this)}> Delete Event
-            </button>
-          </div>
         </div>
       );
     }
@@ -403,6 +436,40 @@ export default class EventView extends Component {
           <div className='feedHolder'>
             {eventFeed}
           </div>
+        </Modal
+        <Modal id="manageModal" title = "Manage Events">
+            <div id='selectManage' style={{'width' : '100%', 'height' : '400px'}}>
+              <div>
+                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.openDeleteModal.bind(this)}> Delete Event</button>
+                <button className = "btn btn-primary btn-sm text-center" type = "button" onClick = {this.handleEventUpdated.bind(this)}> Update Event</button>
+
+                  <div>The purpose of this modal is to allow for management of events</div>
+                  <div>
+                    Please attend the events you are asked to attend.
+                  </div>
+                  <InviteTableWidget/>
+                  <button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick = {this.handleInvites.bind(this)}>Invite Org Attendees</button>
+                </div>
+
+            </div>
+        </Modal>
+        <Modal id="deleteModal" title = "Delete Event">
+            <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>
+                <div>
+                  <div> Do you want to delete this event?</div>
+                  <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleDeleteButtonClick.bind(this)}> Yes</button>
+                  <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleChangedMind()}> NO</button>
+
+                </div>
+              </div>
+        </Modal>
+        <Modal id="updateModal" title = "Update Event">
+            <div id='selectUpdate' style={{'width' : '100%', 'height' : '625px'}}>
+                <div>
+                  <CreateEventForm event={this.state.event}/>
+                </div>
+              </div>
+        </Modal>
         </Modal>
       </div>
     );

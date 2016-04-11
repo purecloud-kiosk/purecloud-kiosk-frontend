@@ -13,7 +13,10 @@ export default class Events extends Component {
 			super(props);
 			var event = this.props.event || {};
 			this.notificationSystem = null;
+			var imageEither = null;
     	this.state = {
+    		startDate : moment(event.startDate).format('LL') || null,
+    		startTime : moment(event.startTime).format('LT') || null,
     		//outside the event variables important to time/date/success
     		success : false,
     		//event variable
@@ -120,6 +123,7 @@ export default class Events extends Component {
   		//this.clear();
   		var state = this.state;
   		state.event.imageUrl = eventsStore.getUrlImageCrop();
+
   		this.setState(state);
   		this.notificationSystem.addNotification({
     	 	message: 'Image successfully uploaded',
@@ -186,7 +190,8 @@ export default class Events extends Component {
  		state.success = true;
  		state.event = {
  			'title' : null,
- 			'date': 0,
+ 			'stateDate': null,
+ 			'endDate' : null,
  			'location' : null,
 			'description' : '',
  			'private' : false,
@@ -198,7 +203,8 @@ export default class Events extends Component {
  		this.setState(state);
 	}
 	componentWillReceiveProps(newProps){
-		if(newProps.startDate !== undefined){
+		//console.log('got some new props yo');
+		if(newProps.startDate !== null){
 			var date = newProps.startDate.split('|');
 			this.state.startDate = date[0];
 			this.state.startTime = date[1];
@@ -229,6 +235,8 @@ export default class Events extends Component {
 	      window.dispatchEvent(new Event('resize'));
 	    },500);
 	    this.state.imageType = type;
+	    this.setState(this.state);
+
 	    console.log(this.state.imageType);
 	    $('#imageModal').modal('show');
 	  }
@@ -297,7 +305,7 @@ export default class Events extends Component {
 			    </div>
 				<div >
 					<label className= 'form-description'>Description of Event</label>
-					<textarea className='form-control' rows='3' value={event.description}  onChange={this.handleChange('description')}/>
+					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
 				<div>
 					<label className = 'form-submit'></label>
@@ -310,7 +318,7 @@ export default class Events extends Component {
 			<Modal id='imageModal' title="Thumbnail">
 		          <div id='selectImage' style={{'width' : '100%', 'height' : '400px'}}>
 		            <div>
-					<ImageCropper />
+					<ImageCropper type = {this.state.imageType}/>
 					<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this)}>Save Image</button>
 
 					</div>

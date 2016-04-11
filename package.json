@@ -27,6 +27,7 @@
     "react-tabs": "^0.5.3",
     "react-time-picker": "^1.1.0",
     "request": "^2.69.0",
+    "selenium-webdriver": "^2.53.1",
     "serve-favicon": "^2.3.0",
     "style-loader": "^0.13.0"
   },
