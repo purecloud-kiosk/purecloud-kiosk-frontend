@@ -16,10 +16,11 @@ var updateFlag = false;
 var queryResults = null;
 var calendarEvents = null;
 var eventCheckIns = null;
-var checkInCountArray = null;
+var checkInCountArray = [];
 var eventFiles = null;
 var ThumbImage = null;
 var UrlImage = null;
+var eventFeed = [];
 function setPrivateEvents(events){
   privateEvents = events;
 }
@@ -58,13 +59,17 @@ function setImageThumbCrop(tempImage){
 function setImageUrlCrop(tempImage){
   UrlImage = tempImage;
 }
-
 function setCheckInCountArray(countArray){
   checkInCountArray = countArray;
 }
-
 function setEventFiles(files){
   eventFiles = files;
+}
+function setEventFeed(feed){
+  eventFeed = feed.reverse();
+}
+function addMessage(message){
+  eventFeed.unshift(message);
 }
 class EventsStore extends EventEmitter{
   getPublicEvents(){
@@ -106,7 +111,9 @@ class EventsStore extends EventEmitter{
   getUrlImageCrop(){
     return UrlImage;
   }
-
+  getEventFeed(){
+    return eventFeed;
+  }
 }
 
 var eventsStore = new EventsStore();
@@ -142,7 +149,6 @@ dispatcher.register(function(payload){
       setCheckInCountArray(payload.data);
       break;
     case eventsConstants.EVENT_FILES_RETRIEVED:
-      console.log('right here');
       setEventFiles(payload.data);
       break;
     case eventsConstants.CAL_EVENTS_FETCHED:
@@ -151,8 +157,14 @@ dispatcher.register(function(payload){
     case eventsConstants.IMAGE_THUMB_STORED:
       setImageThumbCrop(payload.data.fileUrl);
       break;
-      case eventsConstants.IMAGE_URL_STORED:
+    case eventsConstants.IMAGE_URL_STORED:
       setImageUrlCrop(payload.data.fileUrl);
+      break;
+    case eventsConstants.EVENT_FEED_RETRIEVED:
+      setEventFeed(payload.data);
+      break;
+    case eventsConstants.EVENT_MESSAGE_RECIEVED:
+      addMessage(payload.data);
       break;
     default:
       //no op

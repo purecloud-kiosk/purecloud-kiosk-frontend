@@ -8,7 +8,8 @@ export default class PieChartWidget extends Component {
   constructor(props){
     super(props);
     this.state = {
-      'id' : (Math.random() + 1).toString(36).substring(7)
+      'id' : (Math.random() + 1).toString(36).substring(7),
+      'type' : null
     };
   }
   componentDidMount(){
@@ -36,6 +37,7 @@ export default class PieChartWidget extends Component {
     const {type, chartData, options} = props;
     var optns;
     let state = this.state;
+    this.state.type = type;
     if(options === undefined){
       optns = {
         segmentShowStroke : true,

@@ -15,7 +15,7 @@ function setEventStats(statistics){
   eventStats = statistics;
 }
 
-class NavStore extends EventEmitter{
+class StatsStore extends EventEmitter{
   getUserStats(){
     return userStats;
   }
@@ -24,7 +24,7 @@ class NavStore extends EventEmitter{
   }
 }
 
-var navStore = new NavStore();
+var statsStore = new StatsStore();
 
 // register for data from dispatcher
 dispatcher.register(function(payload){
@@ -36,7 +36,7 @@ dispatcher.register(function(payload){
       setEventStats(payload.data);
       break;
   }
-  navStore.emit(payload.actionType);
+  statsStore.emit(payload.actionType);
 });
 
-export default navStore;
+export default statsStore;

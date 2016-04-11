@@ -9,7 +9,7 @@ var compression = require('compression');
 var favicon = require('serve-favicon');
 var httpProxy = require('http-proxy');
 var url = require('url');
-var apiServer = 'http://localhost:8080';//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8080';
+var apiServer = 'http://localhost:8080';//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000';
 // localhost
 var proxy = httpProxy.createProxyServer();
 
@@ -55,5 +55,5 @@ app.use('/api/*', function(req, res){
 });
 
 app.listen(8000, function(){
-  console.log('Server running on port 8000...');
+  console.log('Server running on port 8080...');
 });

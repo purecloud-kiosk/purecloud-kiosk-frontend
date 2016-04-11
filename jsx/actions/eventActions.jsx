@@ -9,7 +9,6 @@ import eventsConstants from '../constants/eventsConstants';
 /**
  *  NOTE : Requests should be moved into a Data access object
  **/
- var temporaryImage;
 export function setUpdateFlag(bool){
   dispatcher.dispatch({
       actionType : eventsConstants.FLAG_UPDATE_SET,
@@ -262,35 +261,52 @@ export function getEventFiles(eventID){
   }).fail(function(error){
     console.log("ERROR : ");
     console.log(error);
-  })
+  });
 }
-export function uploadImage(formData, fileType){
-  $.ajax('/api/file/upload', {
-    method: "POST",
-    data: formData,
-    processData: false,
-    contentType: false,
+
+export function getEventFeed(eventID){
+  $.ajax({
+    url: 'api/notification/event?eventID=' + eventID,
+    method : 'GET',
     headers : {
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
-    },
-    success: function (data) {
-      console.log(data);
-      //temporaryImage = data;
-      console.log('Upload success');
-      let actionType;
-      if (fileType == "banner"){
-        actionType = eventsConstants.IMAGE_URL_STORED;
-      }
-      else{
-        actionType = eventsConstants.IMAGE_THUMB_STORED;
-      }
-      dispatcher.dispatch({
-        actionType: actionType,
-        data: data
-      });
-    },
-    error: function () {
-      console.log('Upload error');
     }
+  }).done(function(data){
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_FEED_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
+
+export function postToEventFeed(eventID, message){
+  $.ajax({
+    url: 'api/events/postMessage',
+    method : 'POST',
+    data : {
+      'eventID' : eventID,
+      'message' : message
+    },
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log('sent!')
+    dispatcher.dispatch({
+      actionType : eventsConstants.MESSAGE_SENT,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
+export function dispatchEventMessage(message){
+  dispatcher.dispatch({
+    actionType: eventsConstants.EVENT_MESSAGE_RECIEVED,
+    data: message
   });
 }

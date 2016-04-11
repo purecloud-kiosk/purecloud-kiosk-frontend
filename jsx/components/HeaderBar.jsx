@@ -1,6 +1,8 @@
 'use strict';
 import React, { Component } from 'react';
 import * as statsActions from '../actions/statsActions';
+import * as eventActions from '../actions/eventActions';
+import * as navActions from '../actions/navActions';
 import statsStore from '../stores/statsStore';
 import navStore from '../stores/navStore';
 import navConstants from '../constants/navConstants';
@@ -40,6 +42,17 @@ export default class HeaderBar extends Component {
     });
     this.setState(state);
   }
+  onNotificationClick(message){
+    console.log('clicked');
+    console.log(message);
+    switch(message.action){
+      case "EVENT_CREATED":
+        eventActions.setCurrentEvent(message.content);
+        navActions.routeToPage('event');
+        navActions.refresh();
+        break;
+    }
+  }
   render(){
     let {stats, notificationMessages} = this.state;
     let notifications= [];
@@ -72,12 +85,12 @@ export default class HeaderBar extends Component {
         </li>
           */
           nMsg = (
-              <a className='notification-message' href='javascript:void(0);'>An event with the title <strong>{notification.message.content.title}</strong> has been created</a>
+              <a className='notification-message' onClick={this.onNotificationClick.bind(this,notification.message)}>An event with the title <strong>{notification.message.content.title}</strong> has been created</a>
           );
         }
         else{
           nMsg = (
-              <a className='notification-message' href='javascript:void(0);'>
+              <a className='notification-message' onClick={this.onNotificationClick.bind(this,notification.message)}>
                 <strong>New:</strong>
                 An event with the title <strong>{notification.content.title}</strong> has been created
               </a>

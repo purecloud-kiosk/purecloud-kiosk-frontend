@@ -70,11 +70,11 @@ export default class Dash extends Component {
     this.state.privateEventsListener = eventsStore.addListener(eventsConstants.PRIVATE_EVENTS_RETRIEVED, this.updateView.bind(this, 'privateEvents'));
     this.state.checkInCountsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKIN_COUNTS_RETRIEVED, this.updateView.bind(this, 'barChartData'));
     statsActions.getUserStats();
-    eventActions.getPastEventsManaged(10,0);
+    eventActions.getPublicEvents(10, 0);
+    eventActions.getUpcomingEventsManaging(10, 0);
+    eventActions.getPrivateEvents(10, 0);
     setTimeout(() => {
-      eventActions.getPublicEvents(10, 0);
-      eventActions.getUpcomingEventsManaging(10, 0);
-      eventActions.getPrivateEvents(10, 0);
+      eventActions.getPastEventsManaged(10,0);
     }, 1000);
   }
   componentDidUpdate(){
@@ -133,7 +133,7 @@ export default class Dash extends Component {
       if(barChartData.data[0].length !== 0){
         barChart = (
           <div className="col-md-12">
-            <div className='widget'>
+            <div className='widget animated fadeInDown'>
               <div className='widget-header'>
                 Bar Chart
               </div>

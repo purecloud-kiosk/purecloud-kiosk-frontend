@@ -12,8 +12,10 @@ import navConstants from "../constants/navConstants";
 import statsConstants from "../constants/statsConstants";
 import Chart from "./Chart";
 import TickerWidget from "./TickerWidget";
+import FeedInput from './FeedInput';
 import Modal from "./Modal";
 import InviteTableWidget from "./InviteTableWidget";
+import webSocket from '../websocket/socket';
 
 export default class EventView extends Component {
   constructor(props){
@@ -23,6 +25,8 @@ export default class EventView extends Component {
       'files' : [],
       'stats' : null,
       'checkIns' : null,
+      'feed' : [],
+      'message' : "",
       'chartOptions' : {
         'segmentShowStroke' : true,
         'segmentStrokeColor' : '#fff',
@@ -40,17 +44,22 @@ export default class EventView extends Component {
     };
   }
   componentDidMount(){
-    console.log('current event in event view');
-    console.log(this.state.event);
-
+    webSocket.subscribe(this.state.event.id);
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
     this.state.eventFilesListener = eventsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
     this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
+    this.state.eventMessageListener = eventsStore.addListener(eventsConstants.EVENT_MESSAGE_RECIEVED, this.setFeed.bind(this));
+    this.state.eventFeedListener = eventsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
     this.refreshView();
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
+  }
+  setFeed(){
+    let state = this.state;
+    state.feed = eventsStore.getEventFeed();
+    this.setState(state);
   }
   refreshView(){
     console.log('refreshing');
@@ -59,26 +68,28 @@ export default class EventView extends Component {
     this.setState(state);
     statsActions.getEventStats(this.state.event.id);
     eventActions.getEventCheckIns(this.state.event.id);
-    eventActions.getEventFiles(this.state.event.id);
+    setTimeout(() => {
+      eventActions.getEventFiles(this.state.event.id);
+      eventActions.getEventFeed(this.state.event.id);
+    },1500);
+
   }
   updateEventFiles(){
     let state = this.state;
     state.files = eventsStore.getEventFiles();
     this.setState(state);
-
   }
   componentWillUnmount(){
+    webSocket.unsubscribe(this.state.event.id);
     this.state.eventStatsListener.remove();
     this.state.eventsStoreListener.remove();
     this.state.getEventCheckInsListener.remove();
     this.state.eventFilesListener.remove();
+    this.state.refreshListener.remove();
   }
   handleEventUpdated(page){
     eventActions.setUpdateFlag(true);
     navActions.routeToPage("create");
-  }
-  handleEditButtonClicked(){
-
   }
   handleDeleteButtonClick(){
     eventActions.deleteEvent({'eventID': this.state.event.id});
@@ -99,6 +110,7 @@ export default class EventView extends Component {
     state.stats = statsStore.getEventStats();
     this.setState(state);
   }
+
   updateCheckIns(){
     let state = this.state;
     state.checkIns = eventsStore.getCheckIns();
@@ -113,13 +125,16 @@ export default class EventView extends Component {
     },500);
     $('#scatterChartModal').modal('show');
   }
-
+  openFeedModal(){
+    $('#feedModal').modal('show');
+  }
   render(){
-    let {event, files, stats, checkIns, chartOptions} = this.state;
+    let {event, files, stats, checkIns, chartOptions, feed} = this.state;
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, inviteWidget, invitedCheckInsWidget, lineWidget, fileWidget, manageButton;
+    let view, checkInWidget, inviteWidget, invitedCheckInsWidget, eventFeed,
+      lineWidget, fileWidget, feedWidget, feedInput, manageButton;
     let privacy = "public";
 
     if(event != null){
@@ -205,8 +220,9 @@ export default class EventView extends Component {
         );
       }
       if(stats !== null){
-        console.log(stats);
-        if(stats.userType === 'admin' || stats.userIsManager){
+        if(statsStore.getUserStats().userType === 'admin' || stats.userIsManager)
+          feedInput = (<FeedInput eventID={this.state.event.id}/>);
+        if(statsStore.getUserStats().userType === 'admin' || stats.userIsManager){
           manageButton = (
             <div className="update-button">
               <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
@@ -215,7 +231,6 @@ export default class EventView extends Component {
           );
         }
       }
-
       let lineData = {
         data : []
       };
@@ -266,6 +281,40 @@ export default class EventView extends Component {
           </div>
         );
       }
+      if(feed.length === 0){
+        eventFeed = 'No messages available';
+      }
+      else{
+        eventFeed = (
+          <div>
+          {feed.map((data) => {
+            return (
+              <blockquote className='animated fadeInLeft'>
+                <p className='text-size-medium'>{data.message.content}</p>
+                <footer>{data.posterName}</footer>
+              </blockquote>
+            );
+          })}
+          </div>
+        );
+      }
+      feedWidget = (
+        <div className="col-sm-6 col-md-4">
+          <div className='widget'>
+            <div className='widget-header'>
+              <i className="fa fa-user"></i>
+              Event Feed
+               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openFeedModal.bind(this)}>
+                <i className="fa fa-cog fa-lg"></i> Expand
+              </a>
+            </div>
+            <div className='widget-body medium no-padding'>
+              {eventFeed}
+            </div>
+          </div>
+        </div>
+      );
+
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
@@ -309,6 +358,7 @@ export default class EventView extends Component {
               </div>
             </div>
           </div>
+          {feedWidget}
           {checkInWidget}
           {inviteWidget}
           <div className="col-sm-6 col-md-4">
@@ -348,8 +398,11 @@ export default class EventView extends Component {
             {lineWidget}
           </div>
         </Modal>
-        <Modal id='editModal' title='Event Settings'>
-
+        <Modal id='feedModal' title='Event Feed'>
+          {feedInput}
+          <div className='feedHolder'>
+            {eventFeed}
+          </div>
         </Modal>
       </div>
     );

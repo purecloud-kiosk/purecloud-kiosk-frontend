@@ -40,14 +40,16 @@ export function getNotifications(){
     console.log(error);
   });
 }
-export function refresh(){
-  dispatcher.dispatch({
-    actionType: navConstants.REFRESH
-  });
-}
-export function dispatchNotification(message){
+
+export function dispatchOrgNotification(message){
   dispatcher.dispatch({
     actionType: navConstants.NOTIFICATION_RECIEVED,
     data: message
+  });
+}
+
+export function refresh(){
+  dispatcher.dispatch({
+    actionType: navConstants.REFRESH
   });
 }

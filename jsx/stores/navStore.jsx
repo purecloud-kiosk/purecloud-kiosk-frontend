@@ -7,27 +7,23 @@ import dispatcher from '../dispatchers/dispatcher';
 import navConstants from '../constants/navConstants';
 
 var open = false;
-var notifications = [];
+var orgNotifications = [];
 function toggleOpen(){
   open = !open;
 }
-function addNotification(message){
+function addOrgNotification(message){
   message.viewed = false;
-  notifications.push(message);
+  orgNotifications.unshift(message);
 }
-function addNotifications(messages){
-  console.log(messages);
-  messages.forEach((message) => {
-    message.viewed = false;
-    notifications.push(message);
-  });
+function setOrgNotifications(messages){
+  orgNotifications = messages.reverse();
 }
 class NavStore extends EventEmitter{
   sideBarIsOpen(){
     return open;
   }
   getNotifications(){
-    return notifications;
+    return orgNotifications;
   }
 }
 
@@ -40,10 +36,10 @@ dispatcher.register(function(payload){
       toggleOpen();
       break;
     case navConstants.NOTIFICATION_RECIEVED:
-      addNotification(payload.data);
+      addOrgNotification(payload.data);
       break;
     case navConstants.NOTIFICATIONS_RETRIEVED:
-      addNotifications(payload.data);
+      setOrgNotifications(payload.data);
       break;
   }
   navStore.emit(payload.actionType);
