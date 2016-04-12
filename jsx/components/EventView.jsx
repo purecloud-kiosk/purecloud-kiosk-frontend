@@ -191,11 +191,33 @@ export default class EventView extends Component {
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, inviteWidget, invitedCheckInsWidget, eventFeed,
-      lineWidget, fileWidget, feedWidget, feedInput, manageButton;
+    let view, checkInWidget, inviteWidget, invitedCheckInsWidget, eventFeed, checkInChart,
+      lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput, managerWidget, manageButton;
     let privacy = "public";
-
+    managerWidget = (<UserWidget users={managers} title='Event Managers' emptyMsg=''/>);
     if(event != null){
+      descriptionWidget = (
+        <div className="col-sm-6 col-md-4 col-lg-3">
+          <div className="widget">
+            <div className="widget-header">
+              <i className="fa fa-user"></i>
+              Description
+               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openDescModal.bind(this)}>
+                <i className="fa fa-cog fa-lg"></i> Expand
+              </a>
+            </div>
+            <div className="widget-body medium no-padding">
+              <div className="text-body">
+                <p>
+                  {event.description.split('\n').map((item) => {
+                    return <span>{item}<br/></span>
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
       if(event.private && stats != null){
         privacy = "private";
         let chartData = [{
@@ -304,7 +326,24 @@ export default class EventView extends Component {
           count++;
         });
       }
-      lineWidget = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>)
+      checkInChart = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>);
+      lineWidget = (
+        <div className="col-sm-6 col-md-4 col-lg-3">
+          <div className='widget animated fadeInDown'>
+            <div className='widget-header'>
+              <i className="fa fa-user"></i>
+              Check In Chart
+               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openChartModal.bind(this)}>
+                <i className="fa fa-cog fa-lg"></i> Expand
+               </a>
+            </div>
+            <div className='widget-body medium no-padding'>
+              {checkInChart}
+            </div>
+          </div>
+        </div>
+      )
+
       event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
       event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
       if(files.length > 0){
@@ -405,52 +444,21 @@ export default class EventView extends Component {
               </div>
             </div>
           </div>
-
-            <div className="col-sm-6 col-md-4 col-lg-3">
-              <div className="widget">
-                <div className="widget-header">
-                  <i className="fa fa-user"></i>
-                  Description
-                   <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openDescModal.bind(this)}>
-                    <i className="fa fa-cog fa-lg"></i> Expand
-                  </a>
-                </div>
-                <div className="widget-body medium no-padding">
-                  <div className="text-body">
-                    <p>
-                      {event.description.split('\n').map((item) => {
-                        return <span>{item}<br/></span>
-                      })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {descriptionWidget}
+          {managerWidget}
           {feedWidget}
           {fileWidget}
-          <UserWidget users={managers} title='Event Managers' emptyMsg=''/>
           {checkInWidget}
           {inviteWidget}
-          <div className="col-sm-6 col-md-4 col-lg-3">
-            <div className='widget animated fadeInDown'>
-              <div className='widget-header'>
-                <i className="fa fa-user"></i>
-                Check In Chart
-                 <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openChartModal.bind(this)}>
-                  <i className="fa fa-cog fa-lg"></i> Expand
-                 </a>
-              </div>
-              <div className='widget-body medium no-padding'>
-                  {lineWidget}
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6 col-md-4 col-lg-3">
-              {invitedCheckInsWidget}
-          </div>
+          {lineWidget}
         </div>
       );
     }
+    /*
+    <div className="col-sm-6 col-md-4 col-lg-3">
+        {invitedCheckInsWidget}
+    </div>
+    */
     console.log('about to complete render');
     let userModalContent = (
       <div>
@@ -480,7 +488,7 @@ export default class EventView extends Component {
         </Modal>
         <Modal id='scatterChartModal' title="Check In Chart" size='modal-lg'>
           <div id='chartHolder' style={{'width' : '100%', 'height' : '400px'}}>
-            {lineWidget}
+            {checkInChart}
           </div>
         </Modal>
         <Modal id='feedModal' title='Event Feed'>
