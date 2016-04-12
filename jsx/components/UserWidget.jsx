@@ -66,10 +66,10 @@ export default class UserWidget extends Component{
             </tbody>
           </table>
         </div>
-      ) ;
+      );
     }
     return (
-      <div className='col-md-4 col-sm-6 col-lg-3'>
+      <div className='col-md-4 col-sm-6'>
         <div className='widget animated fadeInDown'>
           <div className='widget-header'>
             <i className={'fa ' + faIcon}></i>

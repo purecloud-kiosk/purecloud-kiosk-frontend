@@ -15,7 +15,15 @@ export default class Modal extends Component{
     $('#' + this.props.id).modal('hide');
   }
   render(){
-    var {id, title, size} = this.props;
+    var {id, title, size, submitCallback} = this.props;
+    let submitButton;
+    if(submitCallback !== undefined){
+      console.log('submit defined')
+      submitButton = <button type="button" className="btn btn-primary pull-left" onClick={submitCallback}>Submit</button>;
+    }
+    else{
+      console.log('submit not defined');
+    }
     return (
       <div id={id} className="modal fade" role="dialog">
         <div className={"modal-dialog " + size}>
@@ -29,6 +37,7 @@ export default class Modal extends Component{
               <div className='clear'></div>
             </div>
             <div className="modal-footer">
+              {submitButton}
               <button type="button" className="btn btn-default" onClick={this.onClosePressed.bind(this)}>Close</button>
             </div>
           </div>

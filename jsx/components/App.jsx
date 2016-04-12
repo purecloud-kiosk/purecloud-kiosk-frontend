@@ -15,6 +15,7 @@ import DashView from './DashView';
 import EventView from './EventView';
 import CreateEventView from './CreateEventForm';
 import EventSearch from "./EventSearch";
+import ManageView from './ManageView';
 import Calendar from "./Calendar";
 
 import NotificationSystem from 'react-notification-system';
@@ -53,6 +54,7 @@ export default class App extends Component{
                   <Route path="event" component={EventView}/>
                   <Route path="search" component={EventSearch}/>
                   <Route path="calendar" component={Calendar}/>
+                  <Route path="manage" component={ManageView}/>
                 </Route>
               </Router>
             </div>

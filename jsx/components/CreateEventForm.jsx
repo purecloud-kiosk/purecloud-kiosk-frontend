@@ -29,12 +29,14 @@ export default class Events extends Component {
     			description : event.description || null,
     			imageUrl :  event.imageUrl || null,
     			thumbnailUrl : event.thumbnailUrl || null
-    		}
+    		},
+				update : this.props.update || false
 				//event : null
     	};
   	}
   	// after component successfully rendered
   	componentDidMount(){
+			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
   		if(eventsStore.updateIsSet()){
    			var event = eventsStore.getCurrentEvent();
    			//add listener
@@ -150,14 +152,16 @@ export default class Events extends Component {
 		this.setState(state);
 	}
 	//this should pass var to the Actions
-
+	handleSubmit(){
+		this.handleButtonClick();
+	}
 	handleButtonClick(){
 		this.state.event.startDate = moment(this.state.startDate + " " +  this.state.startTime).format();
 		this.state.event.endDate = new Date(this.state.event.startDate).getTime() + (60*60*1000);
 		console.log('handleButtonClick');
 		console.log('this is the event data that is getting sent off');
 		console.log(this.state.event);
-		if(eventsStore.updateIsSet()){
+		if(this.state.update){
 			this.state.event.eventID = this.state.event.id;
 			eventActions.updateEvent(this.state.event);
 		}
@@ -204,7 +208,7 @@ export default class Events extends Component {
 	}
 	componentWillReceiveProps(newProps){
 		//console.log('got some new props yo');
-		if(newProps.startDate !== null){
+		if(newProps.startDate !== undefined){
 			var date = newProps.startDate.split('|');
 			this.state.startDate = date[0];
 			this.state.startTime = date[1];
@@ -236,7 +240,8 @@ export default class Events extends Component {
     $('#imageModal').modal('show');
   }
 	render(){
-		var {event, success, date, mode, format, inputFormat, startDate} = this.state;
+		const {event, success, date, mode, format, inputFormat, startDate} = this.state;
+		const {hideButton} = this.props;
 		var iCropper;
 		var temporaryImage;
 		var style = {
@@ -251,6 +256,15 @@ export default class Events extends Component {
 	      color: 'black'
 	    }
 	  }
+	}
+	let submit = (
+		<div>
+			<label className = 'form-submit'></label>
+			<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
+		</div>
+	);
+	if(hideButton){
+		submit = null;
 	}
 	return (
 		<div className='form-container'>
@@ -301,10 +315,7 @@ export default class Events extends Component {
 					<label className= 'form-description'>Description of Event</label>
 					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
-				<div>
-					<label className = 'form-submit'></label>
-					<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
-				</div>
+				{submit}
 				<div>
   				  <NotificationSystem ref='notificationSystem' style={style}/>
   			</div>

@@ -129,6 +129,9 @@ export default class Calendar extends Component{
     $('#calendar').fullCalendar('addEventSource', this.state.source);
     console.log($('#calendar').fullCalendar('getView'));
   }
+  createEvent(){
+    eventActions.submitForm();
+  }
   render(){
     var {selectedDate} = this.state;
     var alert = (
@@ -145,8 +148,8 @@ export default class Calendar extends Component{
         <div id='calendar-wrapper' className='animated fadeInDown'>
           <div id='calendar'></div>
         </div>
-        <Modal id='createEventModal' title='Create Event'>
-          <CreateEventForm startDate={selectedDate}/>
+        <Modal id='createEventModal' title='Create Event' size='modal-lg' submitCallback={this.createEvent.bind(this)}>
+          <CreateEventForm startDate={selectedDate} hideButton={true}/>
         </Modal>
       </div>
     );

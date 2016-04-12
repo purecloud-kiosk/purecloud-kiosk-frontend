@@ -140,7 +140,7 @@ export function updateEvent(event){
   });
 
 }
-export function searchEvents(query){
+export function eventSearchResults(query){
   $.ajax({
     url : 'api/events/searchEvents',
     method : 'GET',
@@ -308,27 +308,8 @@ export function postToEventFeed(eventID, message){
 }
 export function dispatchEventMessage(message){
   dispatcher.dispatch({
-    actionType: eventsConstants.EVENT_MESSAGE_RECEIVED,
+    actionType: eventsConstants.EVENT_MESSAGE_RECIEVED,
     data: message
-  });
-}
-
-export function getEventManagers(event){
-  $.ajax({
-    url: 'api/events/getManagers?getAll=true&eventID=' + event,
-    method : 'GET',
-    headers : {
-      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
-    }
-  }).done(function(data){
-    console.log(data);
-    dispatcher.dispatch({
-      actionType : eventsConstants.EVENT_MANAGERS_RETRIEVED,
-      data : data
-    });
-  }).fail(function(error){
-    console.log("ERROR : ");
-    console.log(error);
   });
 }
 
@@ -362,6 +343,35 @@ export function uploadImage(formData, fileType){
     }
   });
 }
+
+export function submitForm(){
+  dispatcher.dispatch({
+    actionType: eventsConstants.SUBMIT_FORM,
+  });
+}
+
+
+export function getEventManagers(eventID){
+  $.ajax({
+    url: 'api/events/getManagers?getAll=true&eventID=' + eventID,
+    method : 'GET',
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log('sent!')
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_MANAGERS_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
+
+
+
 export function getUser(personID){
   $.ajax({
     url: 'api/purecloud/retrievePerson?personID=' + personID,
@@ -370,7 +380,7 @@ export function getUser(personID){
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
-    console.log(data);
+    console.log('sent!')
     dispatcher.dispatch({
       actionType : eventsConstants.USER_RETRIEVED,
       data : data

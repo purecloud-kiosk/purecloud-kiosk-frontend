@@ -50,7 +50,7 @@ export default class EventView extends Component {
     webSocket.subscribe(this.state.event.id);
     this.state.eventManagerListener = eventsStore.addListener(eventsConstants.EVENT_MANAGERS_RETRIEVED, this.updateEventManagers.bind(this));
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
-    this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
+    this.state.deleteListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
     this.state.eventFilesListener = eventsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
     this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
@@ -108,7 +108,7 @@ export default class EventView extends Component {
   componentWillUnmount(){
     webSocket.unsubscribe(this.state.event.id);
     this.state.eventStatsListener.remove();
-    this.state.eventsStoreListener.remove();
+    this.state.deleteListener.remove();
     this.state.getEventCheckInsListener.remove();
     this.state.eventFilesListener.remove();
     this.state.refreshListener.remove();
@@ -184,7 +184,9 @@ export default class EventView extends Component {
   handleInvites(){
     console.log("invites will be mailed");
   }
-
+  navToManageView(){
+    navActions.routeToPage('manage');
+  }
   render(){
     const {event, files, stats, checkIns, chartOptions, feed, managers} = this.state;
     console.log(managers);
@@ -197,7 +199,7 @@ export default class EventView extends Component {
     managerWidget = (<UserWidget users={managers} title='Event Managers' emptyMsg=''/>);
     if(event != null){
       descriptionWidget = (
-        <div className="col-sm-6 col-md-4 col-lg-3">
+        <div className="col-sm-6 col-md-4">
           <div className="widget">
             <div className="widget-header">
               <i className="fa fa-user"></i>
@@ -267,7 +269,7 @@ export default class EventView extends Component {
               <InviteTableWidget />
           );
           inviteWidget = (
-            <div className="col-sm-6 col-md-4 col-lg-3">
+            <div className="col-sm-6 col-md-4 ">
               <div className='widget'>
                 <div className='widget-header'>
                   Invite Pie Chart
@@ -280,7 +282,7 @@ export default class EventView extends Component {
           );
         }
         checkInWidget = (
-          <div className="col-sm-6 col-md-4 col-lg-3">
+          <div className="col-sm-6 col-md-4 ">
             <div className='widget'>
               <div className='widget-header'>
                 Check In Pie Chart
@@ -294,16 +296,15 @@ export default class EventView extends Component {
       }
       else if(stats !== null){ // public, so show ticker instead
         checkInWidget = (
-          <div className='col-sm-6 col-md-4 col-lg-3'>
+          <div className='col-sm-6 col-md-4 '>
             <TickerWidget value={stats.checkInStats.checkedIn}/>
           </div>
         );
       }
       // regardless of whether the event is private or not
       if(stats !== null){
-        if(statsStore.getUserStats().userType === 'admin' || stats.userIsManager)
-          feedInput = (<FeedInput eventID={this.state.event.id}/>);
         if(statsStore.getUserStats().userType === 'admin' || stats.userIsManager){
+          feedInput = (<FeedInput eventID={this.state.event.id}/>);
           manageButton = (
             <div className="update-button">
               <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
@@ -328,7 +329,7 @@ export default class EventView extends Component {
       }
       checkInChart = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>);
       lineWidget = (
-        <div className="col-sm-6 col-md-4 col-lg-3">
+        <div className="col-sm-6 col-md-4 ">
           <div className='widget animated fadeInDown'>
             <div className='widget-header'>
               <i className="fa fa-user"></i>
@@ -357,7 +358,7 @@ export default class EventView extends Component {
           )
         })
         fileWidget = (
-          <div className="col-sm-6 col-md-4 col-lg-3">
+          <div className="col-sm-6 col-md-4 ">
             <div className='widget'>
               <div className='widget-header'>
                 Event Files
@@ -420,11 +421,8 @@ export default class EventView extends Component {
         <div className="animated fadeInUp">
           <div className="event-container">
             <div className="update-button">
-                <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
+                <button className= "btn btn-primary pull-right" onClick={this.navToManageView.bind(this)}> Manage Event
                 {this.props.event}</button>
-            </div>
-            <div className = "Manage-Events">
-                <button className = "btn btn-primary" type="button" onClick={this.openManageModal.bind()}>Manage Events</button>
             </div>
             <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
             <div className="row">
@@ -455,7 +453,7 @@ export default class EventView extends Component {
       );
     }
     /*
-    <div className="col-sm-6 col-md-4 col-lg-3">
+    <div className="col-sm-6 col-md-4 ">
         {invitedCheckInsWidget}
     </div>
     */
@@ -510,6 +508,7 @@ export default class EventView extends Component {
                   <button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick = {this.handleInvites.bind(this)}>Invite Org Attendees</button>
                 </div>
             </div>
+
         </Modal>
         <Modal id="deleteModal" title = "Delete Event">
             <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>
