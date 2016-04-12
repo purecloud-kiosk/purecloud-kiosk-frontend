@@ -15,10 +15,10 @@ export default class Modal extends Component{
     $('#' + this.props.id).modal('hide');
   }
   render(){
-    var {id, title} = this.props;
+    var {id, title, size} = this.props;
     return (
       <div id={id} className="modal fade" role="dialog">
-        <div className="modal-dialog">
+        <div className={"modal-dialog " + size}>
           <div className="modal-content">
             <div className="modal-header">
               <button type="button" className="close" onClick={this.onClosePressed.bind(this)}>&times;</button>

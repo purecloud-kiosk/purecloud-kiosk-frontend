@@ -118,17 +118,17 @@ export default class Dash extends Component {
     }
     eventsManagingTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Upcoming Events You Are Managing' faIcon='fa-user' events={eventsManaging}/>
+        <EventsTableWidget title='Upcoming Events You Are Managing' size='medium' faIcon='fa-user' events={eventsManaging}/>
       </div>
     );
     publicEventsTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Upcoming Public Events' faIcon='fa-users' events={publicEvents}/>
+        <EventsTableWidget title='Upcoming Public Events' size='medium' faIcon='fa-users' events={publicEvents}/>
       </div>
     );
     privateEventsTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Upcoming Private Events' faIcon='fa-user-secret' events={privateEvents}/>
+        <EventsTableWidget title='Upcoming Private Events' size='medium' faIcon='fa-user-secret' events={privateEvents}/>
       </div>
     );
     if(barChartData !== null){

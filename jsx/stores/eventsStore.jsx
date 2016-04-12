@@ -20,7 +20,9 @@ var checkInCountArray = [];
 var eventFiles = null;
 var ThumbImage = null;
 var UrlImage = null;
+var eventManagers = [];
 var eventFeed = [];
+var user = null;
 function setPrivateEvents(events){
   privateEvents = events;
 }
@@ -36,7 +38,9 @@ function setPastEventsManaged(events){
 function setCurrentEvent(event){
   currentEvent = event;
 }
-
+function setEventManagers(managers){
+  eventManagers = managers;
+}
 function storeCreatedEvent(event){
   createEvent = event;
 }
@@ -70,6 +74,9 @@ function setEventFeed(feed){
 }
 function addMessage(message){
   eventFeed.unshift(message);
+}
+function setUser(newUser){
+  user = newUser;
 }
 class EventsStore extends EventEmitter{
   getPublicEvents(){
@@ -113,6 +120,12 @@ class EventsStore extends EventEmitter{
   }
   getEventFeed(){
     return eventFeed;
+  }
+  getEventManagers(){
+    return eventManagers;
+  }
+  getCurrentUser(){
+    return user;
   }
 }
 
@@ -163,8 +176,14 @@ dispatcher.register(function(payload){
     case eventsConstants.EVENT_FEED_RETRIEVED:
       setEventFeed(payload.data);
       break;
-    case eventsConstants.EVENT_MESSAGE_RECIEVED:
+    case eventsConstants.EVENT_MESSAGE_RECEIVED:
       addMessage(payload.data);
+      break;
+    case eventsConstants.EVENT_MANAGERS_RETRIEVED:
+      setEventManagers(payload.data);
+      break;
+    case eventsConstants.USER_RETRIEVED:
+      setUser(payload.data);
       break;
     default:
       //no op

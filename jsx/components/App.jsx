@@ -51,7 +51,6 @@ export default class App extends Component{
                   <IndexRoute component={DashView}/>
                   <Route path="dash" component={DashView}/>
                   <Route path="event" component={EventView}/>
-                  <Route path="create" component={CreateEventView}/>
                   <Route path="search" component={EventSearch}/>
                   <Route path="calendar" component={Calendar}/>
                 </Route>

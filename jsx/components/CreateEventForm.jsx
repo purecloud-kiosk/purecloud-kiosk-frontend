@@ -277,6 +277,7 @@ export default class Events extends Component {
 					<label className ='form-location'>Location</label>
 					<input className='form-control' value={event.location} onChange={this.handleChange('location')}/>
 				</div>
+				<br/>
 		    <div className= 'form-image-thumb'>
 		      <label className='form-image-thumb'>Thumbnail Image</label>
 		      <div className='input-group'>
@@ -286,6 +287,7 @@ export default class Events extends Component {
 			      </span>
 		      </div>
 		    </div>
+				<br/>
 				<div className= 'form-image-banner'>
 		      <label className='form-image-banner'>Banner Image</label>
 		      <div className='input-group'>

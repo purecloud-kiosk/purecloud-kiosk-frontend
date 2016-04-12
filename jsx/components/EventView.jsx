@@ -17,6 +17,7 @@ import Modal from "./Modal";
 import InviteTableWidget from "./InviteTableWidget";
 import webSocket from '../websocket/socket';
 import CreateEventForm from './CreateEventForm';
+import UserWidget from './UserWidget';
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -25,7 +26,9 @@ export default class EventView extends Component {
       'files' : [],
       'stats' : null,
       'checkIns' : null,
+      'user' : null,
       'feed' : [],
+      'managers' : [],
       'message' : "",
       'chartOptions' : {
         'segmentShowStroke' : true,
@@ -45,16 +48,24 @@ export default class EventView extends Component {
   }
   componentDidMount(){
     webSocket.subscribe(this.state.event.id);
+    this.state.eventManagerListener = eventsStore.addListener(eventsConstants.EVENT_MANAGERS_RETRIEVED, this.updateEventManagers.bind(this));
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
     this.state.eventFilesListener = eventsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
     this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
-    this.state.eventMessageListener = eventsStore.addListener(eventsConstants.EVENT_MESSAGE_RECIEVED, this.setFeed.bind(this));
+    this.state.eventMessageListener = eventsStore.addListener(eventsConstants.EVENT_MESSAGE_RECEIVED, this.setFeed.bind(this));
     this.state.eventFeedListener = eventsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
+    this.state.userListener = eventsStore.addListener(eventsConstants.USER_RETRIEVED, this.showUser.bind(this));
     this.refreshView();
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
+  }
+  showUser(){
+    console.log('called');
+    let state = this.state;
+    state.user = eventsStore.getCurrentUser();
+    this.setState(state);
   }
   setFeed(){
     console.log('feed set');
@@ -67,14 +78,27 @@ export default class EventView extends Component {
     console.log('refreshing');
     var state = this.state;
     state.event = eventsStore.getCurrentEvent();
-    this.setState(state);
-    statsActions.getEventStats(this.state.event.id);
-    eventActions.getEventCheckIns(this.state.event.id);
+    statsActions.getEventStats(state.event.id);
+    eventActions.getEventCheckIns(state.event.id);
+    eventActions.getEventManagers(state.event.id);
     setTimeout(() => {
-      eventActions.getEventFiles(this.state.event.id);
-      eventActions.getEventFeed(this.state.event.id);
+      eventActions.getEventFiles(state.event.id);
+      eventActions.getEventFeed(state.event.id);
     },1500);
+    this.setState(state);
 
+  }
+  updateEventManagers(){
+    console.log('got managers');
+    console.log('got managers');
+    console.log('got managers');
+    console.log('got managers');
+    console.log('got managers');
+    console.log('got managers');
+    let state = this.state;
+    state.managers = eventsStore.getEventManagers();
+    console.log(state);
+    this.setState(state);
   }
   updateEventFiles(){
     let state = this.state;
@@ -162,7 +186,8 @@ export default class EventView extends Component {
   }
 
   render(){
-    let {event, files, stats, checkIns, chartOptions, feed} = this.state;
+    const {event, files, stats, checkIns, chartOptions, feed, managers} = this.state;
+    console.log(managers);
     console.log('about to render');
     console.log(event);
     console.log(files);
@@ -220,7 +245,7 @@ export default class EventView extends Component {
               <InviteTableWidget />
           );
           inviteWidget = (
-            <div className="col-sm-6 col-md-4">
+            <div className="col-sm-6 col-md-4 col-lg-3">
               <div className='widget'>
                 <div className='widget-header'>
                   Invite Pie Chart
@@ -233,7 +258,7 @@ export default class EventView extends Component {
           );
         }
         checkInWidget = (
-          <div className="col-sm-6 col-md-4">
+          <div className="col-sm-6 col-md-4 col-lg-3">
             <div className='widget'>
               <div className='widget-header'>
                 Check In Pie Chart
@@ -247,7 +272,7 @@ export default class EventView extends Component {
       }
       else if(stats !== null){ // public, so show ticker instead
         checkInWidget = (
-          <div className='col-sm-6 col-md-4'>
+          <div className='col-sm-6 col-md-4 col-lg-3'>
             <TickerWidget value={stats.checkInStats.checkedIn}/>
           </div>
         );
@@ -293,7 +318,7 @@ export default class EventView extends Component {
           )
         })
         fileWidget = (
-          <div className="col-sm-6 col-md-4">
+          <div className="col-sm-6 col-md-4 col-lg-3">
             <div className='widget'>
               <div className='widget-header'>
                 Event Files
@@ -316,16 +341,20 @@ export default class EventView extends Component {
         );
       }
       if(feed.length === 0){
-        eventFeed = 'Feed is empty';
+        eventFeed = (
+          <div className='text-center'>
+            <h4>No messages have been published to the Event Feed</h4>
+          </div>
+        );
       }
       else{
         eventFeed = (
           <div>
             {feed.map((data) => {
               return (
-                <blockquote className='animated fadeInLeft'>
+                <blockquote className='animated fadeInLeft' key={data.id}>
                   <p className='text-size-medium'>{data.message.content}</p>
-                  <footer>{data.posterName}</footer>
+                  <footer>{data.posterName} on {moment(data.datePosted).format('LLL')}</footer>
                 </blockquote>
               );
             })}
@@ -333,7 +362,7 @@ export default class EventView extends Component {
         );
       }
       feedWidget = (
-        <div className="col-sm-6 col-md-4">
+        <div className="col-sm-6 col-md-8 col-lg-6">
           <div className='widget'>
             <div className='widget-header'>
               <i className="fa fa-user"></i>
@@ -376,32 +405,34 @@ export default class EventView extends Component {
               </div>
             </div>
           </div>
-          {fileWidget}
-          <div className="col-sm-6 col-md-4">
-            <div className="widget">
-              <div className="widget-header">
-                <i className="fa fa-user"></i>
-                Description
-                 <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openDescModal.bind(this)}>
-                  <i className="fa fa-cog fa-lg"></i> Expand
-                </a>
-              </div>
-              <div className="widget-body medium no-padding">
-                <div className="text-body">
-                  <p>
-                    {event.description.split('\n').map((item) => {
-                      return <span>{item}<br/></span>
-                    })}
-                  </p>
+
+            <div className="col-sm-6 col-md-4 col-lg-3">
+              <div className="widget">
+                <div className="widget-header">
+                  <i className="fa fa-user"></i>
+                  Description
+                   <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openDescModal.bind(this)}>
+                    <i className="fa fa-cog fa-lg"></i> Expand
+                  </a>
+                </div>
+                <div className="widget-body medium no-padding">
+                  <div className="text-body">
+                    <p>
+                      {event.description.split('\n').map((item) => {
+                        return <span>{item}<br/></span>
+                      })}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           {feedWidget}
+          {fileWidget}
+          <UserWidget users={managers} title='Event Managers' emptyMsg=''/>
           {checkInWidget}
           {inviteWidget}
-          <div className="col-sm-6 col-md-4">
-            <div className='widget'>
+          <div className="col-sm-6 col-md-4 col-lg-3">
+            <div className='widget animated fadeInDown'>
               <div className='widget-header'>
                 <i className="fa fa-user"></i>
                 Check In Chart
@@ -414,13 +445,31 @@ export default class EventView extends Component {
               </div>
             </div>
           </div>
-          <div className="col-sm-6 col-md-4">
+          <div className="col-sm-6 col-md-4 col-lg-3">
               {invitedCheckInsWidget}
           </div>
         </div>
       );
     }
     console.log('about to complete render');
+    let userModalContent = (
+      <div>
+        <div>Empty</div>
+      </div>
+    );
+    if(this.state.user !== null){
+      console.log(this.state.user);
+      let image = '/img/avatar.jpg';
+      if(this.state.user.res.images !== undefined)
+        image = this.state.user.res.images.profile[0].ref.x200;
+      userModalContent = (
+        <div className='text-center'>
+          <h2>{this.state.user.res.general.name[0].value}</h2>
+          <img src={image} width='200px' height='200px'></img>
+          <h4>Email: {this.state.user.res.primaryContactInfo.email[0].ref}</h4>
+        </div>
+      );
+    }
     return(
       <div>
         {view}
@@ -429,7 +478,7 @@ export default class EventView extends Component {
             return <span>{item}<br/></span>
           })}
         </Modal>
-        <Modal id='scatterChartModal' title="Check In Chart">
+        <Modal id='scatterChartModal' title="Check In Chart" size='modal-lg'>
           <div id='chartHolder' style={{'width' : '100%', 'height' : '400px'}}>
             {lineWidget}
           </div>
@@ -463,15 +512,14 @@ export default class EventView extends Component {
               </div>
             </div>
         </Modal>
+        <Modal id="userModal" title = "User">
+          {userModalContent}
+        </Modal>
       </div>
     );
   }
 }
 
 /*
-<Modal id="updateModal" title = "Update Event">
-  <div id='selectUpdate' style={{'width' : '100%', 'height' : '625px'}}>
-      <CreateEventForm event={this.state.event}/>
-  </div>
-</Modal>
+
 */

@@ -17,9 +17,9 @@ export default class EventsTable extends Component {
     navActions.routeToPage('event');
   }
   render(){
-    var {title, events, faIcon} = this.props;
+    var {title, events, faIcon, loading} = this.props;
     var rows = [], content;
-    if(events === null){
+    if(events === null || loading){
       content = (<LoadingIcon/>);
     }
     else{
@@ -33,7 +33,7 @@ export default class EventsTable extends Component {
         );
       }
       if(rows.length == 0){ // there is no data
-        content = (<div className='text-center'><p>There are no upcoming events here.</p></div>);
+        content = (<div className='text-center'><p>There are no events to show</p></div>);
       }
       else{
         content = (
@@ -60,11 +60,8 @@ export default class EventsTable extends Component {
           <div className='widget-header'>
             <i className={'fa ' + faIcon}></i>
             {title}
-            <a className='btn btn-primary btn-sm pull-right text-center' data-toggle='tooltip' title='manage events' href='#'>
-              <i className='fa fa-cog fa-lg'></i>
-            </a>
           </div>
-          <div className='widget-body medium no-padding'>
+          <div className={'widget-body ' + this.props.size +  ' no-padding'}>
             {content}
           </div>
         </div>

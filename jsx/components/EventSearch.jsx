@@ -13,46 +13,34 @@ export default class EventSearch extends Component {
 		super(props);
     	this.state = {
     		eventSearchResults : [],
-    		//outside the event variables important to time/date/success
-    		//success : false,
-    		//query variable
     		query : {
     			query : null,
     			limit : 25,
     			page : 0,
-    			private : false,
-    			upcoming : true,
-    			managing : true
-    		}
-
+    			private : undefined,
+    			upcoming : undefined,
+    			managing : undefined
+    		},
+				loading : false
     	};
   	}
   	setSearchResults(){
   		//set the search results
   		console.log("event successfully searched");
   	}
-  	handleButtonClick(){
 
-			//handleEventUpdateEvent (){
-			console.log(this.state.query);
-			eventActions.eventSearchResults(this.state.query);
-			//eventActions.createEvent(this.state.event);
-	}
   	componentDidMount(){
   		var self = this;
-  		$('#option1').change(function(){
-  			self.state.query.private = null;
-  		});
-  		$('#option2').change(function(){
-  			self.state.query.private = true;
-  		});
-  		$('#option3').change(function(){
-  			self.state.query.private = false;
-  		});
+  		// $('#option1').change(function(){
+  		// 	self.state.query.private = null;
+  		// });
+  		// $('#option2').change(function(){
+  		// 	self.state.query.private = true;
+  		// });
+  		// $('#option3').change(function(){
+  		// 	self.state.query.private = false;
+  		// });
   		this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_SEARCHED, this.retrieveEventsSuccessfully.bind(this));
-  		  this.state.eventsManagingListener = eventsStore.addListener(eventsConstants.UPCOMING_EVENTS_MANAGING_RETRIEVED, this.updateView.bind(this, 'eventsManaging'));
-
-  		statsActions.getUserStats();
     	eventActions.getUpcomingEventsManaging(10, 0);
   	}
   	componentWillUnmount(){
@@ -63,6 +51,7 @@ export default class EventSearch extends Component {
   	}
 	retrieveEventsSuccessfully(){
 		var state = this.state;
+		state.loading = false;
 		state.eventSearchResults = eventsStore.eventSearchResults();
 		this.setState(state);
 	}
@@ -89,125 +78,124 @@ export default class EventSearch extends Component {
 			this.setState(state);
 		}.bind(this);
 	}
+	submitForm(e){
+		e.preventDefault();
+		this.handleButtonClick();
+	}
+	handleButtonClick(){
+		let state = this.state;
+		switch($('#privacyFilter input:radio:checked').val()){
+			case 'private':
+				state.query.private = true;
+				break;
+			case 'public':
+				state.query.private = false;
+				break;
+			default:
+				state.query.private = undefined;
+				break;
+		}
+		switch($('#managingFilter input:radio:checked').val()){
+			case 'managing':
+				state.query.managing = true;
+				break;
+			case 'notManaging':
+				state.query.managing = false;
+				break;
+			default:
+				state.query.managing = undefined;
+				break;
+		}
+		switch($('#upcomingFilter input:radio:checked').val()){
+			case 'upcoming':
+				state.query.upcoming = true;
+				break;
+			case 'past':
+				state.query.upcoming = false;
+				break;
+			default:
+				state.query.upcoming = undefined;
+				break;
+		}
+		eventActions.searchEvents(state.query);
+		console.log(state);
+		state.loading = true;
+		this.setState(state);
+	}
 	updateView(field){
     	var state = this.state;
 			state = eventsStore.eventSearchResults();
-
     	this.setState(state);
   }
 	render() {
-
 		var {query, limit, page, upcoming, managing} = this.state.query;
 		var {stats, eventsFound} = this.state.query;
-    	var widgets, eventsSearchTable;
-		eventsSearchTable = (
-	      <div className='col-md-6'>
-	        <EventsTableWidget title='Search Results' faIcon='fa-user' events={this.state.eventSearchResults}/>
-	      </div>
-	    );
+    	var widgets;
 		return(
 
 			<div>
-				<form>
-					<div className="col-md-10">
-						<label className ="form-search">Event Search</label>
-							<div className='col-md-10'>
-								<label className ='form-query'>query</label>
-									<input className='form-control' value={query} onChange={this.handleChange('query')} >
-									</input>
-							</div>
-							<div className='col-md-10'>
-								<label className ='form-limit'>limit</label>
-									<input className='form-control' value={limit} onChange={this.handleChange('limit')} >
-									</input>
-							</div>
-							<div className='col-md-10'>
-								<label className ='form-page'>page</label>
-									<input className='form-control' value={page} onChange={this.handleChange('page')} >
-									</input>
-							</div>
-							<div className="btn-group" data-toggle= "buttons">
+				<form onSubmit={this.submitForm.bind(this)}>
+					<div className="col-sm-12">
+						<h4>Event Search</h4>
+			      <div className='input-group'>
+				      <input type="text" className="form-control" placeholder='Enter your search query here...' onChange={this.handleChange('query')}/>
+				      <span className="input-group-btn">
+				        <button className="btn btn-default" type="button" onClick={this.handleButtonClick.bind(this)}>Search</button>
+				      </span>
+			      </div>
+						<br></br>
+						<div className='form-inline'>
+							<label className='search-label'>Privacy</label>
+							<div id='privacyFilter' className="btn-group" data-toggle= "buttons">
 								<label className ='btn btn-primary active'>
-									<input type="radio" name="Both" id="option1" value='both' defaultChecked={this.state.query.private === null}/> Both
+									<input type="radio" name="Both" id="option1" value='both' defaultChecked={this.state.query.private === undefined}/> All
+								</label>
+							  <label className="btn btn-primary">
+							    <input type="radio" name="Both" id="option2" value='private' defaultChecked={this.state.query.private === true} /> Private
+							  </label>
+							  <label className="btn btn-primary">
+							    <input type="radio" name="Both" id="option3" value='public' defaultChecked={this.state.query.private === false}/> Public
+							  </label>
+							</div>
+						</div>
+
+						<br></br><br></br>
+
+						<div className='form-inline'>
+							<label className='search-label'>Managing</label>
+							<div id='managingFilter' className="btn-group" data-toggle= "buttons">
+								<label className ='btn btn-primary active'>
+									<input type="radio" name="Manage" id="option1" value='both' defaultChecked={this.state.query.managing === undefined}/> Both
+								</label>
+								<label className ='btn btn-primary'>
+									<input type="radio" name="Manage" id="option1" value='notManaging' defaultChecked={this.state.query.managing === false}/> Not Managing
+								</label>
+								<label className="btn btn-primary">
+									<input type="radio" name="Manage" id="option2" value='managing' defaultChecked={this.state.query.managing === true} /> Managing
+								</label>
+							</div>
+						</div>
+						<br></br><br></br>
+
+						<div className='form-horizontal'>
+							<label className='search-label'>Upcoming</label>
+								<div id='upcomingFilter' className="btn-group" data-toggle= "buttons">
+									<label className ='btn btn-primary active'>
+										<input type="radio" name="Upcoming" id="option1" value='both' defaultChecked={this.state.query.upcoming === undefined}/> All
+									</label>
+								  <label className="btn btn-primary">
+								    <input type="radio" name="Upcoming" id="option2" value='past' defaultChecked={this.state.query.upcoming === false} /> Past
 								  </label>
 								  <label className="btn btn-primary">
-								    <input type="radio" name="Both" id="option2" defaultChecked={this.state.query.private === true} /> Private
+								    <input type="radio" name="Upcoming" id="option3" value='upcoming' defaultChecked={this.state.query.upcoming === true}/> Upcoming
 								  </label>
-								  <label className="btn btn-primary">
-								    <input type="radio" name="Both" id="option3" defaultChecked={this.state.query.private === false}/> Public
-								  </label>
-							</div>
-							<div className='col-md-10'>
-								<label className = 'form-submit'></label>
-									<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
-							</div>
-							<div className='tables'>
-					          {eventsSearchTable}
+								</div>
+						</div>
 
-					        </div>
-
+			      <EventsTableWidget title='Search Results' loading={this.state.loading} size='large'  faIcon='fa-user' events={this.state.eventSearchResults}/>
 					</div>
 				</form>
 			</div>
 			);
 	}
 }
-
-/*
-							<div className='col-md-10'>
-								<label className ='form-upcoming'>Upcoming</label>
-									<input type = 'checkbox' defaultChecked={query.upcoming}  onClick={this.handleCheckBoxChange.bind(this)} />
-							</div>
-							<div className='col-md-10'>
-								<label className ='form-managing'>Managing</label>
-									<input type = 'checkbox' defaultChecked={query.managing}  onClick={this.handleCheckBoxChange.bind(this)} />
-							</div>
-							*/
-
-
-
-				/*
-				componentDidMount(){
-		$('#blah').cropper({
-			responsive:true,
-  		aspectRatio: 16 / 9,
-  		crop: function(e) {
-    // Output the result data for cropping image.
-   		 console.log(e.x);
-		  console.log(e.y);
-		  console.log(e.width);
-		  console.log(e.height);
-		  console.log(e.rotate);
-		    console.log(e.scaleX);
-		    console.log(e.scaleY);
-		  }
-		});
-	}
-
-
-	readURL(input) {
-		console.log('called');
-		console.log(input.target.files[0]);
-        if (input.target.files && input.target.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-            	console.log(e.target.result);
-                $('#blah')
-                    .attr('src', e.target.result)
-                    .width(300)
-                    .height(300);
-            };
-
-            reader.readAsDataURL(input.target.files[0]);
-        }
-    }
-							<div>
-								<FileInput accept=".png,.gif" onChange={this.readURL.bind(this)} />
-
-								<img id="blah" src="#" alt="your image" />
-							</div>
-				<div>
-				<img id="image" src="img/avatar.jpg"/>
-				</div>
-				*/

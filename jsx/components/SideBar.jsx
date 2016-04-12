@@ -30,14 +30,9 @@ export default class SideBar extends Component{
               Calendar<span className="menu-icon fa fa-table"></span>
             </a>
           </li>
-          <li className='sidebar-list'>
-            <a href='javascript:void(0);' onClick={this.handleLinkClick.bind(this, 'create')}>
-              Create <span className='menu-icon fa fa-table'></span>
-            </a>
-          </li>
           <li className="sidebar-list">
             <a href="javascript:void(0);" onClick={this.handleLinkClick.bind(this, "search")}>
-              Create <span className="menu-icon fa fa-table"></span>
+              Event Search <span className="menu-icon fa fa-search"></span>
             </a>
           </li>
         </ul>

@@ -29,6 +29,12 @@ export default class EventView extends Component {
     state.message = event.target.value;
     this.setState(state);
   }
+  formSubmit(e){
+    console.log('submit attempted');
+    e.preventDefault();
+    if(this.state.message.length > 0)
+      this.handleSubmit();
+  }
   handleSubmit(){
     let state = this.state;
     eventActions.postToEventFeed(state.eventID, state.message);
@@ -37,7 +43,7 @@ export default class EventView extends Component {
   }
   render(){
     return(
-      <form className="form-horizontal message-form">
+      <form className="form-horizontal message-form" onSubmit={this.formSubmit.bind(this)}>
         <div className="form-group">
           <div className='input-group'>
             <input type="text" className="form-control" value={this.state.message} onChange={this.handleMessageChange.bind(this)}/>

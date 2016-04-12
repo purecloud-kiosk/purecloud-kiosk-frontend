@@ -6,7 +6,7 @@ import statsStore from '../stores/statsStore';
 // init this.socket connection and handle all routing of events here
 class WebSocket{
   constructor(){
-    this.socket =  io('http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000/ws');
+    this.socket =  io('http://localhost:8080/ws');//io('http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000/ws');
   }
   init(notificationSystem){
     this.notificationSystem = notificationSystem;

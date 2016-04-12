@@ -24,13 +24,25 @@ export default class PieChartWidget extends Component {
     });
   }
   componentWillReceiveProps(newProps){
-    this.renderChart(newProps);
+    console.log('new props for chart');
+    if(this.shouldComponentUpdate(newProps, {}))
+      this.renderChart(newProps);
   }
-  componentDidUpdate(){
 
-  }
-  componentWillUnmount(){
-
+  shouldComponentUpdate(nextProps, nextState){
+    let update = false;
+    if(nextProps.type === 'scatter' || nextProps.type === 'bar')
+      update =  nextProps.chartData.data.length != this.props.chartData.data.length
+    else {
+      for(let i = 0; i < nextProps.chartData[0].data.length; i++){
+        if(nextProps.chartData[0].data.y != this.props.chartData[0].data.y){
+          update = true;
+          break;
+        }
+      }
+    }
+    console.log('should chart update?' + update);
+    return update;
   }
   renderChart(props){
     console.log('rendering!');

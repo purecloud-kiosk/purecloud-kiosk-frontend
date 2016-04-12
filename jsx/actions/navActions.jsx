@@ -6,6 +6,13 @@ import dispatcher from '../dispatchers/dispatcher';
 import requestConstants from '../constants/requestConstants';
 import navConstants from '../constants/navConstants';
 import history from '../history/history';
+
+let currentPath = null;
+history.listen(location => {
+  console.log('path');
+  console.log(location.pathname);
+  currentPath = location.pathname;
+})
 /**
  *  Dispatches to the navStore that the sidebar has been toggled
  **/
@@ -19,7 +26,8 @@ export function toggleSideBar(){
  **/
 export function routeToPage(page){
   // TODO: push state and maintain states
-  history.replaceState(null, page);
+  if("/" + page !== currentPath)
+    history.pushState(null, page);
   $('.main-content').scrollTop(0);
 }
 
