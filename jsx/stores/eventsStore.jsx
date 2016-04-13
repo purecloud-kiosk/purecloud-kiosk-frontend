@@ -23,6 +23,7 @@ var UrlImage = null;
 var eventManagers = [];
 var eventFeed = [];
 var user = null;
+var bulkCheckIns = [];
 function setPrivateEvents(events){
   privateEvents = events;
 }
@@ -78,6 +79,9 @@ function addMessage(message){
 function setUser(newUser){
   user = newUser;
 }
+function setBulkCheckIns(checkIns){
+  bulkCheckIns = checkIns;
+}
 class EventsStore extends EventEmitter{
   getPublicEvents(){
     return publicEvents;
@@ -126,6 +130,9 @@ class EventsStore extends EventEmitter{
   }
   getCurrentUser(){
     return user;
+  }
+  getBulkRetrievedCheckIns(){
+    return bulkCheckIns;
   }
 }
 
@@ -185,6 +192,10 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.USER_RETRIEVED:
       setUser(payload.data);
+      break;
+    case eventsConstants.BULK_CHECKINS_RETRIEVED:
+      console.log('checkIn recieved')
+      setBulkCheckIns(payload.data);
       break;
     default:
       //no op

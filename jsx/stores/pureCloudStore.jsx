@@ -24,6 +24,7 @@ dispatcher.register(function(payload){
   switch(payload.actionType){
     case pureCloudConstants.USER_SEARCH_RETRIEVED:
       console.log('got payload of data');
+
       setSearchResults(payload.data);
       break;
   }

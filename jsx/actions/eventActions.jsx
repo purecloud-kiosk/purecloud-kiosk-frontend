@@ -371,7 +371,25 @@ export function getEventManagers(eventID){
   });
 }
 
-
+export function bulkRetrieveCheckIns(event, personIDs){
+  $.ajax({
+    url: 'api/events/bulkRetrieveCheckIns?eventID='+event+'&personIDs=' + personIDs,
+    method : 'GET',
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    console.log('recieved data from server');
+    console.log(data);
+    dispatcher.dispatch({
+      actionType : eventsConstants.BULK_CHECKINS_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
 
 export function getUser(personID){
   $.ajax({
@@ -382,6 +400,7 @@ export function getUser(personID){
     }
   }).done(function(data){
     console.log('sent!')
+
     dispatcher.dispatch({
       actionType : eventsConstants.USER_RETRIEVED,
       data : data
@@ -389,5 +408,17 @@ export function getUser(personID){
   }).fail(function(error){
     console.log("ERROR : ");
     console.log(error);
+  });
+}
+
+
+export function addEventManager(userData){
+  return $.ajax({
+    url: 'api/events/addEventManager',
+    method : 'POST',
+    data : userData,
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
   });
 }

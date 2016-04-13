@@ -4,38 +4,46 @@ import React, {
 import * as eventActions from '../actions/eventActions';
 import eventsStore from '../stores/eventsStore';
 import eventsConstants from '../constants/eventsConstants';
-
+import LoadingIcon from './LoadingIcon';
 import Modal from "./Modal";
 /**
  *  This is a generic user widget that lists users.
  **/
-export default class UserWidget extends Component{
+export default class ManagerWidget extends Component{
   constructor(props){
     super(props);
     console.log(props);
     this.state = {
+      'event' : this.props.event,
       'users' : this.props.users,
       'showManagerStatus' : this.props.showManagerStatus
     };
-  }
-  componentDidMount(){
-
   }
   componentWillReceiveProps(newProps){
     console.log('got new props');
     this.state.users = newProps.users;
     this.setState(this.state);
   }
-  handleRowClick(user){
-    eventActions.getUser(user.personID);
-    $('#userModal').modal('show');
-  }
-  showUser(){
-
+  handleAddClicked(user){
+    eventActions.addEventManager({
+      'eventID' : this.state.event.id,
+      'manager' : {
+        'personID' : user.personID,
+        'email' : user.email,
+        'name' : user.name,
+        'image' : user.image,
+        'orgGuid' : this.state.event.orgGuid
+      }
+    }).done((data) => {
+      user.eventManager = 'added';
+    }).fail((error) => {
+      console.log(error);
+      user.eventManager = 'unable';
+    }).always(()=>{
+      this.setState(this.state);
+    });
   }
   render(){
-    console.log('USER WIDGET');
-    console.log(this.state.users);
     const {title, faIcon, emptyMsg, showManagerStatus} = this.props;
     const {users} = this.state;
     let content, rows;
@@ -45,10 +53,27 @@ export default class UserWidget extends Component{
     else{
       rows = (
         users.map((user) => {
+          let managerButton;
+          if(user.eventManager === null){
+            managerButton = <LoadingIcon/>
+          }
+          else if(user.eventManager === 'added'){
+            managerButton = 'Added';
+          }
+          else if(user.eventManager === 'unable'){
+            managerButton = 'Unable to be added';
+          }
+          else if(user.eventManager === true){
+            managerButton = 'Already a manager'
+          }
+          else{ // false
+            managerButton = (<button className='btn btn-primary' onClick={this.handleAddClicked.bind(this, user)}>Add Manager</button>)
+          }
           return (
-            <tr className='animated fadeInLeft' key={user.personID} onClick={this.handleRowClick.bind(this, user)}>
+            <tr className='animated fadeInLeft' key={user.personID}>
               <td>{user.name}</td>
               <td>{user.email}</td>
+              <td>{managerButton}</td>
             </tr>
           );
         })
@@ -60,6 +85,7 @@ export default class UserWidget extends Component{
               <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Manager</th>
               </tr>
             </thead>
             <tbody>

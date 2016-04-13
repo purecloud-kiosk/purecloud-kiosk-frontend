@@ -37,7 +37,7 @@ export default class Events extends Component {
   	// after component successfully rendered
   	componentDidMount(){
 			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
-  		if(eventsStore.updateIsSet()){
+  		if(this.state.update){
    			var event = eventsStore.getCurrentEvent();
    			//add listener
 				console.log('updating');
@@ -65,7 +65,7 @@ export default class Events extends Component {
 				this.setState(state);
    		}
    		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
-		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
+			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 			$('#privacy-checkbox').bootstrapSwitch({
 				'onText' : 'Private',
 				'offText' : 'Public',
@@ -171,11 +171,9 @@ export default class Events extends Component {
 	}
 	handleEventUpdatedSuccessfully(){
  		console.log("event successfully updated");
- 		this.clear();
- 		//debugger;
-
- 		//this.setState(state);
- 		//debugger;
+ 		if(!this.props.update){
+			this.clear();
+		}
  		this.notificationSystem.addNotification({
    	 	message: 'Event successfully updated',
     		position: 'bc',
