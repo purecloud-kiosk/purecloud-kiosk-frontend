@@ -30,16 +30,6 @@ export default class EventSearch extends Component {
   	}
 
   	componentDidMount(){
-  		var self = this;
-  		// $('#option1').change(function(){
-  		// 	self.state.query.private = null;
-  		// });
-  		// $('#option2').change(function(){
-  		// 	self.state.query.private = true;
-  		// });
-  		// $('#option3').change(function(){
-  		// 	self.state.query.private = false;
-  		// });
   		this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_SEARCHED, this.retrieveEventsSuccessfully.bind(this));
     	eventActions.getUpcomingEventsManaging(10, 0);
   	}

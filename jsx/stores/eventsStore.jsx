@@ -177,6 +177,7 @@ dispatcher.register(function(payload){
       setEventFeed(payload.data);
       break;
     case eventsConstants.EVENT_MESSAGE_RECEIVED:
+      console.log('adding message');
       addMessage(payload.data);
       break;
     case eventsConstants.EVENT_MANAGERS_RETRIEVED:

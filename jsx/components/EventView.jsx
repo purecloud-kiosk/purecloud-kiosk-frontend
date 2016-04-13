@@ -48,7 +48,6 @@ export default class EventView extends Component {
   }
   componentDidMount(){
     webSocket.subscribe(this.state.event.id);
-    this.state.eventManagerListener = eventsStore.addListener(eventsConstants.EVENT_MANAGERS_RETRIEVED, this.updateEventManagers.bind(this));
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.deleteListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
@@ -80,25 +79,12 @@ export default class EventView extends Component {
     state.event = eventsStore.getCurrentEvent();
     statsActions.getEventStats(state.event.id);
     eventActions.getEventCheckIns(state.event.id);
-    eventActions.getEventManagers(state.event.id);
     setTimeout(() => {
       eventActions.getEventFiles(state.event.id);
       eventActions.getEventFeed(state.event.id);
     },1500);
     this.setState(state);
 
-  }
-  updateEventManagers(){
-    console.log('got managers');
-    console.log('got managers');
-    console.log('got managers');
-    console.log('got managers');
-    console.log('got managers');
-    console.log('got managers');
-    let state = this.state;
-    state.managers = eventsStore.getEventManagers();
-    console.log(state);
-    this.setState(state);
   }
   updateEventFiles(){
     let state = this.state;
@@ -194,9 +180,8 @@ export default class EventView extends Component {
     console.log(event);
     console.log(files);
     let view, checkInWidget, inviteWidget, invitedCheckInsWidget, eventFeed, checkInChart,
-      lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput, managerWidget, manageButton;
+      lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = "public";
-    managerWidget = (<UserWidget users={managers} title='Event Managers' emptyMsg=''/>);
     if(event != null){
       descriptionWidget = (
         <div className="col-sm-6 col-md-4">
@@ -402,7 +387,7 @@ export default class EventView extends Component {
         );
       }
       feedWidget = (
-        <div className="col-sm-6 col-md-8 col-lg-6">
+        <div className="col-sm-6 col-md-4">
           <div className='widget'>
             <div className='widget-header'>
               <i className="fa fa-user"></i>
@@ -443,7 +428,6 @@ export default class EventView extends Component {
             </div>
           </div>
           {descriptionWidget}
-          {managerWidget}
           {feedWidget}
           {fileWidget}
           {checkInWidget}

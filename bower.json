@@ -23,6 +23,7 @@
     "fullcalendar": "~2.6.1",
     "bootstrap-material-datetimepicker": "~2.5.3",
     "bootstrap-switch": "~3.3.2",
-    "Chart.Scatter.js": "~1.1.3"
+    "Chart.Scatter.js": "~1.1.3",
+    "typeahead.js": "^0.11.1"
   }
 }

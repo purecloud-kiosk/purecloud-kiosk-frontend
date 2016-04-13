@@ -14,7 +14,8 @@ export default class UserWidget extends Component{
     super(props);
     console.log(props);
     this.state = {
-      'users' : this.props.users
+      'users' : this.props.users,
+      'showManagerStatus' : this.props.showManagerStatus
     };
   }
   componentDidMount(){
@@ -35,7 +36,7 @@ export default class UserWidget extends Component{
   render(){
     console.log('USER WIDGET');
     console.log(this.state.users);
-    const {title, faIcon, emptyMsg} = this.props;
+    const {title, faIcon, emptyMsg, showManagerStatus} = this.props;
     const {users} = this.state;
     let content, rows;
     if(users.length === 0){
@@ -69,7 +70,6 @@ export default class UserWidget extends Component{
       );
     }
     return (
-      <div className='col-md-4 col-sm-6'>
         <div className='widget animated fadeInDown'>
           <div className='widget-header'>
             <i className={'fa ' + faIcon}></i>
@@ -79,7 +79,6 @@ export default class UserWidget extends Component{
             {content}
           </div>
         </div>
-      </div>
     );
   }
 }

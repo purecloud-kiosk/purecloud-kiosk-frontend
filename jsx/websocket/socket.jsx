@@ -22,6 +22,7 @@ class WebSocket{
     });
     this.socket.on('EVENT', (message) => {
       console.log("EVENT");
+      console.log('recieved!')
       eventActions.dispatchEventMessage(message);
     });
     this.socket.on('ORG', (data) => {

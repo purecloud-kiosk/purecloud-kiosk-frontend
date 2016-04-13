@@ -307,8 +307,9 @@ export function postToEventFeed(eventID, message){
   });
 }
 export function dispatchEventMessage(message){
+  console.log('dispatching')
   dispatcher.dispatch({
-    actionType: eventsConstants.EVENT_MESSAGE_RECIEVED,
+    actionType: eventsConstants.EVENT_MESSAGE_RECEIVED,
     data: message
   });
 }

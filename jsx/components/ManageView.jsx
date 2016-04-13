@@ -6,8 +6,11 @@ import * as navActions from '../actions/navActions';
 import history from '../history/history';
 import * as eventActions from "../actions/eventActions";
 import eventsStore from "../stores/eventsStore";
+import pureCloudStore from '../stores/pureCloudStore';
 import eventsConstants from "../constants/eventsConstants";
-
+import pureCloudConstants from '../constants/pureCloudConstants';
+import UserWidget from './UserWidget';
+import PeopleTypeAhead from './PeopleTypeAhead';
 
 export default class ManageView extends Component{
   constructor(props){
@@ -18,12 +21,41 @@ export default class ManageView extends Component{
         'edit' : true,
         'managers' : false
       },
-      'view' : false
+      'data':{
+        'managers' : [],
+        'managerSearchResults' : []
+      },
+      'view' : 'edit'
     };
   }
   componentDidMount(){
+    this.state.eventManagerListener =
+      eventsStore.addListener(eventsConstants.EVENT_MANAGERS_RETRIEVED, this.updateEventManagers.bind(this));
+    this.state.pureCloudSearchListener =
+      pureCloudStore.addListener(pureCloudConstants.USER_SEARCH_RETRIEVED, this.updateManagerSearchResults.bind(this));
+    eventActions.getEventManagers(this.state.event.id);
+  }
+  updateManagerSearchResults(){
+    let state = this.state;
+
+    state.data.managerSearchResults = pureCloudStore.getSearchResults();
+    state.data.managerSearchResults = state.data.managerSearchResults.map((user) => {
+      return {
+        'name' : user.general.name[0].value,
+        'email' : user.primaryContactInfo.email[0].ref,
+        'personID' : user._id,
+      };
+    })
+    this.setState(state);
+  }
+  updateEventManagers(){
+    let state = this.state;
+    state.data.managers = eventsStore.getEventManagers();
+    this.setState(state);
   }
   componentWillUnmount(){
+    this.state.eventManagerListener.remove();
+    this.state.pureCloudSearchListener.remove();
   }
   menuItemClicked(key){
     let state = this.state;
@@ -31,16 +63,30 @@ export default class ManageView extends Component{
       state.menu[menuKey] = false;
     });
     state.menu[key] = true;
-    switch(key){
-      case 'edit':
-        break;
-      case 'managers':
-        break;
-    }
+    state.view = key;
     this.setState(state);
   }
   render(){
-    const {event, menu} = this.state;
+    const {event, menu, data, view} = this.state;
+    let mainContent;
+    switch(view){
+      case 'edit':
+        mainContent = (
+          <div className='animated fadeInDown'>
+            <CreateEventForm event={event} update={true}/>
+          </div>
+        );
+        break;
+      case 'managers':
+        mainContent = (
+          <div className='col-sm-12'>
+            <PeopleTypeAhead id='managerTypeAhead'/>
+            <UserWidget title='Search Results' users={data.managerSearchResults}/>
+            <UserWidget title='Event Managers' users={data.managers}/>
+          </div>
+        );
+        break;
+    }
     return (
       <div className='text-body'>
         <h2>Event Management Dashboard</h2>
@@ -53,7 +99,7 @@ export default class ManageView extends Component{
             </ul>
         </div>
         <div className='col-sm-9'>
-          <CreateEventForm event={event} update={true}/>
+          {mainContent}
         </div>
       </div>
     );
