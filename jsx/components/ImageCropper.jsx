@@ -7,24 +7,35 @@ import eventsConstants from "../constants/eventsConstants";
 var FileInput = require('react-file-input');
 import NumbersWidget from './NumbersWidget';
 import EventsTableWidget from './EventsTableWidget';
-var IType = "thumbnail";
+import CreateEventForm from './CreateEventForm';
+//var id = "bannerCropper";
 export default class ImageCropper extends Component {
 	constructor(props){
 		super(props);
-		this.state = {imgUrl : "img/avatar.jpg"};
+		//var id = this.props.id || {};
+		this.state = {
+			imgUrl : "img/no-image.png",
+			id : this.props.id
+			//id : null
+		};
 	}
 	componentWillReceiveProps(newProps) {
     console.log('got some better props', newProps);
-    if (newProps.type == "banner"){
-    	IType = newProps.type;
-    }
-    else{
-    	IType=newProps.type;
-    }
+    //this.setState({id :this.newProps.id});
+    	// this.props = {
+    	// 	id : newProps.id
+    	// };
+   //  	if (newProps.type == "banner"){
+   //  		iType = newProps.type;
+	  //   } 
+	  //   else{
+	  //   	iType=newProps.type;
+	  //   }
 
-  }
+  	}
 	componentDidMount(){
 
+		//this.setState(id);
 		// $('#blah').cropper({
 		// 	responsive:true,
 	 //  		aspectRatio: 16 / 9,
@@ -58,14 +69,17 @@ export default class ImageCropper extends Component {
 	// 	  });
 	// 	});
 	}
-
+	componentWillUnmount(){
+  	
+  	}
 
 	readURL(input) {
 		console.log('called');
-
+		console.log(this.state);
+		const {id} = this.state;
         if (input.target.files && input.target.files[0]) {
             var reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = (e) => {
             	//console.log(e.target.result);
     //         	$('#blah').cropper({
 				//  	responsive:true,
@@ -83,30 +97,30 @@ export default class ImageCropper extends Component {
 				//   }
 				// });
 				console.log("called image type");
-				if (IType == "banner"){
-					$('#blah').cropper("replace", "avatar.jpg");
-					$('#blah').cropper("setAspectRatio", 1.618);
-					$('#blah').cropper({
+				console.log("the id is " + id);
+				//$('#' + this.state.id).cropper("replace", "avatar.jpg");
+				if(this.state.id == "bannerCropper"){
+					$('#'+ this.state.id).cropper("setAspectRatio", 1.618);
+					$('#'+ this.state.id).cropper({
 					responsive: true,
 					aspectRatio: 16/9,
-					scaleX: .5,
-					scaleY: .5
+					scaleX: 1,
+					scaleY: 1
 					});
 				} else {
-					$('#blah').cropper("replace", "avatar.jpg");
-					$('#blah').cropper("setAspectRatio", 1.00);
-					$('#blah').cropper({
+					$('#'+ this.state.id).cropper("setAspectRatio", 1.33333);
+					$('#'+ this.state.id).cropper({
 					responsive: true,
-					aspectRatio: 1/1,
-					scaleX: .5,
-					scaleY: .5
+					aspectRatio: 3/4,
+					scaleX: 1,
+					scaleY: 1
 					});
 				}
-
-                $('#blah').cropper("replace", e.target.result);
+                $('#'+ this.state.id ).cropper("replace", e.target.result);
             };
             reader.readAsDataURL(input.target.files[0]);
         }
+
 	}
 
 	render() {
@@ -114,11 +128,9 @@ export default class ImageCropper extends Component {
     	var image;
 		return(
 			<div>
-				<div className="col-md-10">
-					<div>
-						<FileInput accept=".png,.gif" onChange={this.readURL.bind(this)} />
-						<img id="blah" width='100%' height='400px' src={this.state.imgUrl} alt="your image" />
-					</div>
+				<div className="file-input2">
+					<FileInput className='file-input' accept=".png,.gif,.jpeg,.jpg" onChange={this.readURL.bind(this)} />
+					<img id = {this.state.id} width='100%' height='400px' src={this.state.imgUrl} alt="your image" />
 				</div>
 			</div>
 			);
