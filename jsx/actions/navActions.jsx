@@ -12,7 +12,7 @@ history.listen(location => {
   console.log('path');
   console.log(location.pathname);
   currentPath = location.pathname;
-})
+});
 /**
  *  Dispatches to the navStore that the sidebar has been toggled
  **/
@@ -29,6 +29,9 @@ export function routeToPage(page){
   if("/" + page !== currentPath)
     history.pushState(null, page);
   $('.main-content').scrollTop(0);
+}
+export function goBack(){
+  history.goBack();
 }
 
 export function getNotifications(){

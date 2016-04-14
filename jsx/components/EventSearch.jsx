@@ -148,9 +148,7 @@ export default class EventSearch extends Component {
 							  </label>
 							</div>
 						</div>
-
 						<br></br><br></br>
-
 						<div className='form-inline'>
 							<label className='search-label'>Managing</label>
 							<div id='managingFilter' className="btn-group" data-toggle= "buttons">

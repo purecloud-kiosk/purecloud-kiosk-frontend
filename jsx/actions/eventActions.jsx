@@ -140,7 +140,7 @@ export function updateEvent(event){
   });
 
 }
-export function eventSearchResults(query){
+export function searchEvents(query){
   $.ajax({
     url : 'api/events/searchEvents',
     method : 'GET',
@@ -420,5 +420,39 @@ export function addEventManager(userData){
     headers : {
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
     }
+  }).done((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.MANAGER_ADDED,
+      'data' : userData.manager
+    });
+  }).fail((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ERROR,
+      'data' : data
+    });
+  });;
+}
+
+export function removeEventManager(options){
+  return $.ajax({
+    url: 'api/events/removeEventManager',
+    method : 'POST',
+    data : {
+      'eventID' : options.eventID,
+      'managerID' : options.managerID
+    },
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.MANAGER_REMOVED,
+      'data' : options.managerID
+    });
+  }).fail((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ERROR,
+      'data' : data
+    });
   });
 }

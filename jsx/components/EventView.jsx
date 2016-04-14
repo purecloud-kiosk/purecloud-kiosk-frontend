@@ -181,7 +181,7 @@ export default class EventView extends Component {
     console.log(files);
     let view, checkInWidget, inviteWidget, invitedCheckInsWidget, eventFeed, checkInChart,
       lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
-    let privacy = "public";
+    let privacy = "public";;
     if(event != null){
       descriptionWidget = (
         <div className="col-sm-6 col-md-4">
@@ -291,10 +291,9 @@ export default class EventView extends Component {
         if(statsStore.getUserStats().userType === 'admin' || stats.userIsManager){
           feedInput = (<FeedInput eventID={this.state.event.id}/>);
           manageButton = (
-            <div className="update-button">
-              <button className= "btn btn-primary pull-right" onClick={this.handleEventUpdated.bind(this, "create")}> Update Event
-              {this.props.event}</button>
-            </div>
+            <button className= "btn btn-primary pull-right" onClick={this.navToManageView.bind(this)}>
+              Manage Event
+            </button>
           );
         }
       }
@@ -406,8 +405,7 @@ export default class EventView extends Component {
         <div className="animated fadeInUp">
           <div className="event-container">
             <div className="update-button">
-                <button className= "btn btn-primary pull-right" onClick={this.navToManageView.bind(this)}> Manage Event
-                {this.props.event}</button>
+              {manageButton}
             </div>
             <img className="banner" src={event.imageUrl} onerror="console.log('error')"></img>
             <div className="row">

@@ -24,6 +24,10 @@ var eventManagers = [];
 var eventFeed = [];
 var user = null;
 var bulkCheckIns = [];
+var removedManager = null;
+var addedManager = null;
+var error = null;
+
 function setPrivateEvents(events){
   privateEvents = events;
 }
@@ -82,6 +86,15 @@ function setUser(newUser){
 function setBulkCheckIns(checkIns){
   bulkCheckIns = checkIns;
 }
+function setRemovedManager(personID){
+  removedManager = personID;
+}
+function setAddedManager(manager){
+  addedManager = manager;
+}
+function setError(e){
+  error = e;
+}
 class EventsStore extends EventEmitter{
   getPublicEvents(){
     return publicEvents;
@@ -134,6 +147,15 @@ class EventsStore extends EventEmitter{
   getBulkRetrievedCheckIns(){
     return bulkCheckIns;
   }
+  getRemovedManager(){
+    return removedManager;
+  }
+  getAddedManager(){
+    return addedManager;
+  }
+  getError(){
+    return error;
+  }
 }
 
 var eventsStore = new EventsStore();
@@ -184,7 +206,6 @@ dispatcher.register(function(payload){
       setEventFeed(payload.data);
       break;
     case eventsConstants.EVENT_MESSAGE_RECEIVED:
-      console.log('adding message');
       addMessage(payload.data);
       break;
     case eventsConstants.EVENT_MANAGERS_RETRIEVED:
@@ -194,8 +215,16 @@ dispatcher.register(function(payload){
       setUser(payload.data);
       break;
     case eventsConstants.BULK_CHECKINS_RETRIEVED:
-      console.log('checkIn recieved')
       setBulkCheckIns(payload.data);
+      break;
+    case eventsConstants.MANAGER_REMOVED:
+      setRemovedManager(payload.data);
+      break;
+    case eventsConstants.MANAGER_ADDED:
+      setAddedManager(payload.data);
+      break;
+    case eventsConstants.ERROR:
+      setError(payload.data);
       break;
     default:
       //no op
