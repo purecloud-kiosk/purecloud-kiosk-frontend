@@ -333,7 +333,7 @@ export default class Events extends Component {
 		      <div className='input-group'>
 			      <input type="text" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
 			      <span className="input-group-btn">
-			        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'banner')}>Crop Image</button>
+			        <button className="btn btn-default" type="button" onClick={this.openImageModal2.bind(this, 'banner')}>Crop Image</button>
 			      </span>
 		      </div>
 		    </div>
