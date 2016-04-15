@@ -23,25 +23,28 @@ export default class ManageView extends Component{
     };
   }
   componentDidMount(){
-  
+    //listener for delete
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     
   }
   componentWillUnmount(){
     this.state.eventsStoreListener.remove();
   }
+  //this is the call to open modal to delete event
   openDeleteModal(){
-      console.log("this was called");
+      console.log("delete modal was called");
       setTimeout(()=>{
         window.dispatchEvent(new Event('resize'));
       },500);
       $('#deleteModal').modal('show');
     }
+  //this simply releases the delete modal
   handleChangedMind(){
     console.log("Handle close was called");
     $('#deleteModal').modal('hide');
 
   }  
+  //the event is deleted using the event id
   handleDeleteButtonClick(page){
     event = eventsStore.getCurrentEvent();
     var state = this.state;
@@ -51,6 +54,7 @@ export default class ManageView extends Component{
     this.state.event.eventID = this.state.event.id;
     eventActions.deleteEvent({'eventID': this.state.event.eventID});
     $('#deleteModal').modal('hide');
+    //then routed to dash view
     navActions.routeToPage("dash");
    
   }
