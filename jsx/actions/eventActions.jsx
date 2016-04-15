@@ -399,8 +399,6 @@ export function getUser(personID){
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
     }
   }).done(function(data){
-    console.log('sent!')
-
     dispatcher.dispatch({
       actionType : eventsConstants.USER_RETRIEVED,
       data : data

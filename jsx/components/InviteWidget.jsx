@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import * as eventActions from '../actions/eventActions';
 import * as navActions from '../actions/navActions';
-import eventsStore from '../stores/eventsStore';
+import eventDetailsStore from '../stores/eventDetailsStore';
 import eventsConstants from '../constants/eventsConstants';
 import LoadingIcon from './LoadingIcon';
 import Modal from "./Modal";
@@ -24,11 +24,11 @@ export default class ManagerWidget extends Component{
   }
   componentDidMount(){
     this.state.errorListener =
-      eventsStore.addListener(eventsConstants.ERROR, this.onRemoveFailed.bind(this));
+      eventDetailsStore.addListener(eventsConstants.ERROR, this.onRemoveFailed.bind(this));
     this.state.onRemoveListener =
-      eventsStore.addListener(eventsConstants.ATTENDEE_ADDED, this.onAttendeeAdded.bind(this));
+      eventDetailsStore.addListener(eventsConstants.ATTENDEE_ADDED, this.onAttendeeAdded.bind(this));
     this.state.onAddListener =
-      eventsStore.addListener(eventsConstants.ATTENDEE_REMOVED, this.onAttendeeRemoved.bind(this));
+      eventDetailsStore.addListener(eventsConstants.ATTENDEE_REMOVED, this.onAttendeeRemoved.bind(this));
   }
   componentWillReceiveProps(newProps){
     console.log('got new props');
@@ -51,7 +51,7 @@ export default class ManagerWidget extends Component{
   }
   onAttendeeAdded(){
     console.log('added');
-    let attendee = eventsStore.getAddedAttendee();
+    let attendee = eventDetailsStore.getAddedAttendee();
     this.state.users.some((user) => {
       if(user.personID === attendee.personID){
         user.invited = true;
@@ -80,7 +80,7 @@ export default class ManagerWidget extends Component{
   }
   onAttendeeRemoved(){
     console.log('on removed called');
-    let personID = eventsStore.getRemovedAttendee();
+    let personID = eventDetailsStore.getRemovedAttendee();
     let index;
     for(let i = 0; i < this.state.users.length; i++){
       console.log(this.state.users[i]);

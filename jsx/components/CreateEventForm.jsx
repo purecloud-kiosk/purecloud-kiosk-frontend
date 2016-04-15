@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import * as eventActions from '../actions/eventActions';
 import eventsStore from '../stores/eventsStore';
+import eventDetailsStore from '../stores/eventDetailsStore';
 import eventsConstants from '../constants/eventsConstants';
 import DatePicker from './DatePicker';
 import ImageCropper from './ImageCropper';
@@ -36,18 +37,10 @@ export default class Events extends Component {
   	}
   	// after component successfully rendered
   	componentDidMount(){
-			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
-  		if(this.state.update){
-   			var event = eventsStore.getCurrentEvent();
-   			//add listener
-				console.log('updating');
-   			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_UPDATED, this.handleEventUpdatedSuccessfully.bind(this));
-   			this.notificationSystem = this.refs.notificationSystem;
-   			console.log(this.notificationSystem);
-   			//var event = eventsStore.getCurrentEvent();
-   			//add event data
-   			var state = this.state;
 
+  		if(this.state.update){
+   			var event = eventDetailsStore.getCurrentEvent();
+   			var state = this.state;
    			state.event = event;
 				// convert to local
 				var startDate = moment.utc(event.startDate).toDate();
@@ -56,16 +49,16 @@ export default class Events extends Component {
    			this.setState(state);
    		}
    		else{
-   			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
-   			this.notificationSystem = this.refs.notificationSystem;
-   			console.log(this.notificationSystem);
 				var state = this.state;
 				state.event.startDate = this.props.startDate;
 				console.log('form rerendered');
 				this.setState(state);
    		}
-   		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
-			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
+			this.notificationSystem = this.refs.notificationSystem;
+			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
+			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
+   		this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
+			this.state.bannerListener = eventDetailsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 			$('#privacy-checkbox').bootstrapSwitch({
 				'onText' : 'Private',
 				'offText' : 'Public',
@@ -83,7 +76,9 @@ export default class Events extends Component {
 			$('#privacy-checkbox').bootstrapSwitch('_width');
   	}
   	componentWillUnmount(){
-  		this.state.eventsStoreListener.remove();
+			this.state.submitListener.remove();
+  		this.state.thumbnailListener.remove();
+			this.state.bannerListener.remove();
   		this.state.eventStatsListener.remove();
 			$("#privacy-checkbox").bootstrapSwitch('destroy');
   	}

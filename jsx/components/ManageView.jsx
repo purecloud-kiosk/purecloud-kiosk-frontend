@@ -4,7 +4,7 @@ import Modal from './Modal';
 import CreateEventForm from './CreateEventForm';
 import * as navActions from '../actions/navActions';
 import history from '../history/history';
-import eventsStore from '../stores/eventsStore';
+import eventDetailsStore from '../stores/eventDetailsStore';
 
 import ManageEventManagersView from './ManageEventManagersView';
 import ManageInvitesView from './ManageInvitesView';
@@ -12,7 +12,7 @@ export default class ManageView extends Component{
   constructor(props){
     super(props);
     this.state = {
-      'event' : eventsStore.getCurrentEvent(),
+      'event' : eventDetailsStore.getCurrentEvent(),
       'menu' : {
         'edit' : true,
         'managers' : false,

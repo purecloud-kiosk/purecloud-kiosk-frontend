@@ -3,7 +3,7 @@ import React,{
 } from 'react';
 import * as eventActions from "../actions/eventActions";
 import * as pureCloudActions from '../actions/pureCloudActions';
-import eventsStore from "../stores/eventsStore";
+import eventDetailsStore from "../stores/eventDetailsStore";
 import pureCloudStore from '../stores/pureCloudStore';
 import eventsConstants from "../constants/eventsConstants";
 import pureCloudConstants from '../constants/pureCloudConstants';
@@ -23,11 +23,11 @@ export default class EventManagerView extends Component{
   }
   componentDidMount(){
     this.state.eventManagerListener =
-      eventsStore.addListener(eventsConstants.EVENT_MANAGERS_RETRIEVED, this.updateEventManagers.bind(this));
+      eventDetailsStore.addListener(eventsConstants.EVENT_MANAGERS_RETRIEVED, this.updateEventManagers.bind(this));
     this.state.pureCloudSearchListener =
       pureCloudStore.addListener(pureCloudConstants.USER_SEARCH_RETRIEVED, this.updateSearchResults.bind(this));
     this.state.bulkCheckInListener =
-      eventsStore.addListener(eventsConstants.BULK_CHECKINS_RETRIEVED, this.updateManagerStatus.bind(this));
+      eventDetailsStore.addListener(eventsConstants.BULK_CHECKINS_RETRIEVED, this.updateManagerStatus.bind(this));
     eventActions.getEventManagers(this.state.event.id);
     pureCloudActions.searchUsers('');
   }
@@ -61,7 +61,7 @@ export default class EventManagerView extends Component{
   updateManagerStatus(){
     console.log('Updated')
     let state = this.state;
-    let managers = eventsStore.getBulkRetrievedCheckIns();
+    let managers = eventDetailsStore.getBulkRetrievedCheckIns();
     let ids = [];
     managers.forEach((manager) => {
       if(manager.eventManager)
@@ -78,7 +78,7 @@ export default class EventManagerView extends Component{
   }
   updateEventManagers(){
     let state = this.state;
-    state.managers = eventsStore.getEventManagers();
+    state.managers = eventDetailsStore.getEventManagers();
     this.setState(state);
   }
   render(){

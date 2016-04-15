@@ -3,7 +3,7 @@ import React,{
 } from 'react';
 import * as eventActions from "../actions/eventActions";
 import * as pureCloudActions from '../actions/pureCloudActions';
-import eventsStore from "../stores/eventsStore";
+import eventDetailsStore from "../stores/eventDetailsStore";
 import pureCloudStore from '../stores/pureCloudStore';
 import eventsConstants from "../constants/eventsConstants";
 import pureCloudConstants from '../constants/pureCloudConstants';
@@ -24,11 +24,11 @@ export default class EventManagerView extends Component{
   }
   componentDidMount(){
     this.state.eventManagerListener =
-      eventsStore.addListener(eventsConstants.EVENT_INVITES_RETRIEVED, this.updateEventInvites.bind(this));
+      eventDetailsStore.addListener(eventsConstants.EVENT_INVITES_RETRIEVED, this.updateEventInvites.bind(this));
     this.state.pureCloudSearchListener =
       pureCloudStore.addListener(pureCloudConstants.USER_SEARCH_RETRIEVED, this.updateSearchResults.bind(this));
     this.state.bulkCheckInListener =
-      eventsStore.addListener(eventsConstants.BULK_CHECKINS_RETRIEVED, this.updateInviteStatus.bind(this));
+      eventDetailsStore.addListener(eventsConstants.BULK_CHECKINS_RETRIEVED, this.updateInviteStatus.bind(this));
     eventActions.getEventInvites(this.state.event.id);
     pureCloudActions.searchUsers('');
   }
@@ -62,7 +62,7 @@ export default class EventManagerView extends Component{
   }
   updateInviteStatus(){
     let state = this.state;
-    let invites = eventsStore.getBulkRetrievedCheckIns();
+    let invites = eventDetailsStore.getBulkRetrievedCheckIns();
     let ids = [];
     for(let i = 0; i < invites.length; i++){
       ids.push(invites[i].personID);
@@ -81,7 +81,7 @@ export default class EventManagerView extends Component{
   }
   updateEventInvites(){
     let state = this.state;
-    state.invites = eventsStore.getInvites();
+    state.invites = eventDetailsStore.getInvites();
     console.log('recieved invites');
     console.log(this.state.invites);
     this.setState(state);

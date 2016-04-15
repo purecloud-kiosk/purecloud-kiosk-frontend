@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import * as eventActions from '../actions/eventActions';
 import * as navActions from '../actions/navActions';
-import eventsStore from '../stores/eventsStore';
+import eventDetailsStore from '../stores/eventDetailsStore';
 import eventsConstants from '../constants/eventsConstants';
 import LoadingIcon from './LoadingIcon';
 import Modal from "./Modal";
@@ -24,11 +24,11 @@ export default class ManagerWidget extends Component{
   }
   componentDidMount(){
     this.state.errorListener =
-      eventsStore.addListener(eventsConstants.ERROR, this.onRemoveFailed.bind(this));
+      eventDetailsStore.addListener(eventsConstants.ERROR, this.onRemoveFailed.bind(this));
     this.state.onRemoveListener =
-      eventsStore.addListener(eventsConstants.MANAGER_REMOVED, this.onManagerRemoved.bind(this));
+      eventDetailsStore.addListener(eventsConstants.MANAGER_REMOVED, this.onManagerRemoved.bind(this));
     this.state.onAddListener =
-      eventsStore.addListener(eventsConstants.MANAGER_ADDED, this.onManagerAdded.bind(this));
+      eventDetailsStore.addListener(eventsConstants.MANAGER_ADDED, this.onManagerAdded.bind(this));
   }
   componentWillReceiveProps(newProps){
     console.log('got new props');
@@ -50,7 +50,7 @@ export default class ManagerWidget extends Component{
     });
   }
   onManagerAdded(){
-    let manager = eventsStore.getAddedManager();
+    let manager = eventDetailsStore.getAddedManager();
     manager.eventManager = true;
     this.state.users.some((user) => {
       if(user.personID === manager.personID){
@@ -72,13 +72,13 @@ export default class ManagerWidget extends Component{
     });
   }
   onRemoveFailed(){
-    let error = eventsStore.getError();
+    let error = eventDetailsStore.getError();
     if(JSON.parse(error.responseText).code === 600){
       $('#lastManager').modal('show');
     }
   }
   onManagerRemoved(){
-    let personID = eventsStore.getRemovedManager();
+    let personID = eventDetailsStore.getRemovedManager();
     let index;
     for(let i = 0; i < this.state.users.length; i++){
       if(this.state.users[i].personID === personID){

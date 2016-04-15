@@ -5,6 +5,7 @@ import * as eventActions from "../actions/eventActions";
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
 import eventsStore from "../stores/eventsStore";
+import eventDetailsStore from "../stores/eventDetailsStore";
 import eventsConstants from "../constants/eventsConstants";
 import statsStore from "../stores/statsStore";
 import navStore from "../stores/navStore";
@@ -22,7 +23,7 @@ export default class EventView extends Component {
   constructor(props){
     super(props);
     this.state = {
-      'event' : eventsStore.getCurrentEvent(),
+      'event' : eventDetailsStore.getCurrentEvent(),
       'files' : [],
       'stats' : null,
       'checkIns' : null,
@@ -51,11 +52,11 @@ export default class EventView extends Component {
     webSocket.subscribe(this.state.event.id);
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.deleteListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
-    this.state.getEventCheckInsListener = eventsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
-    this.state.eventFilesListener = eventsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
+    this.state.getEventCheckInsListener = eventDetailsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
+    this.state.eventFilesListener = eventDetailsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
     this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
-    this.state.eventMessageListener = eventsStore.addListener(eventsConstants.EVENT_MESSAGE_RECEIVED, this.setFeed.bind(this));
-    this.state.eventFeedListener = eventsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
+    this.state.eventMessageListener = eventDetailsStore.addListener(eventsConstants.EVENT_MESSAGE_RECEIVED, this.setFeed.bind(this));
+    this.state.eventFeedListener = eventDetailsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
     this.state.userListener = eventsStore.addListener(eventsConstants.USER_RETRIEVED, this.showUser.bind(this));
     this.refreshView();
     $('.banner').error(this.onBannerError.bind(this));
@@ -64,20 +65,20 @@ export default class EventView extends Component {
   showUser(){
     console.log('called');
     let state = this.state;
-    state.user = eventsStore.getCurrentUser();
+    state.user = eventDetailsStore.getCurrentUser();
     this.setState(state);
   }
   setFeed(){
     console.log('feed set');
     let state = this.state;
-    state.feed = eventsStore.getEventFeed();
+    state.feed = eventDetailsStore.getEventFeed();
     console.log(state.feed);
     this.setState(state);
   }
   refreshView(){
     console.log('refreshing');
     var state = this.state;
-    state.event = eventsStore.getCurrentEvent();
+    state.event = eventDetailsStore.getCurrentEvent();
     statsActions.getEventStats(state.event.id);
     eventActions.getEventCheckIns(state.event.id);
     setTimeout(() => {
@@ -89,7 +90,7 @@ export default class EventView extends Component {
   }
   updateEventFiles(){
     let state = this.state;
-    state.files = eventsStore.getEventFiles();
+    state.files = eventDetailsStore.getEventFiles();
     this.setState(state);
   }
   componentWillUnmount(){
@@ -145,7 +146,7 @@ export default class EventView extends Component {
 
   updateCheckIns(){
     let state = this.state;
-    state.checkIns = eventsStore.getCheckIns();
+    state.checkIns = eventDetailsStore.getCheckIns();
     this.setState(state);
   }
   openDescModal(){
