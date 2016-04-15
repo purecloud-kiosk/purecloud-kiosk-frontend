@@ -1,3 +1,6 @@
+/**
+ * This is the main view that users will see when the dashboard loads up.
+ **/
 'use strict';
 import React, { Component } from 'react';
 

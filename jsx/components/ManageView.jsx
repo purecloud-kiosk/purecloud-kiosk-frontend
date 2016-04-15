@@ -7,7 +7,7 @@ import history from '../history/history';
 import eventsStore from '../stores/eventsStore';
 
 import ManageEventManagersView from './ManageEventManagersView';
-
+import ManageInvitesView from './ManageInvitesView';
 export default class ManageView extends Component{
   constructor(props){
     super(props);
@@ -33,6 +33,7 @@ export default class ManageView extends Component{
   render(){
     const {event, menu, data, view} = this.state;
     let mainContent, invitesButton;
+    // swap views
     switch(view){
       case 'edit':
         mainContent = (<CreateEventForm event={event} update={true}/>);
@@ -41,12 +42,14 @@ export default class ManageView extends Component{
         mainContent = (<ManageEventManagersView event={event}/>);
         break;
       case 'invites':
-        mainContent = (<div></div>);
+        mainContent = (<ManageInvitesView event={event}/>);
+        break;
     }
+    // show invites button if the event is private
     if(event.private){
       invitesButton = (
         <li className={menu.invites ? 'active' : ''}>
-          <a onClick={this.menuItemClicked.bind(this, 'edit')}>
+          <a onClick={this.menuItemClicked.bind(this, 'invites')}>
             Invites
           </a>
         </li>
@@ -56,8 +59,7 @@ export default class ManageView extends Component{
       <div className='text-body'>
         <div className='col-md-12'>
           <div className='display-block'>
-            <div className='col-md-1'></div>
-            <div className='col-md-10'>
+            <div className='col-md-10 col-md-offset-1'>
               <h2>Event Management Dashboard</h2>
               <h4>Event: {event.title}</h4>
             </div>
@@ -65,8 +67,7 @@ export default class ManageView extends Component{
           </div>
         </div>
         <div className='col-md-12'>
-          <div className='col-md-1'></div>
-          <div className='col-md-3'>
+          <div className='col-md-3 col-md-offset-1'>
             <label>Options Menu</label>
             <ul className="nav nav-pills nav-stacked">
               <li className={menu.edit ? 'active' : ''}>
@@ -85,7 +86,6 @@ export default class ManageView extends Component{
           <div className='col-md-7'>
             <div className='col-md-12'>{mainContent}</div>
           </div>
-          <div className='col-md-1'></div>
         </div>
 
       </div>

@@ -209,7 +209,7 @@ export function deleteEvent(event){
 
 export function getEventCheckIns(event){
   $.ajax({
-    url: 'api/events/getEventCheckIns?eventID=' + event,
+    url: 'api/events/getEventAttendees?checkedIn=true&eventID=' + event,
     method : 'GET',
     headers : {
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
@@ -448,6 +448,69 @@ export function removeEventManager(options){
     dispatcher.dispatch({
       'actionType' : eventsConstants.MANAGER_REMOVED,
       'data' : options.managerID
+    });
+  }).fail((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ERROR,
+      'data' : data
+    });
+  });
+}
+
+export function getEventInvites(event){
+  $.ajax({
+    url: 'api/events/getEventAttendees?&eventID=' + event,
+    method : 'GET',
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    dispatcher.dispatch({
+      actionType : eventsConstants.EVENT_INVITES_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
+
+export function addAttendee(userData){
+  return $.ajax({
+    url: 'api/events/addPrivateAttendee',
+    method : 'POST',
+    data : userData,
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ATTENDEE_ADDED,
+      'data' : userData.attendee
+    });
+  }).fail((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ERROR,
+      'data' : data
+    });
+  });;
+}
+
+export function removeAttendee(options){
+  return $.ajax({
+    url: 'api/events/removePrivateAttendee',
+    method : 'POST',
+    data : {
+      'eventID' : options.eventID,
+      'personID' : options.personID
+    },
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ATTENDEE_REMOVED,
+      'data' : options.personID
     });
   }).fail((data) => {
     dispatcher.dispatch({

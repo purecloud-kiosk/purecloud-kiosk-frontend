@@ -38,7 +38,7 @@ export default class SideBar extends Component{
         </ul>
         <div className='sidebar-footer'>
           <div className='col-xs-6'>
-            <a href='https://github.com/purecloud-kiosk/purecloud-kiosk'>
+            <a href='https://github.com/purecloud-kiosk'>
               Github
             </a>
           </div>

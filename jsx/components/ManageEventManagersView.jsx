@@ -86,7 +86,8 @@ export default class EventManagerView extends Component{
     return (
       <div className='col-sm-12'>
         <PeopleTypeAhead id='managerTypeAhead'/>
-        <ManagerWidget title='Search Results' event={event} users={managerSearchResults}/>
+        <ManagerWidget title='Search Results'
+          event={event} users={managerSearchResults}/>
         <ManagerWidget title='Event Managers' event={event} users={managers} removeOnDelete={true}/>
       </div>
     );

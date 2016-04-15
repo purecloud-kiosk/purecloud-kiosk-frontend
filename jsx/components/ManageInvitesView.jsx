@@ -2,6 +2,7 @@ import React,{
   Component
 } from 'react';
 import * as eventActions from "../actions/eventActions";
+import * as pureCloudActions from '../actions/pureCloudActions';
 import eventsStore from "../stores/eventsStore";
 import pureCloudStore from '../stores/pureCloudStore';
 import eventsConstants from "../constants/eventsConstants";
@@ -9,6 +10,7 @@ import pureCloudConstants from '../constants/pureCloudConstants';
 import UserWidget from './UserWidget';
 import PeopleTypeAhead from './PeopleTypeAhead';
 import ManagerWidget from './ManagerWidget';
+import InviteWidget from './InviteWidget';
 export default class EventManagerView extends Component{
   constructor(props){
     super(props);
@@ -16,17 +18,19 @@ export default class EventManagerView extends Component{
     console.log(this.props.event);
     this.state = {
       'event' : this.props.event,
-      'userSearchResults' : []
+      'userSearchResults' : [],
+      'invites' : []
     };
   }
   componentDidMount(){
     this.state.eventManagerListener =
-      eventsStore.addListener(eventsConstants.EVENT_MANAGERS_RETRIEVED, this.updateEventManagers.bind(this));
+      eventsStore.addListener(eventsConstants.EVENT_INVITES_RETRIEVED, this.updateEventInvites.bind(this));
     this.state.pureCloudSearchListener =
       pureCloudStore.addListener(pureCloudConstants.USER_SEARCH_RETRIEVED, this.updateSearchResults.bind(this));
     this.state.bulkCheckInListener =
-      eventsStore.addListener(eventsConstants.BULK_CHECKINS_RETRIEVED, this.updateManagerStatus.bind(this));
-    eventActions.getEventManagers(this.state.event.id);
+      eventsStore.addListener(eventsConstants.BULK_CHECKINS_RETRIEVED, this.updateInviteStatus.bind(this));
+    eventActions.getEventInvites(this.state.event.id);
+    pureCloudActions.searchUsers('');
   }
   componentWillUnmount(){
     this.state.eventManagerListener.remove();
@@ -52,39 +56,43 @@ export default class EventManagerView extends Component{
       return data;
     });
     console.log('sending personIDs');
+    console.log(personIDs);
     eventActions.bulkRetrieveCheckIns(this.state.event.id, personIDs);
     this.setState(state);
   }
-  updateManagerStatus(){
-    console.log('Updated')
+  updateInviteStatus(){
     let state = this.state;
-    let managers = eventsStore.getBulkRetrievedCheckIns();
+    let invites = eventsStore.getBulkRetrievedCheckIns();
     let ids = [];
-    managers.forEach((manager) => {
-      if(manager.eventManager)
-        ids.push(manager.personID);
-    });
+    for(let i = 0; i < invites.length; i++){
+      ids.push(invites[i].personID);
+    }
     state.userSearchResults.forEach((user) => {
-      console.log(user);
-      if(ids.indexOf(user.personID) != -1)
-        user.eventManager = true;
-      else
-        user.eventManager = false;
+      let index = ids.indexOf(user.personID) ;
+      if(index !== -1){
+        user.invited = true;
+        user.eventManager = invites[index].eventManager;
+      }
+      else{
+        user.invited = false;
+      }
     });
     this.setState(state);
   }
-  updateEventManagers(){
+  updateEventInvites(){
     let state = this.state;
-    state.managers = eventsStore.getEventManagers();
+    state.invites = eventsStore.getInvites();
+    console.log('recieved invites');
+    console.log(this.state.invites);
     this.setState(state);
   }
   render(){
-    const {userSearchResults, managers, event} = this.state;
+    const {userSearchResults, invites, event} = this.state;
     return (
       <div className='col-sm-12'>
         <PeopleTypeAhead id='inviteTypeAhead'/>
-        <InviteSearchWidget title='Search Results' event={event} users={userSearchResults}/>
-        <InviteWidget title='Event Managers' users={managers}/>
+        <InviteWidget title='Search Results' event={event} users={userSearchResults}/>
+        <InviteWidget title='Event Attendees' event={event} users={invites} removeOnDelete={true}/>
       </div>
     );
   }

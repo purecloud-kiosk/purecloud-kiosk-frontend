@@ -26,9 +26,9 @@ export default class ManagerWidget extends Component{
     this.state.errorListener =
       eventsStore.addListener(eventsConstants.ERROR, this.onRemoveFailed.bind(this));
     this.state.onRemoveListener =
-      eventsStore.addListener(eventsConstants.MANAGER_REMOVED, this.onManagerRemoved.bind(this));
+      eventsStore.addListener(eventsConstants.ATTENDEE_ADDED, this.onAttendeeAdded.bind(this));
     this.state.onAddListener =
-      eventsStore.addListener(eventsConstants.MANAGER_ADDED, this.onManagerAdded.bind(this));
+      eventsStore.addListener(eventsConstants.ATTENDEE_REMOVED, this.onAttendeeRemoved.bind(this));
   }
   componentWillReceiveProps(newProps){
     console.log('got new props');
@@ -38,9 +38,9 @@ export default class ManagerWidget extends Component{
   handleAddClicked(user){
     console.log(user);
     console.log(this.state);
-    eventActions.addEventManager({
+    eventActions.addAttendee({
       'eventID' : this.state.event.id,
-      'manager' : {
+      'attendee' : {
         'personID' : user.personID,
         'email' : user.email,
         'name' : user.name,
@@ -49,26 +49,27 @@ export default class ManagerWidget extends Component{
       }
     });
   }
-  onManagerAdded(){
-    let manager = eventsStore.getAddedManager();
-    manager.eventManager = true;
+  onAttendeeAdded(){
+    console.log('added');
+    let attendee = eventsStore.getAddedAttendee();
     this.state.users.some((user) => {
-      if(user.personID === manager.personID){
-        user.eventManager = true;
+      if(user.personID === attendee.personID){
+        user.invited = true;
         return true;
       }
-    });
+    })
     if(this.props.removeOnDelete){
-      this.state.users.unshift(manager);
+      this.state.users.unshift(attendee);
     }
     this.setState(this.state);
   }
-  removeEventManager(){
+  removeAttendee(){
     let user = this.state.currentUser;
+    console.log(this.state);
     $('#removeCheck').modal('hide');
-    eventActions.removeEventManager({
+    eventActions.removeAttendee({
       'eventID' : this.state.event.id,
-      'managerID' : user.personID
+      'personID' : user.personID
     });
   }
   onRemoveFailed(){
@@ -77,13 +78,15 @@ export default class ManagerWidget extends Component{
       $('#lastManager').modal('show');
     }
   }
-  onManagerRemoved(){
-    let personID = eventsStore.getRemovedManager();
+  onAttendeeRemoved(){
+    console.log('on removed called');
+    let personID = eventsStore.getRemovedAttendee();
     let index;
     for(let i = 0; i < this.state.users.length; i++){
+      console.log(this.state.users[i]);
       if(this.state.users[i].personID === personID){
+        this.state.users[i].invited = false;
         index = i;
-        this.state.users[i].eventManager = false;
         break;
       }
     }
@@ -97,12 +100,9 @@ export default class ManagerWidget extends Component{
     console.log(user);
     console.log(this.state);
     this.state.currentUser = user;
-    if(statsStore.getUserStats().personID === user.personID){
-      $('#removeCheck').modal('show');
-    }
-    else{
-      this.removeEventManager(user);
-    }
+    console.log(statsStore.getUserStats());
+    this.removeAttendee(user);
+
   }
   render(){
     const {title, faIcon, emptyMsg, showManagerStatus} = this.props;
@@ -114,27 +114,34 @@ export default class ManagerWidget extends Component{
     else{
       rows = (
         users.map((user) => {
-          let managerButton;
-          if(user.eventManager === null){
-            managerButton = <LoadingIcon/>
+          let inviteButton;
+          console.log(user.name);
+          console.log(user);
+
+          if(user.eventManager === true){
+            inviteButton = 'Event Manager';
           }
-          else if(user.eventManager === 'added'){
-            managerButton = 'Added';
-          }
-          else if(user.eventManager === 'unable'){
-            managerButton = 'Unable to be added';
-          }
-          else if(user.eventManager === true){
-            managerButton = (
+          else if(this.props.removeOnDelete){
+            inviteButton = (
               <button className='btn btn-danger' onClick={this.handleRemoveClicked.bind(this, user)}>
                 Remove
               </button>
-            );
+            )
+          }
+          else if(user.invited === undefined){
+            inviteButton = <LoadingIcon/>
+          }
+          else if(user.invited === true){
+            inviteButton = (
+              <button className='btn btn-danger' onClick={this.handleRemoveClicked.bind(this, user)}>
+                Remove
+              </button>
+            )
           }
           else{ // not a manager, show add button
-            managerButton = (
-              <button className='btn btn-primary' onClick={this.handleAddClicked.bind(this, user)}>
-                Add
+            inviteButton = (
+              <button className='btn btn-info' onClick={this.handleAddClicked.bind(this, user)}>
+                Invite
               </button>
             );
           }
@@ -142,7 +149,9 @@ export default class ManagerWidget extends Component{
             <tr className='animated fadeInLeft' key={user.personID}>
               <td>{user.name}</td>
               <td>{user.email}</td>
-              <td>{managerButton}</td>
+              <td>
+                {inviteButton}
+              </td>
             </tr>
           );
         })
@@ -173,14 +182,6 @@ export default class ManagerWidget extends Component{
         <div className='widget-body large no-padding'>
           {content}
         </div>
-        <Modal title='Warning' id='removeCheck' submitCallback={this.removeEventManager.bind(this)}
-          submitText='Yes' cancelText='No'>
-          Are you sure you want to remove your management privileges?
-        </Modal>
-        <Modal title='Warning' id='lastManager' cancelText='Okay'>
-          There is only one manager for this event. Please either delete this event or
-          pass management privileges to another user, then remove yourself.
-        </Modal>
       </div>
     );
   }

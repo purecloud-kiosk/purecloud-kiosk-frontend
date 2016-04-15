@@ -46,6 +46,7 @@ export default class EventView extends Component {
       }
     };
   }
+  // on mount, add all of the listeners needed for the view to function
   componentDidMount(){
     webSocket.subscribe(this.state.event.id);
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
@@ -101,12 +102,11 @@ export default class EventView extends Component {
   }
   handleEventUpdated(){
     eventActions.setUpdateFlag(true);
-    // open modal here
-      setTimeout(()=>{
-        window.dispatchEvent(new Event('resize'));
-      },500);
-      $('#updateModal').modal('show');
-    }
+    setTimeout(()=>{
+      window.dispatchEvent(new Event('resize'));
+    },500);
+    $('#updateModal').modal('show');
+  }
 
   handleDeleteButtonClick(){
     console.log(this.state.event.id);
@@ -117,12 +117,12 @@ export default class EventView extends Component {
 
   }
   openDeleteModal(){
-      console.log("this was called");
-      setTimeout(()=>{
-        window.dispatchEvent(new Event('resize'));
-      },500);
-      $('#deleteModal').modal('show');
-    }
+    console.log("this was called");
+    setTimeout(()=>{
+      window.dispatchEvent(new Event('resize'));
+    },500);
+    $('#deleteModal').modal('show');
+  }
   handleChangedMind(){
     console.log("ok");
   }

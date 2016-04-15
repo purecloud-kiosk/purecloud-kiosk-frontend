@@ -15,20 +15,11 @@ export default class TypeAhead extends Component{
         'limit' : 10
       },
       'q' : ''
-      // 'submitCallback' : this.props.submitCallback,
-      // 'transformFunction' : this.props.transformFunction,
-      // 'searchUrl' : this.props.searchUrl
     };
   }
-  componentWillReceiveProps(newProps){
-    this.state.query.upcoming = newProps.query.upcoming;
-    this.state.query.managing = newProps.query.managing;
-    this.state.query.private = newProps.query.private;
-    $('#' + this.state.id).off();
-    $('#' + this.state.id).typeahead('destroy');
-    this.init();
-
-  }
+  /**
+   *  Initialize the typeahead compnent
+   **/
   init(){
     let engine = new Bloodhound({
       queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -76,14 +67,26 @@ export default class TypeAhead extends Component{
       }
     });
   }
+  // on mount, call init
   componentDidMount(){
     this.init();
   }
+  // After recieving new props, set the props, and re init typeahead
+  componentWillReceiveProps(newProps){
+    this.state.query.upcoming = newProps.query.upcoming;
+    this.state.query.managing = newProps.query.managing;
+    this.state.query.private = newProps.query.private;
+    $('#' + this.state.id).off();
+    $('#' + this.state.id).typeahead('destroy');
+    this.init();
+  }
+
   handleInputChange(e){
     let state = this.state;
     state.q = e.target.value;
     this.setState(state);
   }
+  // perform search on submit
   handleSubmit(e){
     console.log('submit pressed');
     let query = $.extend(true, {}, this.state.query);
