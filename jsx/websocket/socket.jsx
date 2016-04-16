@@ -20,18 +20,16 @@ class WebSocket{
     this.socket.on('subError', (error)=> {
       console.log(error);
     });
-    this.socket.on('EVENT', (message) => {
-      console.log("EVENT");
-      console.log('recieved!')
-      eventActions.dispatchEventMessage(message);
+    this.socket.on('EVENT', (notification) => {
+      eventActions.dispatchEventNotification(notification);
     });
-    this.socket.on('ORG', (data) => {
+    this.socket.on('ORG', (notification) => {
       console.log("ORG");
       // org wide message, so just push to notification bar
       console.log(data);
       console.log(statsStore.getUserStats());
       if(data.posterID !== statsStore.getUserStats().personID &&
-      moment(new Date()).isBefore(new Date(data.message.content.endDate))){
+      moment(new Date()).isBefore(new Date(notification.message.content.endDate))){
         navActions.dispatchOrgNotification(data);
         this.notificationSystem.addNotification({
           'message': 'A new event was created!',
@@ -40,7 +38,7 @@ class WebSocket{
           'action': {
             'label': 'View Event',
             'callback': () => {
-              eventActions.setCurrentEvent(data.message.content);
+              eventActions.setCurrentEvent(notification.message.content);
               navActions.routeToPage('event');
               navActions.refresh();
             }

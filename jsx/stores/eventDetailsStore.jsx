@@ -48,8 +48,21 @@ function setEventFiles(files){
 function setEventFeed(feed){
   eventFeed = feed.reverse();
 }
-function addMessage(message){
-  eventFeed.unshift(message);
+function addMessage(notification){
+  eventFeed.unshift(notification);
+}
+function removeMessage(notification){
+  console.log(notification);
+  let index;
+  for(index = 0; index < eventFeed.length; index++){
+    console.log('|')
+    console.log(eventFeed[index].id);
+    console.log(notification.message.content);
+    if(eventFeed[index].id === notification.message.content)
+      break;
+  }
+  console.log(eventFeed.splice(index, 1));
+  console.log(index);
 }
 function setUser(newUser){
   user = newUser;
@@ -167,6 +180,9 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.EVENT_MESSAGE_RECEIVED:
       addMessage(payload.data);
+      break;
+    case eventsConstants.EVENT_MESSAGE_REMOVED:
+      removeMessage(payload.data);
       break;
     case eventsConstants.EVENT_MANAGERS_RETRIEVED:
       setEventManagers(payload.data);

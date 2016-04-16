@@ -15,11 +15,16 @@ export default class Events extends Component {
 			var event = this.props.event || {};
 			this.notificationSystem = null;
 			var imageEither = null;
+
+		//set the set
     	this.state = {
     		startDate : moment(event.startDate).format('LL') || null,
     		startTime : moment(event.startDate).format('LT') || null,
+    		endDate : moment(event.endDate).format('LL') || null,
+    		endTime : moment(event.endDate).format('LT') || null,
     		//outside the event variables important to time/date/success
     		success : false,
+
     		//event variable
     		event : {
     			title : event.title || null,
@@ -37,10 +42,19 @@ export default class Events extends Component {
   	}
   	// after component successfully rendered
   	componentDidMount(){
-
+  			//for submission
+			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
+			var state = this.state;
+   		//this case handles the update flag is set then do this part
   		if(this.state.update){
    			var event = eventDetailsStore.getCurrentEvent();
-   			var state = this.state;
+   			//add listener
+				console.log('updating');
+   			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_UPDATED, this.handleEventUpdatedSuccessfully.bind(this));
+   			this.notificationSystem = this.refs.notificationSystem;
+   			console.log(this.notificationSystem);
+   			//var event = eventsStore.getCurrentEvent();
+   			//add event data
    			state.event = event;
 				// convert to local
 				var startDate = moment.utc(event.startDate).toDate();
@@ -48,6 +62,7 @@ export default class Events extends Component {
 				state.startTime = moment(startDate).format('LT');
    			this.setState(state);
    		}
+   		//else this is a new event
    		else{
 				var state = this.state;
 				state.event.startDate = this.props.startDate;
@@ -59,6 +74,12 @@ export default class Events extends Component {
 			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
    		this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
 			this.state.bannerListener = eventDetailsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
+			console.log(endDate);
+			state.endDate = moment(endDate).format('LL');
+			state.endTime = moment(endDate).format('LT');
+   		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
+			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
+
 			$('#privacy-checkbox').bootstrapSwitch({
 				'onText' : 'Private',
 				'offText' : 'Public',
@@ -75,6 +96,7 @@ export default class Events extends Component {
 			// seems to not render properly without this...
 			$('#privacy-checkbox').bootstrapSwitch('_width');
   	}
+  	//release the listeners
   	componentWillUnmount(){
 			this.state.submitListener.remove();
   		this.state.thumbnailListener.remove();
@@ -98,7 +120,8 @@ export default class Events extends Component {
      		level: 'success'
     	});
   	}
-  	handleImageThumbUploadedSuccessfully(){
+  	//image is uploaded successfully for a thumbnail
+  	handleImageThumbUploadedSuccessfully(id){
 
   		console.log("image successfully uploaded");
   		//reset the state
@@ -111,9 +134,11 @@ export default class Events extends Component {
      		position: 'bc',
      		level: 'success'
     	});
-    	$("#blah").attr("src", "");
+    	console.log($('#'+ id));
+    	$('#'+ id).attr("src", "");
   	}
-  	handleImageUrlUploadedSuccessfully(){
+  	//image is uploaded for a banner
+  	handleImageUrlUploadedSuccessfully(id){
 
   		console.log("image successfully uploaded");
   		//reset the state
@@ -127,8 +152,8 @@ export default class Events extends Component {
      		position: 'bc',
      		level: 'success'
     	});
-    	console.log($('#blah'));
-    	$("#blah").attr("src", "");
+    	console.log($('#'+ id));
+    	$('#'+ id).attr("src", "");
   	}
 
 	handleChange(key) {
@@ -152,7 +177,7 @@ export default class Events extends Component {
 	}
 	handleButtonClick(){
 		this.state.event.startDate = moment(this.state.startDate + " " +  this.state.startTime).format();
-		this.state.event.endDate = new Date(this.state.event.startDate).getTime() + (60*60*1000);
+		this.state.event.endDate = moment(this.state.endDate + " " +  this.state.endTime).format();
 		console.log('handleButtonClick');
 		console.log('this is the event data that is getting sent off');
 		console.log(this.state.event);
@@ -164,6 +189,7 @@ export default class Events extends Component {
 			eventActions.createEvent(this.state.event);
 		}
 	}
+	//everything was updated successfully
 	handleEventUpdatedSuccessfully(){
  		console.log("event successfully updated");
  		if(!this.props.update){
@@ -182,6 +208,7 @@ export default class Events extends Component {
 	handleDateChange(key, format, dateMoment){
 		this.state[key] = dateMoment.format(format);
 	}
+	//this method clears out the form besides the date and time
 	clear(){
 		var state = this.state;
  		state.success = true;
@@ -190,30 +217,36 @@ export default class Events extends Component {
  			'stateDate': null,
  			'endDate' : null,
  			'location' : null,
-			'description' : '',
  			'private' : false,
- 			'description' : null,
+ 			'description' : '',
 			'imageUrl' : null,
  			'thumbnailUrl' : null
  		}
  		//debugger;
  		this.setState(state);
 	}
+	//new props for entering the form
 	componentWillReceiveProps(newProps){
 		//console.log('got some new props yo');
 		if(newProps.startDate !== undefined){
-			var date = newProps.startDate.split('|');
-			this.state.startDate = date[0];
-			this.state.startTime = date[1];
+			// var date = newProps.startDate.split('|');
+			// var date2 = newProps.startDate.split('|');
+			let start = newProps.startDate;
+			let end = moment(newProps.startDate).add(1, 'h');
+			this.state.startDate =  moment(start).format('LL');
+			this.state.startTime = moment(start).format('LT');
+			this.state.endDate = moment(end).format('LL');
+			this.state.endTime = moment(end).format('LT');
 			$('#privacy-checkbox').bootstrapSwitch('state', false);
 			this.clear();
 		}
 	}
 	//method to save image
-	saveImage(){
-		//do that son!
-		console.log($('#blah').cropper('getCroppedCanvas'));
-		$('#blah').cropper('getCroppedCanvas').toBlob((blob) => {
+	//seperated into two different methods depending on whether it is a thumbnail
+	saveImage(id){
+
+		console.log($('#'+ id).cropper('getCroppedCanvas'));
+		$('#'+ id).cropper('getCroppedCanvas').toBlob((blob) => {
 		  var formData = new FormData();
 			formData.append('fileName', this.state.imageType);
 		  formData.append('fileType', this.state.imageType);
@@ -223,6 +256,21 @@ export default class Events extends Component {
 			eventActions.uploadImage(formData, this.state.imageType);
 		}, "image/png");
 	}
+	//or a banner
+	saveImage2(id){
+
+		console.log($('#'+ id).cropper('getCroppedCanvas'));
+		$('#'+ id).cropper('getCroppedCanvas').toBlob((blob) => {
+		  var formData = new FormData();
+			formData.append('fileName', this.state.imageType);
+		  formData.append('fileType', this.state.imageType);
+		  console.log(blob);
+		  formData.append('file', blob);
+		  console.log(formData);
+			eventActions.uploadImage(formData, this.state.imageType);
+		}, "image/png");
+	}
+	//thumbnail open image modal
   openImageModal(type){
     setTimeout(()=>{
       window.dispatchEvent(new Event('resize'));
@@ -232,8 +280,19 @@ export default class Events extends Component {
     console.log(this.state.imageType);
     $('#imageModal').modal('show');
   }
+  //banner open image modal
+  openImageModal2(type){
+    setTimeout(()=>{
+      window.dispatchEvent(new Event('resize'));
+    },500);
+    this.state.imageType = type;
+    this.setState(this.state);
+    console.log(this.state.imageType);
+    $('#imageModal2').modal('show');
+  }
+  //the render method
 	render(){
-		const {event, success, date, mode, format, inputFormat, startDate} = this.state;
+		const {event, success, date, mode, format, inputFormat, startDate, endDate} = this.state;
 		const {hideButton} = this.props;
 		var iCropper;
 		var temporaryImage;
@@ -259,6 +318,7 @@ export default class Events extends Component {
 	if(hideButton){
 		submit = null;
 	}
+	//the return: where HTML lives
 	return (
 		<div className='form-container'>
 			<form className='form-all'>
@@ -280,10 +340,19 @@ export default class Events extends Component {
 					<label className ='form-time'>Start Time</label>
 					<DatePicker id='startTime' type='time' date={this.state.startTime} onChange={this.handleDateChange.bind(this, 'startTime', 'LT')}/>
 				</div>
+				<div>
+					<label className ='form-end-date'>End Date</label>
+					<DatePicker id='endDate' type='date' date={this.state.endDate} onChange={this.handleDateChange.bind(this, 'endDate', 'LL')}/>
+				</div>
+				<div>
+					<label className ='form-time'>End Time</label>
+					<DatePicker id='endTime' type='time' date={this.state.endTime} onChange={this.handleDateChange.bind(this, 'endTime', 'LT')}/>
+				</div>
 				<div >
 					<label className ='form-location'>Location</label>
 					<input className='form-control' value={event.location} onChange={this.handleChange('location')}/>
 				</div>
+
 				<br/>
 		    <div className= 'form-image-thumb'>
 		      <label className='form-image-thumb'>Thumbnail Image</label>
@@ -300,7 +369,7 @@ export default class Events extends Component {
 		      <div className='input-group'>
 			      <input type="text" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
 			      <span className="input-group-btn">
-			        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'banner')}>Crop Image</button>
+			        <button className="btn btn-default" type="button" onClick={this.openImageModal2.bind(this, 'banner')}>Crop Image</button>
 			      </span>
 		      </div>
 		    </div>
@@ -314,11 +383,21 @@ export default class Events extends Component {
   			</div>
 			</form>
 			<Modal id='imageModal' title="Thumbnail">
-        <div id='selectImage' style={{'width' : '100%', 'height' : '400px'}}>
-					<ImageCropper type = {this.state.imageType}/>
-					<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this)}>Save Image</button>
-        </div>
-	    </Modal>
+       			 <div style={{'width' : '100%', 'height' : '400px'}}>
+					<ImageCropper id='thumbCropper' type = {this.state.imageType} ></ImageCropper>
+					<div className>
+						<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this, 'thumbCropper')}>Save Image</button>
+       			 	</div>
+       			 </div>
+	   		</Modal>
+		    <Modal id='imageModal2' title="Banner">
+	       		 <div style={{'width' : '100%', 'height' : '400px'}}>
+						<ImageCropper id='bannerCropper' type = {this.state.imageType} > </ImageCropper>
+						<div className>
+							<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage2.bind(this, 'bannerCropper')}>Save Image</button>
+	        			</div>
+	        		</div>
+		    </Modal>
 		</div>
 		);
 	}

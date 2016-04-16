@@ -11,8 +11,6 @@ import statsStore from "../stores/statsStore";
 import navStore from "../stores/navStore";
 import navConstants from "../constants/navConstants";
 import statsConstants from "../constants/statsConstants";
-import Chart from "./Chart";
-import TickerWidget from "./TickerWidget";
 import Modal from "./Modal";
 import webSocket from '../websocket/socket';
 

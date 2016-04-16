@@ -20,6 +20,8 @@ import webSocket from '../websocket/socket';
 import CreateEventForm from './CreateEventForm';
 import UserWidget from './UserWidget';
 import FileWidget from './FileWidget';
+import EventFeed from './EventFeed';
+
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -58,11 +60,13 @@ export default class EventView extends Component {
     this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
     this.state.eventMessageListener = eventDetailsStore.addListener(eventsConstants.EVENT_MESSAGE_RECEIVED, this.setFeed.bind(this));
     this.state.eventFeedListener = eventDetailsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
-    this.state.userListener = eventsStore.addListener(eventsConstants.USER_RETRIEVED, this.showUser.bind(this));
+    this.state.userListener = eventDetailsStore.addListener(eventsConstants.USER_RETRIEVED, this.showUser.bind(this));
+    this.state.messageRemovedListener = eventDetailsStore.addListener(eventsConstants.EVENT_MESSAGE_REMOVED, this.setFeed.bind(this));
     this.refreshView();
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
   }
+
   showUser(){
     console.log('called');
     let state = this.state;
@@ -344,23 +348,15 @@ export default class EventView extends Component {
       if(feed.length === 0){
         eventFeed = (
           <div className='text-center'>
-            <h4>No messages have been published to the Event Feed</h4>
+            <h5>No messages have been published to the Event Feed</h5>
           </div>
         );
       }
       else{
         eventFeed = (
-          <div>
-            {feed.map((data) => {
-              return (
-                <blockquote className='animated fadeInLeft' key={data.id}>
-                  <p className='text-size-medium'>{data.message.content}</p>
-                  <footer>{data.posterName} on {moment(data.datePosted).format('LLL')}</footer>
-                </blockquote>
-              );
-            })}
-          </div>
-        );
+          <EventFeed feed={feed}
+            managerAccess={statsStore.getUserStats().userType === 'admin' || stats.userIsManager}/>
+        )
       }
       feedWidget = (
         <div className="col-sm-6 col-md-4">
@@ -467,7 +463,6 @@ export default class EventView extends Component {
                   <button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick = {this.handleInvites.bind(this)}>Invite Org Attendees</button>
                 </div>
             </div>
-
         </Modal>
         <Modal id="deleteModal" title = "Delete Event">
             <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>

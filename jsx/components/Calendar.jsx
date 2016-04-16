@@ -76,7 +76,8 @@ export default class Calendar extends Component{
       'dayClick' : (date) => {
         if(date.isAfter(moment().subtract(1, 'day'))){
           var state = self.state;
-          state.selectedDate = date.format('LL') + '|' + date.format('LT');
+          state.selectedDate = date;
+          //state.selectedDate = date.format('LL') + '|' + date.format('LT');
           self.setState(state);
           console.log(self.state);
           $('#createEventModal').modal('show');

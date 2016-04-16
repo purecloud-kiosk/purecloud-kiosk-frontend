@@ -3,9 +3,11 @@ import React, { Component } from 'react';
 import Modal from './Modal';
 import CreateEventForm from './CreateEventForm';
 import * as navActions from '../actions/navActions';
+import * as eventActions from '../actions/eventActions';
+import eventsConstants from '../constants/eventsConstants';
 import history from '../history/history';
 import eventDetailsStore from '../stores/eventDetailsStore';
-
+import eventsStore from '../stores/eventsStore';
 import ManageEventManagersView from './ManageEventManagersView';
 import ManageInvitesView from './ManageInvitesView';
 import ManageEventFilesView from './ManageEventFilesView';
@@ -22,6 +24,42 @@ export default class ManageView extends Component{
       },
       'view' : 'edit'
     };
+  }
+  componentDidMount(){
+    //listener for delete
+    this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
+
+  }
+  componentWillUnmount(){
+    this.state.eventsStoreListener.remove();
+  }
+  //this is the call to open modal to delete event
+  openDeleteModal(){
+      console.log("delete modal was called");
+      setTimeout(()=>{
+        window.dispatchEvent(new Event('resize'));
+      },500);
+      $('#deleteModal').modal('show');
+    }
+  //this simply releases the delete modal
+  handleChangedMind(){
+    console.log("Handle close was called");
+    $('#deleteModal').modal('hide');
+
+  }
+  //the event is deleted using the event id
+  handleDeleteButtonClick(page){
+    event = eventDetailsStore.getCurrentEvent();
+    var state = this.state;
+    state.event = event;
+    this.setState(state);
+    console.log(this.state.event.id);
+    this.state.event.eventID = this.state.event.id;
+    eventActions.deleteEvent({'eventID': this.state.event.eventID});
+    $('#deleteModal').modal('hide');
+    //then routed to dash view
+    navActions.routeToPage("dash");
+
   }
   menuItemClicked(key){
     let state = this.state;
@@ -90,6 +128,11 @@ export default class ManageView extends Component{
                   Event Managers
                 </a>
               </li>
+              <li className={menu.delete ? 'active' : ''}>
+                <a onClick={this.openDeleteModal.bind()}>
+                  Delete Event
+                </a>
+              </li>
               {invitesButton}
             </ul>
           </div>
@@ -97,7 +140,15 @@ export default class ManageView extends Component{
             <div className='col-md-12'>{mainContent}</div>
           </div>
         </div>
-
+        <Modal id="deleteModal" title = "Delete Event">
+            <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>
+              <div>
+                <div> Do you want to delete this event?</div>
+                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleDeleteButtonClick.bind(this, "dash")}>Yes</button>
+                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleChangedMind.bind(this)}>NO</button>
+              </div>
+            </div>
+        </Modal>
       </div>
     );
   }

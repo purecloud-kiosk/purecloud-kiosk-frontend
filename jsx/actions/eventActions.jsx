@@ -306,11 +306,21 @@ export function postToEventFeed(eventID, message){
     console.log(error);
   });
 }
-export function dispatchEventMessage(message){
-  console.log('dispatching')
+export function dispatchEventNotification(notification){
+  console.log('dispatching');
+  let actionType;
+  switch(notification.message.action){
+    case 'NEW_EVENT_MESSAGE':
+      actionType = eventsConstants.EVENT_MESSAGE_RECEIVED;
+      break;
+    case 'EVENT_MESSAGE_REMOVED':
+      actionType = eventsConstants.EVENT_MESSAGE_REMOVED;
+      break;
+  }
+  console.log(actionType);
   dispatcher.dispatch({
-    actionType: eventsConstants.EVENT_MESSAGE_RECEIVED,
-    data: message
+    actionType: actionType,
+    data: notification
   });
 }
 
@@ -498,7 +508,7 @@ export function getEventInvites(event){
 }
 
 export function addAttendee(userData){
-  return $.ajax({
+  $.ajax({
     url: 'api/events/addPrivateAttendee',
     method : 'POST',
     data : userData,
@@ -519,7 +529,7 @@ export function addAttendee(userData){
 }
 
 export function removeAttendee(options){
-  return $.ajax({
+  $.ajax({
     url: 'api/events/removePrivateAttendee',
     method : 'POST',
     data : {
@@ -535,6 +545,31 @@ export function removeAttendee(options){
       'data' : options.personID
     });
   }).fail((data) => {
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ERROR,
+      'data' : data
+    });
+  });
+}
+export function removeEventMessage(id){
+  $.ajax({
+    url: 'api/events/removeMessage',
+    method : 'POST',
+    data : {
+      'messageID' : id,
+    },
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done((data) => {
+    console.log('success');
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.MESSAGE_REMOVED,
+      'data' : id
+    });
+  }).fail((data) => {
+    console.log('Failed');
+    console.log(data);
     dispatcher.dispatch({
       'actionType' : eventsConstants.ERROR,
       'data' : data
