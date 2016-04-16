@@ -31,7 +31,13 @@ export default class TypeAhead extends Component{
           console.log(this.state.query);
           this.state.q = query;
           settings.type = 'GET';
-          settings.data = $.param(this.state.query) + '&query=' + query,
+          let data = '';
+          Object.keys(this.state.query).forEach((key) => {
+            if(this.state.query[key] !== undefined){
+              data += '&' + key + "=" + this.state.query[key];
+            }
+          });
+          settings.data = data + '&query=' + query,
           settings.headers = {
             'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
           };

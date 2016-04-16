@@ -140,14 +140,9 @@ export default class ManageView extends Component{
             <div className='col-md-12'>{mainContent}</div>
           </div>
         </div>
-        <Modal id="deleteModal" title = "Delete Event">
-            <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>
-              <div>
-                <div> Do you want to delete this event?</div>
-                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleDeleteButtonClick.bind(this, "dash")}>Yes</button>
-                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleChangedMind.bind(this)}>NO</button>
-              </div>
-            </div>
+        <Modal id="deleteModal" title = "Delete Event" submitText='Yes'
+          submitCallback={this.handleDeleteButtonClick.bind(this, "dash")} cancelText='No'>
+                <div> Are you sure do you want to delete this event?</div>
         </Modal>
       </div>
     );

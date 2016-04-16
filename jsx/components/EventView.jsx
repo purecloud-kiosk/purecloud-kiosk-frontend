@@ -317,6 +317,7 @@ export default class EventView extends Component {
           count++;
         });
       }
+      console.log(lineData);
       checkInChart = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>);
       lineWidget = (
         <div className="col-sm-6 col-md-4 ">

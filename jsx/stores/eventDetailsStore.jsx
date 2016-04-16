@@ -13,6 +13,7 @@ var eventFiles = null;
 var eventManagers = [];
 var eventFeed = [];
 var user = null;
+var eventCheckIns = [];
 var bulkCheckIns = [];
 var removedManager = null;
 var addedManager = null;

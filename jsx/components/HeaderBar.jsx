@@ -78,14 +78,11 @@ export default class HeaderBar extends Component {
         let nMsg;
         if(notification.viewed === false){
           newNotificationCount++;
-          /*
-          <li className='notification-message'>
-            <a href='javascript:void(0);'>
-          </a>
-        </li>
-          */
           nMsg = (
-              <a className='notification-message' onClick={this.onNotificationClick.bind(this,notification.message)}>An event with the title <strong>{notification.message.content.title}</strong> has been created</a>
+              <a className='notification-message'
+                onClick={this.onNotificationClick.bind(this,notification.message)}>
+                An event with the title <strong>{notification.message.content.title}</strong> has been created
+              </a>
           );
         }
         else{

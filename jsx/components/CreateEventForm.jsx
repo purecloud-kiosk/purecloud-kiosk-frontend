@@ -43,7 +43,7 @@ export default class Events extends Component {
   	// after component successfully rendered
   	componentDidMount(){
   			//for submission
-			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
+
 			var state = this.state;
    		//this case handles the update flag is set then do this part
   		if(this.state.update){
@@ -64,6 +64,7 @@ export default class Events extends Component {
    		}
    		//else this is a new event
    		else{
+				
 				var state = this.state;
 				state.event.startDate = this.props.startDate;
 				console.log('form rerendered');

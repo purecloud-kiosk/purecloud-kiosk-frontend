@@ -23,7 +23,7 @@ export default class Modal extends Component{
       submitText = 'Submit';
     if(submitCallback !== undefined){
       console.log('submit defined')
-      submitButton = <button type="button" className="btn btn-primary pull-left" onClick={submitCallback}>Submit</button>;
+      submitButton = <button type="button" className="btn btn-primary pull-left" onClick={submitCallback}>{submitText}</button>;
     }
     else{
       console.log('submit not defined');

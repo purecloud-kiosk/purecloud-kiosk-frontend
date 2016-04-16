@@ -21,12 +21,12 @@ class WebSocket{
       console.log(error);
     });
     this.socket.on('EVENT', (notification) => {
+      console.log(notification);
       eventActions.dispatchEventNotification(notification);
     });
     this.socket.on('ORG', (notification) => {
       console.log("ORG");
       // org wide message, so just push to notification bar
-      console.log(data);
       console.log(statsStore.getUserStats());
       if(data.posterID !== statsStore.getUserStats().personID &&
       moment(new Date()).isBefore(new Date(notification.message.content.endDate))){
