@@ -48,7 +48,6 @@ export default class EventManagerView extends Component{
         'email' : user.primaryContactInfo.email[0].ref,
         'personID' : user._id,
         'eventManager' : null,
-        'image' : user._id,
         'orgGuid'  : state.event.orgGuid
       };
       if(user.images !== undefined)

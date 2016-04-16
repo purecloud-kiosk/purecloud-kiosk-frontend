@@ -42,12 +42,12 @@ export default class EventManagerView extends Component{
     state.managerSearchResults = pureCloudStore.getSearchResults();
     state.managerSearchResults = state.managerSearchResults.map((user) => {
       personIDs += user._id + ',';
+      console.log(user);
       let data = {
         'name' : user.general.name[0].value,
         'email' : user.primaryContactInfo.email[0].ref,
         'personID' : user._id,
         'eventManager' : null,
-        'image' : user._id,
         'orgGuid'  : state.event.orgGuid
       };
       if(user.images !== undefined)

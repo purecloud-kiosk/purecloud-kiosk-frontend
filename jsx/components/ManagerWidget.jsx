@@ -66,6 +66,7 @@ export default class ManagerWidget extends Component{
   removeEventManager(){
     let user = this.state.currentUser;
     $('#removeCheck').modal('hide');
+
     eventActions.removeEventManager({
       'eventID' : this.state.event.id,
       'managerID' : user.personID
@@ -138,8 +139,14 @@ export default class ManagerWidget extends Component{
               </button>
             );
           }
+          let image = user.image;
+          if(image === undefined || image === null)
+            image = 'img/avatar.jpg';
           return (
             <tr className='animated fadeInLeft' key={user.personID}>
+              <td>
+                <img src={image} width='30px' height='30px'></img>
+              </td>
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>{managerButton}</td>
@@ -152,6 +159,7 @@ export default class ManagerWidget extends Component{
           <table className='table table-hover'>
             <thead>
               <tr>
+                <th>Image</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th></th>

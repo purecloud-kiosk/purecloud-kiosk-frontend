@@ -19,6 +19,7 @@ import InviteTableWidget from "./InviteTableWidget";
 import webSocket from '../websocket/socket';
 import CreateEventForm from './CreateEventForm';
 import UserWidget from './UserWidget';
+import FileWidget from './FileWidget';
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -333,36 +334,11 @@ export default class EventView extends Component {
       event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
       event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
       if(files.length > 0){
-        var rows = [];
-        files.forEach((file)=> {
-          rows.push(
-            <tr className='animated fadeInLeft' key={file.title}>
-              <td><a href={file.url} download>{file.fileName}</a></td>
-              <td>{moment(file.uploadDate).format('LL')}</td>
-            </tr>
-          )
-        })
         fileWidget = (
-          <div className="col-sm-6 col-md-4 ">
-            <div className='widget'>
-              <div className='widget-header'>
-                Event Files
-              </div>
-              <div className='widget-body medium no-padding'>
-                <table className='table table-hover'>
-                  <thead>
-                    <tr>
-                      <th>File Name</th>
-                      <th>Upload Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <div className='col-sm-6 col-md-4'>
+            <FileWidget files={files} size='medium'/>
           </div>
+
         );
       }
       if(feed.length === 0){

@@ -8,6 +8,7 @@ import eventDetailsStore from '../stores/eventDetailsStore';
 
 import ManageEventManagersView from './ManageEventManagersView';
 import ManageInvitesView from './ManageInvitesView';
+import ManageEventFilesView from './ManageEventFilesView';
 export default class ManageView extends Component{
   constructor(props){
     super(props);
@@ -16,7 +17,8 @@ export default class ManageView extends Component{
       'menu' : {
         'edit' : true,
         'managers' : false,
-        'invites' : false
+        'invites' : false,
+        'files' : false
       },
       'view' : 'edit'
     };
@@ -44,6 +46,9 @@ export default class ManageView extends Component{
       case 'invites':
         mainContent = (<ManageInvitesView event={event}/>);
         break;
+      case 'files':
+        mainContent = (<ManageEventFilesView event={event}/>);
+        break;
     }
     // show invites button if the event is private
     if(event.private){
@@ -56,7 +61,7 @@ export default class ManageView extends Component{
       )
     }
     return (
-      <div className='text-body'>
+      <div>
         <div className='col-md-12'>
           <div className='display-block'>
             <div className='col-md-10 col-md-offset-1'>
@@ -73,6 +78,11 @@ export default class ManageView extends Component{
               <li className={menu.edit ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'edit')}>
                   Edit Event Details
+                </a>
+              </li>
+              <li className={menu.files ? 'active' : ''}>
+                <a onClick={this.menuItemClicked.bind(this, 'files')}>
+                  Files
                 </a>
               </li>
               <li className={menu.managers ? 'active' : ''}>

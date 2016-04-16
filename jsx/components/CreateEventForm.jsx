@@ -104,7 +104,7 @@ export default class Events extends Component {
   		//reset the state
   		//this.clear();
   		var state = this.state;
-  		state.event.thumbnailUrl = eventsStore.getThumbImageCrop();
+  		state.event.thumbnailUrl = eventDetailsStore.getThumbImageCrop();
   		this.setState(state);
   		this.notificationSystem.addNotification({
     	 	message: 'Image successfully uploaded',
@@ -119,7 +119,7 @@ export default class Events extends Component {
   		//reset the state
   		//this.clear();
   		var state = this.state;
-  		state.event.imageUrl = eventsStore.getUrlImageCrop();
+  		state.event.imageUrl = eventDetailsStore.getUrlImageCrop();
 
   		this.setState(state);
   		this.notificationSystem.addNotification({

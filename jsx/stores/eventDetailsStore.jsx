@@ -22,7 +22,8 @@ var invites = [];
 var error = null;
 var currentEvent = null;
 var updateFlag = false;
-
+var addedFile = null;
+var removedFileID = null;
 function setEventManagers(managers){
   eventManagers = managers;
 }
@@ -70,6 +71,12 @@ function setAddedAttendee(user){
 }
 function setRemovedAttendee(personID){
   removedAttendee = personID;
+}
+function setAddedFile(file){
+  addedFile = file;
+}
+function setRemovedFileID(id){
+  removedFileID = id;
 }
 function setError(e){
   error = e;
@@ -121,6 +128,12 @@ class EventDetailsStore extends EventEmitter{
   getRemovedAttendee(){
     return removedAttendee;
   }
+  getAddedFile(){
+    return addedFile;
+  }
+  getRemovedFileID(){
+    return removedFileID;
+  }
   getError(){
     return error;
   }
@@ -144,10 +157,10 @@ dispatcher.register(function(payload){
       setEventFiles(payload.data);
       break;
     case eventsConstants.IMAGE_THUMB_STORED:
-      setImageThumbCrop(payload.data.fileUrl);
+      setImageThumbCrop(payload.data.url);
       break;
     case eventsConstants.IMAGE_URL_STORED:
-      setImageUrlCrop(payload.data.fileUrl);
+      setImageUrlCrop(payload.data.url);
       break;
     case eventsConstants.EVENT_FEED_RETRIEVED:
       setEventFeed(payload.data);
@@ -178,6 +191,13 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.ATTENDEE_ADDED:
       setAddedAttendee(payload.data);
+      break;
+    case eventsConstants.FILE_ADDED:
+      setAddedFile(payload.data);
+      break;
+    case eventsConstants.FILE_REMOVED:
+      console.log('removed!');
+      setRemovedFileID(payload.data);
       break;
     case eventsConstants.ERROR:
       setError(payload.data);

@@ -331,8 +331,11 @@ export function uploadImage(formData, fileType){
       if (fileType == "banner"){
         actionType = eventsConstants.IMAGE_URL_STORED;
       }
-      else{
+      else if(fileType == "thumbnail"){
         actionType = eventsConstants.IMAGE_THUMB_STORED;
+      }
+      else{
+        actionType = eventsConstants.FILE_ADDED;
       }
       dispatcher.dispatch({
         actionType: actionType,
@@ -342,6 +345,25 @@ export function uploadImage(formData, fileType){
     error: function () {
       console.log('Upload error');
     }
+  });
+}
+
+export function removeFile(fileID){
+  $.ajax('/api/file/remove', {
+    method: "POST",
+    data: {
+      'fileID' : fileID,
+    },
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done((data) => {
+    dispatcher.dispatch({
+      actionType : eventsConstants.FILE_REMOVED,
+      data : fileID
+    });
+  }).fail((error) => {
+    console.log(error);
   });
 }
 
@@ -443,11 +465,13 @@ export function removeEventManager(options){
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
     }
   }).done((data) => {
+    console.log('manager remmoval happening')
     dispatcher.dispatch({
       'actionType' : eventsConstants.MANAGER_REMOVED,
       'data' : options.managerID
     });
   }).fail((data) => {
+    console.log(data);
     dispatcher.dispatch({
       'actionType' : eventsConstants.ERROR,
       'data' : data
