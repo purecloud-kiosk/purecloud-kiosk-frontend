@@ -77,9 +77,9 @@ export default class PieChartWidget extends Component {
         console.log('chart data for scatter');
         console.log(chartData);
         chartOptions = {
-            chart: {
-              'type' : 'scatter'
-            },
+            // chart: {
+            //   'type' : 'scatter'
+            // },
             title: {
                 text: 'Check In Chart'
             },
@@ -88,19 +88,34 @@ export default class PieChartWidget extends Component {
             },
             xAxis: {
                 type: 'datetime',
+                title: {
+                    text: 'Check In Times'
+                }
             },
             yAxis: {
                 title: {
-                    text: 'Check In Times'
+                    text: 'Check Ins'
                 }
             },
             legend: {
                 enabled: false
             },
             plotOptions: {
-                scatter: {
+                // scatter: {
+                //     marker: {
+                //         radius: 2
+                //     },
+                //     states: {
+                //         hover: {
+                //             enabled : true
+                //         }
+                //     }
+                // }
+                series: {
                     marker: {
-                        radius: 2
+                        enabled : true,
+                        symbol : 'circle',
+                        radius: 3
                     },
                     states: {
                         hover: {
@@ -111,7 +126,7 @@ export default class PieChartWidget extends Component {
             },
             tooltip: {
                 formatter: function(){
-                  return 'Check In: <b>' + new Date(this.x) + '</b>';
+                  return 'Check In: <b>' + moment(this.x).format('LLL') + '</b>';
                 }
             },
             series: [{

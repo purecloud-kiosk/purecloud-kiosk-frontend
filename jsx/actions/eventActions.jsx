@@ -209,7 +209,7 @@ export function deleteEvent(event){
 
 export function getEventCheckIns(event){
   $.ajax({
-    url: 'api/events/getEventAttendees?checkedIn=true&eventID=' + event,
+    url: 'api/events/getEventAttendees?getAll=true&checkedIn=true&eventID=' + event,
     method : 'GET',
     headers : {
       "Authorization" : "bearer " + requestConstants.AUTH_TOKEN

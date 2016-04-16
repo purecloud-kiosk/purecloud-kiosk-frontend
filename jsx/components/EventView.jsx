@@ -21,6 +21,7 @@ import CreateEventForm from './CreateEventForm';
 import UserWidget from './UserWidget';
 import FileWidget from './FileWidget';
 import EventFeed from './EventFeed';
+import EmbeddedMap from './EmbeddedMap';
 
 export default class EventView extends Component {
   constructor(props){
@@ -185,7 +186,7 @@ export default class EventView extends Component {
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, inviteWidget, invitedCheckInsWidget, eventFeed, checkInChart,
+    let view, checkInWidget, inviteWidget, mapWidget, invitedCheckInsWidget, eventFeed, checkInChart,
       lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = "public";;
     if(event != null){
@@ -311,7 +312,7 @@ export default class EventView extends Component {
         checkIns.forEach((checkIn) => {
           if(checkIn.timestamp !== undefined){
             lineData.data.push([
-              new Date(checkIn.timestamp).getTime() / 1000, count
+              new Date(checkIn.timestamp).getTime(), count
             ]);
           }
           count++;
@@ -375,6 +376,22 @@ export default class EventView extends Component {
           </div>
         </div>
       );
+      mapWidget = (
+        <div className="col-sm-6 col-md-4">
+          <div className='widget'>
+            <div className='widget-header'>
+              <i className="fa fa-user"></i>
+              Event Feed
+               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openFeedModal.bind(this)}>
+                <i className="fa fa-cog fa-lg"></i> Expand
+              </a>
+            </div>
+            <div className='widget-body medium no-padding'>
+              <EmbeddedMap location={event.location}/>
+            </div>
+          </div>
+        </div>
+      );
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
@@ -400,6 +417,7 @@ export default class EventView extends Component {
             </div>
           </div>
           {descriptionWidget}
+          {mapWidget}
           {feedWidget}
           {fileWidget}
           {checkInWidget}
