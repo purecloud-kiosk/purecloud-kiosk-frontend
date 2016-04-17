@@ -1,15 +1,17 @@
+'use strict';
 /**
  *  This server is used to mainly host the front-end of the web app.
  *
  *  For anything other than accessing the web app is forwarded the api server.
  **/
-var express = require('express');
-var request = require('request');
-var compression = require('compression');
-var favicon = require('serve-favicon');
-var httpProxy = require('http-proxy');
-var url = require('url');
-var apiServer = 'http://localhost:8080'//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000';//process.env.NODE_ENV === 'production' ?  'http://localhost:8000': 'http://localhost:8080';//'http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000';
+const express = require('express');
+const request = require('request');
+const compression = require('compression');
+const favicon = require('serve-favicon');
+const httpProxy = require('http-proxy');
+const url = require('url');
+const config = require('./config.json')
+const apiServer = config.apiServer;
 // localhost
 var proxy = httpProxy.createProxyServer();
 

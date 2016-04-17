@@ -60,15 +60,6 @@ export default class Events extends Component {
 				var startDate = moment.utc(event.startDate).toDate();
 				state.startDate = moment(startDate).format('LL');
 				state.startTime = moment(startDate).format('LT');
-   			this.setState(state);
-   		}
-   		//else this is a new event
-   		else{
-				
-				var state = this.state;
-				state.event.startDate = this.props.startDate;
-				console.log('form rerendered');
-				this.setState(state);
    		}
 			this.notificationSystem = this.refs.notificationSystem;
 			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
@@ -76,8 +67,8 @@ export default class Events extends Component {
    		this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
 			this.state.bannerListener = eventDetailsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 			console.log(endDate);
-			state.endDate = moment(endDate).format('LL');
-			state.endTime = moment(endDate).format('LT');
+			state.endDate = moment(state.event.endDate).format('LL');
+			state.endTime = moment(state.event.endDate).format('LT');
    		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
 			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 
@@ -96,6 +87,7 @@ export default class Events extends Component {
 			});
 			// seems to not render properly without this...
 			$('#privacy-checkbox').bootstrapSwitch('_width');
+			this.setState(state);
   	}
   	//release the listeners
   	componentWillUnmount(){
@@ -311,8 +303,8 @@ export default class Events extends Component {
 	  }
 	}
 	let submit = (
-		<div>
-			<label className = 'form-submit'></label>
+		<div className='pull-left'>
+			<label className='form-submit'></label>
 			<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
 		</div>
 	);
@@ -378,6 +370,7 @@ export default class Events extends Component {
 					<label className= 'form-description'>Description of Event</label>
 					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
+				<br></br>
 				{submit}
 				<div>
   				  <NotificationSystem ref='notificationSystem' style={style}/>

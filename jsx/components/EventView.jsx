@@ -22,7 +22,7 @@ import UserWidget from './UserWidget';
 import FileWidget from './FileWidget';
 import EventFeed from './EventFeed';
 import EmbeddedMap from './EmbeddedMap';
-
+import CheckInTable from './CheckInTable'
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -105,7 +105,11 @@ export default class EventView extends Component {
     this.state.deleteListener.remove();
     this.state.getEventCheckInsListener.remove();
     this.state.eventFilesListener.remove();
+    this.state.eventFeedListener.remove();
     this.state.refreshListener.remove();
+    this.state.userListener.remove();
+    this.state.eventMessageListener.remove();
+    this.state.messageRemovedListener.remove();
   }
   handleEventUpdated(){
     eventActions.setUpdateFlag(true);
@@ -167,15 +171,11 @@ export default class EventView extends Component {
   openFeedModal(){
     $('#feedModal').modal('show');
   }
-  openManageModal(){
-      console.log("this was called");
-      setTimeout(()=>{
-        window.dispatchEvent(new Event('resize'));
-      },500);
-      $('#manageModal').modal('show');
-    }
-  handleInvites(){
-    console.log("invites will be mailed");
+  openMapModal(){
+    $('#mapModal').modal('show');
+  }
+  openCheckInModal(){
+    $('#checkInModal').modal('show');
   }
   navToManageView(){
     navActions.routeToPage('manage');
@@ -186,7 +186,7 @@ export default class EventView extends Component {
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, inviteWidget, mapWidget, invitedCheckInsWidget, eventFeed, checkInChart,
+    let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, invitedCheckInsWidget, eventFeed, checkInChart,
       lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = "public";;
     if(event != null){
@@ -260,7 +260,7 @@ export default class EventView extends Component {
           invitedCheckInsWidget = (
               <InviteTableWidget />
           );
-          inviteWidget = (
+          invitePieChart = (
             <div className="col-sm-6 col-md-4 ">
               <div className='widget'>
                 <div className='widget-header'>
@@ -273,7 +273,7 @@ export default class EventView extends Component {
             </div>
           );
         }
-        checkInWidget = (
+        checkInPieChart = (
           <div className="col-sm-6 col-md-4 ">
             <div className='widget'>
               <div className='widget-header'>
@@ -287,7 +287,7 @@ export default class EventView extends Component {
         );
       }
       else if(stats !== null){ // public, so show ticker instead
-        checkInWidget = (
+        checkInPieChart = (
           <div className='col-sm-6 col-md-4 '>
             <TickerWidget value={stats.checkInStats.checkedIn}/>
           </div>
@@ -318,7 +318,22 @@ export default class EventView extends Component {
           count++;
         });
       }
-      console.log(lineData);
+      checkInWidget = (
+        <div className="col-sm-6 col-md-4 ">
+          <div className='widget animated fadeInDown'>
+            <div className='widget-header'>
+              <i className="fa fa-user"></i>
+              Event Check Ins
+               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openCheckInModal.bind(this)}>
+                <i className="fa fa-cog fa-lg"></i> Expand
+               </a>
+            </div>
+            <div className='widget-body medium no-padding'>
+              <CheckInTable checkIns={checkIns}/>
+            </div>
+          </div>
+        </div>
+      );
       checkInChart = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>);
       lineWidget = (
         <div className="col-sm-6 col-md-4 ">
@@ -335,8 +350,7 @@ export default class EventView extends Component {
             </div>
           </div>
         </div>
-      )
-
+      );
       event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
       event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
       if(files.length > 0){
@@ -344,7 +358,6 @@ export default class EventView extends Component {
           <div className='col-sm-6 col-md-4'>
             <FileWidget files={files} size='medium'/>
           </div>
-
         );
       }
       if(feed.length === 0){
@@ -358,7 +371,7 @@ export default class EventView extends Component {
         eventFeed = (
           <EventFeed feed={feed}
             managerAccess={statsStore.getUserStats().userType === 'admin' || stats.userIsManager}/>
-        )
+        );
       }
       feedWidget = (
         <div className="col-sm-6 col-md-4">
@@ -380,9 +393,9 @@ export default class EventView extends Component {
         <div className="col-sm-6 col-md-4">
           <div className='widget'>
             <div className='widget-header'>
-              <i className="fa fa-user"></i>
-              Event Feed
-               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openFeedModal.bind(this)}>
+              <i className="fa fa-map"></i>
+              Event Location
+               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openMapModal.bind(this)}>
                 <i className="fa fa-cog fa-lg"></i> Expand
               </a>
             </div>
@@ -420,9 +433,10 @@ export default class EventView extends Component {
           {mapWidget}
           {feedWidget}
           {fileWidget}
-          {checkInWidget}
-          {inviteWidget}
+          {checkInPieChart}
+          {invitePieChart}
           {lineWidget}
+          {checkInWidget}
         </div>
       );
     }
@@ -469,20 +483,6 @@ export default class EventView extends Component {
             {eventFeed}
           </div>
         </Modal>
-        <Modal id="manageModal" title = "Manage Events">
-            <div id='selectManage' style={{'width' : '100%', 'height' : '400px'}}>
-              <div>
-                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.openDeleteModal.bind(this)}>Delete Event</button>
-                <button className = "btn btn-primary btn-sm text-center" type = "button" onClick = {this.handleEventUpdated.bind(this)}>Update Event</button>
-                  <div>The purpose of this modal is to allow for management of events</div>
-                  <div>
-                    Please attend the events you are asked to attend.
-                  </div>
-                  <InviteTableWidget/>
-                  <button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick = {this.handleInvites.bind(this)}>Invite Org Attendees</button>
-                </div>
-            </div>
-        </Modal>
         <Modal id="deleteModal" title = "Delete Event">
             <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>
               <div>
@@ -494,6 +494,16 @@ export default class EventView extends Component {
         </Modal>
         <Modal id="userModal" title = "User">
           {userModalContent}
+        </Modal>
+        <Modal id="checkInModal" title = "Check Ins">
+          <div className='map-container'>
+            <CheckInTable checkIns={checkIns}/>
+          </div>
+        </Modal>
+        <Modal id="mapModal" title="Event Location" cancelText='Close' size='modal-lg'>
+          <div className='map-container'>
+            <EmbeddedMap location={event.location}/>
+          </div>
         </Modal>
       </div>
     );

@@ -1,0 +1,4 @@
+{
+  "apiServer" : "http://localhost:8080",
+  "socketEndpoint" : "http://localhost:8080/ws"
+}

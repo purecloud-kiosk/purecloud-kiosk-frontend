@@ -106,7 +106,7 @@ export default class TypeAhead extends Component{
     return (
       <form onSubmit={this.handleSubmit.bind(this)}>
         <div class='form-group'>
-          <label for={id}>Search</label>
+          <label for={id}>Search </label>
           <input id={id} className='form-control' type='text' onChange={this.handleInputChange.bind(this)}
             placeholder='Enter your search query here'/>
         </div>

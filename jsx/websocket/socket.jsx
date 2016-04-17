@@ -3,21 +3,22 @@ import navConstants from '../constants/navConstants';
 import * as navActions from '../actions/navActions';
 import * as eventActions from '../actions/eventActions';
 import statsStore from '../stores/statsStore';
+import config from '../../config.json';
 // init this.socket connection and handle all routing of events here
 class WebSocket{
   constructor(){
-    this.socket =  io('http://localhost:8080/ws');//io('http://ec2-54-213-9-55.us-west-2.compute.amazonaws.com:8000/ws');
+    this.socket =  io(config.socketEndpoint);
   }
   init(notificationSystem){
     this.notificationSystem = notificationSystem;
-    this.socket.on('connect', ()=>{
+    this.socket.on('connect', () => {
       console.log('connected');
       this.socket.emit('auth', {'token': requestConstants.AUTH_TOKEN});
     });
-    this.socket.on('subResponse', ()=> {
-      console.log('subbed');
+    this.socket.on('subResponse', () => {
+      console.log('subbed to channel');
     });
-    this.socket.on('subError', (error)=> {
+    this.socket.on('subError', (error) => {
       console.log(error);
     });
     this.socket.on('EVENT', (notification) => {
@@ -25,8 +26,6 @@ class WebSocket{
       eventActions.dispatchEventNotification(notification);
     });
     this.socket.on('ORG', (notification) => {
-      console.log("ORG");
-      // org wide message, so just push to notification bar
       console.log(statsStore.getUserStats());
       if(data.posterID !== statsStore.getUserStats().personID &&
       moment(new Date()).isBefore(new Date(notification.message.content.endDate))){
