@@ -36,7 +36,7 @@ export function getPublicEvents(limit, page){
 
 export function getPrivateEvents(limit, page){
   $.ajax({
-    url : 'api/events/private?limit='+ limit +'&page=' + page,
+    url : 'api/events/private?sort=asc&limit='+ limit +'&page=' + page,
     method : 'GET',
     headers : {
       'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
@@ -54,7 +54,7 @@ export function getPrivateEvents(limit, page){
 
 export function getUpcomingEventsManaging(limit, page){
   $.ajax({
-    url : 'api/events/managing?upcoming=true&limit='+ limit +'&page=' + page,
+    url : 'api/events/managing?upcoming=true&sort=asc&limit='+ limit +'&page=' + page,
     method : 'GET',
     headers : {
       'Authorization' : 'bearer ' + requestConstants.AUTH_TOKEN
@@ -181,8 +181,8 @@ export function getCalendarEvents(before, after){
     console.log("ERROR : ");
     console.log(error);
   });
-
 }
+
 export function deleteEvent(event){
   console.log('deleting: ');
   console.log(event);

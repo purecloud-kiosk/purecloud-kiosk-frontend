@@ -89,7 +89,9 @@ export default class EventManagerView extends Component{
     const {userSearchResults, invites, event} = this.state;
     return (
       <div className='col-sm-12'>
-        <PeopleTypeAhead id='inviteTypeAhead'/>
+        <div className='form-group'>
+          <PeopleTypeAhead id='inviteTypeAhead'/>
+        </div>
         <InviteWidget title='Search Results' event={event} users={userSearchResults}/>
         <InviteWidget title='Event Attendees' event={event} users={invites} removeOnDelete={true}/>
       </div>

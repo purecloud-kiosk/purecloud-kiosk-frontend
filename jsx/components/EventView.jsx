@@ -53,6 +53,11 @@ export default class EventView extends Component {
   }
   // on mount, add all of the listeners needed for the view to function
   componentDidMount(){
+    this.addListeners();
+    this.refreshView();
+
+  }
+  addListeners(){
     webSocket.subscribe(this.state.event.id);
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.deleteListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
@@ -67,11 +72,22 @@ export default class EventView extends Component {
       eventDetailsStore.addListener(eventsConstants.NEW_CHECKINS_AVAILABLE, this.retrieveCheckIns.bind(this));
     this.state.incomingCheckInListener =
       eventDetailsStore.addListener(eventsConstants.NEW_CHECKIN_RETRIEVED, this.updateCheckIns.bind(this, true));
-    this.refreshView();
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
   }
-
+  removeListeners(){
+    webSocket.unsubscribe(this.state.event.id);
+    this.state.eventStatsListener.remove();
+    this.state.deleteListener.remove();
+    this.state.getEventCheckInsListener.remove();
+    this.state.eventFilesListener.remove();
+    this.state.eventFeedListener.remove();
+    this.state.refreshListener.remove();
+    this.state.userListener.remove();
+    this.state.eventMessageListener.remove();
+    this.state.messageRemovedListener.remove();
+    this.state.incomingCheckInListener.remove();
+  }
   showUser(){
     console.log('called');
     let state = this.state;
@@ -94,13 +110,16 @@ export default class EventView extends Component {
     console.log('refreshing');
     var state = this.state;
     state.event = eventDetailsStore.getCurrentEvent();
-    statsActions.getEventStats(state.event.id);
-    eventActions.getEventCheckIns(state.event.id);
-    setTimeout(() => {
-      eventActions.getEventFiles(state.event.id);
-      eventActions.getEventFeed(state.event.id);
-    },1500);
+    state.stats = null;
+    state.files = [];
+    state.feed = [];
+    state.managers = [];
+    state.message = '';
+    state.checkIns = null;
     this.setState(state);
+    this.removeListeners();
+    this.addListeners();
+
 
   }
   updateEventFiles(){
@@ -109,17 +128,8 @@ export default class EventView extends Component {
     this.setState(state);
   }
   componentWillUnmount(){
-    webSocket.unsubscribe(this.state.event.id);
-    this.state.eventStatsListener.remove();
-    this.state.deleteListener.remove();
-    this.state.getEventCheckInsListener.remove();
-    this.state.eventFilesListener.remove();
-    this.state.eventFeedListener.remove();
-    this.state.refreshListener.remove();
-    this.state.userListener.remove();
-    this.state.eventMessageListener.remove();
-    this.state.messageRemovedListener.remove();
-    this.state.incomingCheckInListener.remove();
+
+    this.removeListeners();
   }
   handleEventUpdated(){
     eventActions.setUpdateFlag(true);
@@ -200,7 +210,7 @@ export default class EventView extends Component {
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, invitedCheckInsWidget, eventFeed, checkInChart,
+    let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, eventFeed, checkInChart,
       lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = "public";;
     if(event != null){
@@ -271,9 +281,6 @@ export default class EventView extends Component {
                 }
               ]
           }];
-          invitedCheckInsWidget = (
-              <InviteTableWidget />
-          );
           invitePieChart = (
             <div className="col-sm-6 col-md-4 ">
               <div className='widget'>
@@ -455,12 +462,6 @@ export default class EventView extends Component {
         </div>
       );
     }
-    /*
-    <div className="col-sm-6 col-md-4 ">
-        {invitedCheckInsWidget}
-    </div>
-    */
-    console.log('about to complete render');
     let userModalContent = (
       <div>
         <div>Empty</div>

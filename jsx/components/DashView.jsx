@@ -134,7 +134,7 @@ export default class Dash extends Component {
         <EventsTableWidget title='Upcoming Private Events' size='medium' faIcon='fa-user-secret' events={privateEvents}/>
       </div>
     );
-    if(barChartData !== null){
+    if(barChartData !== null && barChartData.data[0] !== undefined){
       if(barChartData.data[0].length !== 0){
         barChart = (
           <div className="col-md-12">
