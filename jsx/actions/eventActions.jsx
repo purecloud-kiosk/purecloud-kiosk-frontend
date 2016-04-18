@@ -316,6 +316,12 @@ export function dispatchEventNotification(notification){
     case 'EVENT_MESSAGE_REMOVED':
       actionType = eventsConstants.EVENT_MESSAGE_REMOVED;
       break;
+    case 'BULK_CHECKIN':
+      actionType = eventsConstants.NEW_CHECKINS_AVAILABLE;
+      break;
+    case 'NEW_CHECKIN':
+      actionType = eventsConstants.NEW_CHECKIN_RETRIEVED;
+      break;
   }
   console.log(actionType);
   dispatcher.dispatch({

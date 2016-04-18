@@ -28,7 +28,7 @@ export default class CheckInTable extends Component{
           image = 'img/avatar.jpg';
         }
         rows.push(
-            <tr key={checkIns[i].personID}>
+            <tr className='animated fadeInLeft' key={checkIns[i].personID}>
               <td><img width='30px' height='30px' src={image}/></td>
               <td>{checkIns[i].name}</td>
               <td>{moment(checkIns[i].timestamp).format('LLL')}</td>

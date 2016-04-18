@@ -4,17 +4,27 @@ import React, { Component } from 'react';
 export default class TickerWidget extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      value : props.value,
+      odometer : null
+    };
   }
+  componentWillReceiveProps(newProps){
+    this.state.value = newProps.value;
+    this.state.odometer.update(newProps.value);
+    this.setState(newProps);
+  }
+
   componentDidMount(){
-    var {value} = this.props;
-    var odometer = new Odometer({
+    let state = this.state;
+    state.odometer = new Odometer({
       el: document.querySelector('.checked-in-odometer'),
       value : 0
     });
     setTimeout( function(){
-      odometer.update(value);
+      state.odometer.update(value);
     }, 500);
-
+    this.setState(state);
   }
   render(){
     return(

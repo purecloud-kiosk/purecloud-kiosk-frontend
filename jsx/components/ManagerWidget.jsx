@@ -74,7 +74,7 @@ export default class ManagerWidget extends Component{
   }
   onRemoveFailed(){
     let error = eventDetailsStore.getError();
-    if(JSON.parse(error.responseText).code === 24){
+    if(error.responseJSON.code === 24){
       $('#lastManager').modal('show');
     }
   }

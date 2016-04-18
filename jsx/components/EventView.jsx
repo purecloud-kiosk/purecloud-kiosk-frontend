@@ -63,6 +63,10 @@ export default class EventView extends Component {
     this.state.eventFeedListener = eventDetailsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
     this.state.userListener = eventDetailsStore.addListener(eventsConstants.USER_RETRIEVED, this.showUser.bind(this));
     this.state.messageRemovedListener = eventDetailsStore.addListener(eventsConstants.EVENT_MESSAGE_REMOVED, this.setFeed.bind(this));
+    this.state.bulkCheckInsListener=
+      eventDetailsStore.addListener(eventsConstants.NEW_CHECKINS_AVAILABLE, this.retrieveCheckIns.bind(this));
+    this.state.incomingCheckInListener =
+      eventDetailsStore.addListener(eventsConstants.NEW_CHECKIN_RETRIEVED, this.updateCheckIns.bind(this, true));
     this.refreshView();
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
@@ -73,6 +77,11 @@ export default class EventView extends Component {
     let state = this.state;
     state.user = eventDetailsStore.getCurrentUser();
     this.setState(state);
+  }
+  retrieveCheckIns(){
+    console.log('Retrieving more checkins');
+    eventActions.getEventCheckIns(this.state.event.id);
+    statsActions.getEventStats(this.state.event.id);
   }
   setFeed(){
     console.log('feed set');
@@ -110,6 +119,7 @@ export default class EventView extends Component {
     this.state.userListener.remove();
     this.state.eventMessageListener.remove();
     this.state.messageRemovedListener.remove();
+    this.state.incomingCheckInListener.remove();
   }
   handleEventUpdated(){
     eventActions.setUpdateFlag(true);
@@ -149,14 +159,18 @@ export default class EventView extends Component {
   }
 
   updateStats(){
+    console.log('new stats came up')
     let state = this.state;
     state.stats = statsStore.getEventStats();
     this.setState(state);
   }
 
-  updateCheckIns(){
+  updateCheckIns(increment){
     let state = this.state;
     state.checkIns = eventDetailsStore.getCheckIns();
+    if(increment){
+      state.stats.checkInStats.checkedIn++;
+    }
     this.setState(state);
   }
   openDescModal(){
@@ -287,8 +301,9 @@ export default class EventView extends Component {
         );
       }
       else if(stats !== null){ // public, so show ticker instead
+        console.log(stats.checkInStats.checkedIn);
         checkInPieChart = (
-          <div className='col-sm-6 col-md-4 '>
+          <div className='col-sm-6 col-md-4'>
             <TickerWidget value={stats.checkInStats.checkedIn}/>
           </div>
         );

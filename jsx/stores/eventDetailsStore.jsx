@@ -95,6 +95,9 @@ function setRemovedFileID(id){
 function setError(e){
   error = e;
 }
+function addCheckIn(data){
+  eventCheckIns.push(data.message.content);
+}
 
 class EventDetailsStore extends EventEmitter{
   getCurrentEvent(){
@@ -193,6 +196,9 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.USER_RETRIEVED:
       setUser(payload.data);
+      break;
+    case eventsConstants.NEW_CHECKIN_RETRIEVED:
+      addCheckIn(payload.data);
       break;
     case eventsConstants.BULK_CHECKINS_RETRIEVED:
       setBulkCheckIns(payload.data);
