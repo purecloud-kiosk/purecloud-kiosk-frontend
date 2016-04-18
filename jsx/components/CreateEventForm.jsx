@@ -20,8 +20,8 @@ export default class Events extends Component {
     	this.state = {
     		startDate : moment(event.startDate).format('LL') || null,
     		startTime : moment(event.startDate).format('LT') || null,
-    		endDate : moment(event.endDate).format('LL') || null,
-    		endTime : moment(event.endDate).format('LT') || null,
+    		// endDate : moment(event.endDate).format('LL') || null,
+    		// endTime : moment(event.endDate).format('LT') || null,
     		//outside the event variables important to time/date/success
     		success : false,
 
@@ -60,16 +60,32 @@ export default class Events extends Component {
 				var startDate = moment.utc(event.startDate).toDate();
 				state.startDate = moment(startDate).format('LL');
 				state.startTime = moment(startDate).format('LT');
+
+				// state.endDate = moment(endDate).format('LL');
+				// state.endTime = moment(endDate).format('LT');
+   			this.setState(state);
    		}
+   		//else this is a new event
+   		else{
+				
+				var state = this.state;
+				state.event.startDate = this.props.startDate;
+				console.log('form rerendered');
+				this.setState(state);
+
+   		}
+   			//notification and listeners established
 			this.notificationSystem = this.refs.notificationSystem;
 			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
 			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
-   		this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
+   			this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
 			this.state.bannerListener = eventDetailsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 			console.log(endDate);
-			state.endDate = moment(state.event.endDate).format('LL');
-			state.endTime = moment(state.event.endDate).format('LT');
-   		this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
+
+			state.endDate = moment(endDate).format('LL');
+			state.endTime = moment(endDate).format('LT');
+   			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
+
 			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 
 			$('#privacy-checkbox').bootstrapSwitch({
@@ -168,12 +184,15 @@ export default class Events extends Component {
 	handleSubmit(){
 		this.handleButtonClick();
 	}
+	//actions associated with handleButtonClick()
 	handleButtonClick(){
 		this.state.event.startDate = moment(this.state.startDate + " " +  this.state.startTime).format();
 		this.state.event.endDate = moment(this.state.endDate + " " +  this.state.endTime).format();
 		console.log('handleButtonClick');
 		console.log('this is the event data that is getting sent off');
 		console.log(this.state.event);
+		//My attempt to grab error code
+		console.log("this is an error code" + this.state.error.responseJSON.code);
 		if(this.state.update){
 			this.state.event.eventID = this.state.event.id;
 			eventActions.updateEvent(this.state.event);
@@ -181,6 +200,7 @@ export default class Events extends Component {
 		else{
 			eventActions.createEvent(this.state.event);
 		}
+
 	}
 	//everything was updated successfully
 	handleEventUpdatedSuccessfully(){
@@ -370,7 +390,6 @@ export default class Events extends Component {
 					<label className= 'form-description'>Description of Event</label>
 					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
-				<br></br>
 				{submit}
 				<div>
   				  <NotificationSystem ref='notificationSystem' style={style}/>
@@ -381,6 +400,7 @@ export default class Events extends Component {
 					<ImageCropper id='thumbCropper' type = {this.state.imageType} ></ImageCropper>
 					<div className>
 						<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this, 'thumbCropper')}>Save Image</button>
+	       			
        			 	</div>
        			 </div>
 	   		</Modal>
@@ -400,3 +420,5 @@ export default class Events extends Component {
 					// 	<a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openImageModal.bind(this)}>Crop Image
 					// 	</a>
 					// </div>
+					
+						
