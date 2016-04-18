@@ -26,6 +26,8 @@ import CheckInTable from './CheckInTable'
 export default class EventView extends Component {
   constructor(props){
     super(props);
+    console.log('CONSTRUCTOR \n\n\n\n\n\n\n\n\n\n');
+    console.log(eventDetailsStore.getCurrentEvent());
     this.state = {
       'event' : eventDetailsStore.getCurrentEvent(),
       'files' : [],
@@ -53,9 +55,10 @@ export default class EventView extends Component {
   }
   // on mount, add all of the listeners needed for the view to function
   componentDidMount(){
+    console.log('mounting the event view');
     this.addListeners();
+    console.log(this.state.event);
     this.refreshView();
-
   }
   addListeners(){
     webSocket.subscribe(this.state.event.id);
@@ -63,7 +66,7 @@ export default class EventView extends Component {
     this.state.deleteListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventDetailsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
     this.state.eventFilesListener = eventDetailsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
-    this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
+    this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.remount.bind(this));
     this.state.eventMessageListener = eventDetailsStore.addListener(eventsConstants.EVENT_MESSAGE_RECEIVED, this.setFeed.bind(this));
     this.state.eventFeedListener = eventDetailsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
     this.state.userListener = eventDetailsStore.addListener(eventsConstants.USER_RETRIEVED, this.showUser.bind(this));
@@ -74,19 +77,25 @@ export default class EventView extends Component {
       eventDetailsStore.addListener(eventsConstants.NEW_CHECKIN_RETRIEVED, this.updateCheckIns.bind(this, true));
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
+    console.log(this.state);
+    this.setState(this.state);
   }
   removeListeners(){
+    console.log('removing listeners');
     webSocket.unsubscribe(this.state.event.id);
+    // old
     this.state.eventStatsListener.remove();
     this.state.deleteListener.remove();
     this.state.getEventCheckInsListener.remove();
     this.state.eventFilesListener.remove();
-    this.state.eventFeedListener.remove();
     this.state.refreshListener.remove();
-    this.state.userListener.remove();
     this.state.eventMessageListener.remove();
+    this.state.eventFeedListener.remove();
+    this.state.userListener.remove();
     this.state.messageRemovedListener.remove();
+    this.state.bulkCheckInsListener.remove()
     this.state.incomingCheckInListener.remove();
+    this.setState(this.state);
   }
   showUser(){
     console.log('called');
@@ -96,6 +105,7 @@ export default class EventView extends Component {
   }
   retrieveCheckIns(){
     console.log('Retrieving more checkins');
+    console.log(this.state.event);
     eventActions.getEventCheckIns(this.state.event.id);
     statsActions.getEventStats(this.state.event.id);
   }
@@ -105,6 +115,12 @@ export default class EventView extends Component {
     state.feed = eventDetailsStore.getEventFeed();
     console.log(state.feed);
     this.setState(state);
+  }
+  remount(){
+    this.removeListeners();
+    this.state.event = eventDetailsStore.getCurrentEvent();
+    this.addListeners();
+    this.refreshView();
   }
   refreshView(){
     console.log('refreshing');
@@ -117,10 +133,13 @@ export default class EventView extends Component {
     state.message = '';
     state.checkIns = null;
     this.setState(state);
-    this.removeListeners();
-    this.addListeners();
-
-
+    console.log(state.event.id);
+    statsActions.getEventStats(state.event.id);
+    eventActions.getEventCheckIns(state.event.id);
+    setTimeout(() => {
+      eventActions.getEventFiles(state.event.id);
+      eventActions.getEventFeed(state.event.id);
+    },1500);
   }
   updateEventFiles(){
     let state = this.state;
@@ -128,7 +147,8 @@ export default class EventView extends Component {
     this.setState(state);
   }
   componentWillUnmount(){
-
+    debugger;
+    console.log('unmounting the event view');
     this.removeListeners();
   }
   handleEventUpdated(){
@@ -311,7 +331,7 @@ export default class EventView extends Component {
         console.log(stats.checkInStats.checkedIn);
         checkInPieChart = (
           <div className='col-sm-6 col-md-4'>
-            <TickerWidget value={stats.checkInStats.checkedIn}/>
+            <TickerWidget id={'a'+event.id} value={stats.checkInStats.checkedIn}/>
           </div>
         );
       }
