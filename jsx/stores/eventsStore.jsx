@@ -89,6 +89,12 @@ dispatcher.register(function(payload){
     case eventsConstants.CAL_EVENTS_FETCHED:
       setCalendarEvents(payload.data);
       break;
+    case eventsConstants.CAL_EVENTS_FETCHED:
+      setCalendarEvents(payload.data);
+      break;
+    case eventsConstants.EVENT_CHECKIN_COUNTS_RETRIEVED:
+      setCheckInCountArray(payload.data);
+      break;
     default:
       //no op
         break;

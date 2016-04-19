@@ -118,7 +118,8 @@ export default class Histogram extends Component {
             min: 0,
             title: {
                 text: 'Check In Counts'
-            }
+            },
+            tickInterval : 1,
         },
         tooltip: {
             headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
