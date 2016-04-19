@@ -106,13 +106,17 @@ export default class Histogram extends Component {
             type: 'column'
         },
         title: {
-            text: 'Most Recent Event Outcomes'
+            text: ''
         },
         xAxis: {
-            //categories: chartData.categories,
-            //crosshair: true,
             startOnTick : true,
-            type : 'datetime',
+            labels : {
+              formatter : function(){
+                console.log('xaxis');
+                console.log(this);
+                return moment(this.value).format('LLL');
+              }
+            }
         },
         yAxis: {
             min: 0,
@@ -122,12 +126,17 @@ export default class Histogram extends Component {
             tickInterval : 1,
         },
         tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y} check ins</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
+            // headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            // pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            //     '<td style="padding:0"><b>{point.y} check ins</b></td></tr>',
+            // footerFormat: '</table>',
+            formatter : function(){
+              return  '<span style="font-size:10px">' + moment(this.x).format('LLL') + '</span><table>'
+                + '<tr><td style="padding:0">+ ' + this.series.name + ': </td>' +
+                    '<td style="padding:0"><b>' + this.y +  ' check ins</b></td></tr>';
+            },
+            // shared: true,
+            // useHTML: true
         },
         plotOptions: {
             column: {
