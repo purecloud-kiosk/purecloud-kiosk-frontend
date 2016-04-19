@@ -22,7 +22,8 @@ import UserWidget from './UserWidget';
 import FileWidget from './FileWidget';
 import EventFeed from './EventFeed';
 import EmbeddedMap from './EmbeddedMap';
-import CheckInTable from './CheckInTable'
+import CheckInTable from './CheckInTable';
+import Histogram from './Histogram';
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -147,7 +148,6 @@ export default class EventView extends Component {
     this.setState(state);
   }
   componentWillUnmount(){
-    debugger;
     console.log('unmounting the event view');
     this.removeListeners();
   }
@@ -224,6 +224,12 @@ export default class EventView extends Component {
   navToManageView(){
     navActions.routeToPage('manage');
   }
+  openHistogramModal(){
+    setTimeout(()=>{
+      window.dispatchEvent(new Event('resize'));
+    },500);
+    $('#histogramModal').modal('show');
+  }
   render(){
     const {event, files, stats, checkIns, chartOptions, feed, managers} = this.state;
     console.log(managers);
@@ -231,7 +237,7 @@ export default class EventView extends Component {
     console.log(event);
     console.log(files);
     let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, eventFeed, checkInChart,
-      lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
+      lineWidget, barWidget, histogram, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = "public";;
     if(event != null){
       descriptionWidget = (
@@ -351,14 +357,24 @@ export default class EventView extends Component {
       };
       if(checkIns !== null){
         let count = 1;
-        checkIns.forEach((checkIn) => {
-          if(checkIn.timestamp !== undefined){
-            lineData.data.push([
-              new Date(checkIn.timestamp).getTime(), count
-            ]);
-          }
-          count++;
-        });
+        histogram = <Histogram checkIns={checkIns}/>;
+        //timeseries = <Timeseries checkIns={checkIns}/>
+        barWidget = (
+          <div className="col-sm-6 col-md-4">
+            <div className='widget'>
+              <div className='widget-header'>
+                <i className="fa fa-map"></i>
+                Check In Histogram
+                 <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openHistogramModal.bind(this)}>
+                  <i className="fa fa-cog fa-lg"></i> Expand
+                </a>
+              </div>
+              <div className='widget-body medium no-padding'>
+                {histogram}
+              </div>
+            </div>
+          </div>
+        );
       }
       checkInWidget = (
         <div className="col-sm-6 col-md-4 ">
@@ -479,6 +495,7 @@ export default class EventView extends Component {
           {invitePieChart}
           {lineWidget}
           {checkInWidget}
+          {barWidget}
         </div>
       );
     }
@@ -539,6 +556,11 @@ export default class EventView extends Component {
         <Modal id="mapModal" title="Event Location" cancelText='Close' size='modal-lg'>
           <div className='map-container'>
             <EmbeddedMap location={event.location}/>
+          </div>
+        </Modal>
+        <Modal id="histogramModal" title="Event Location" cancelText='Close' size='modal-lg'>
+          <div id='chartHolder' style={{'width' : '100%', 'height' : '400px'}}>
+            {histogram}
           </div>
         </Modal>
       </div>
