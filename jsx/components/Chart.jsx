@@ -24,9 +24,16 @@ export default class PieChartWidget extends Component {
     var self = this;
     this.state.navListener = navStore.addListener(navConstants.SIDEBAR_TOGGLED, ()=> {
       setTimeout(() => {
-          self.renderChart(self.props);
-      }, 500);
+          //self.renderChart(self.props);
+          //self.chart.redraw();
+          let width = $('#' + self.state.id).width();
+          let height = $('#' + self.state.id).height();
+          self.state.chart.setSize(width, height);
+      }, 300);
     });
+  }
+  componentWillUnmount(){
+    this.state.navListener.remove();
   }
   componentWillReceiveProps(newProps){
     // console.log('new props for chart');

@@ -27,8 +27,6 @@ import Histogram from './Histogram';
 export default class EventView extends Component {
   constructor(props){
     super(props);
-    console.log('CONSTRUCTOR \n\n\n\n\n\n\n\n\n\n');
-    console.log(eventDetailsStore.getCurrentEvent());
     this.state = {
       'event' : eventDetailsStore.getCurrentEvent(),
       'files' : [],

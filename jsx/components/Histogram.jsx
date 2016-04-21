@@ -25,9 +25,14 @@ export default class Histogram extends Component {
     var self = this;
     this.state.navListener = navStore.addListener(navConstants.SIDEBAR_TOGGLED, ()=> {
       setTimeout(() => {
-          self.renderChart(self.props);
-      }, 500);
+          let width = $('#' + self.state.id).width();
+          let height = $('#' + self.state.id).height();
+          self.state.chart.setSize(width, height);
+      }, 300);
     });
+  }
+  componentWillUnmount(){
+    this.state.navListener.remove();
   }
   componentWillReceiveProps(newProps){
     console.log('New Props for histogram');
