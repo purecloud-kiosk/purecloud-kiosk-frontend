@@ -34,7 +34,10 @@ export default class App extends Component{
   }
   componentDidMount(){
     navActions.getNotifications();
-    navStore.addListener(navConstants.SIDEBAR_TOGGLED, this.updateToggle.bind(this));
+    this.state.sidebarListener = navStore.addListener(navConstants.SIDEBAR_TOGGLED, this.updateToggle.bind(this));
+    this.state.langListener = navStore.addListener(navConstants.LANG_CHANGED, () => {
+      this.setState(this.state); // force a refresh
+    });
     $('.dropdown-toggle').dropdown();
     webSocket.init(this.refs.notificationSystem);
   }

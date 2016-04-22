@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from 'i18next';
 import Modal from './Modal';
 import CreateEventForm from './CreateEventForm';
 import * as navActions from '../actions/navActions';
@@ -93,7 +94,7 @@ export default class ManageView extends Component{
       invitesButton = (
         <li className={menu.invites ? 'active' : ''}>
           <a onClick={this.menuItemClicked.bind(this, 'invites')}>
-            Invites
+            {i18next.t('INVITES')}
           </a>
         </li>
       )
@@ -115,22 +116,22 @@ export default class ManageView extends Component{
             <ul className="nav nav-pills nav-stacked">
               <li className={menu.edit ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'edit')}>
-                  Edit Event Details
+                  {i18next.t('EDIT_EVENT_DETAILS')}
                 </a>
               </li>
               <li className={menu.files ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'files')}>
-                  Files
+                  {i18next.t('FILES')}
                 </a>
               </li>
               <li className={menu.managers ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'managers')}>
-                  Event Managers
+                  {i18next.t('EVENT_MANAGERS')}
                 </a>
               </li>
               <li className={menu.delete ? 'active' : ''}>
                 <a onClick={this.openDeleteModal.bind()}>
-                  Delete Event
+                  {i18next.t('DELETE_EVENT')}
                 </a>
               </li>
               {invitesButton}

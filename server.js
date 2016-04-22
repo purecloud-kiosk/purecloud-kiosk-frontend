@@ -45,6 +45,7 @@ app.get('/', function(req, res){
 app.use('/dist', express.static(__dirname + '/dist'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/img', express.static(__dirname + '/img'));
+app.use('/locales', express.static(__dirname + '/locales'));
 /**
  *  Forward all other requests to api server
  */

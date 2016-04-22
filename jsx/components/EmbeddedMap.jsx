@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import i18next from 'i18next';
 import requestConstants from '../constants/requestConstants';
 export default class EmbeddedMap extends Component{
   constructor(props){
@@ -7,7 +8,10 @@ export default class EmbeddedMap extends Component{
   render(){
     return (
       <iframe className='map' frameborder="0"
-        src={"https://www.google.com/maps/embed/v1/place?q=" + this.props.location + "&key=" + requestConstants.GOOGLE_API_KEY}
+        src={
+          "https://www.google.com/maps/embed/v1/place?q=" +
+          this.props.location + "&key=" + requestConstants.GOOGLE_API_KEY
+        }
         allowfullscreen>
       </iframe>
     );

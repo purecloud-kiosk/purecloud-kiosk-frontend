@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from 'i18next';
 import Modal from './Modal';
 import CreateEventForm from './CreateEventForm';
 import * as navActions from '../actions/navActions';
@@ -57,14 +58,14 @@ export default class FileWidget extends Component{
     return (
       <div className='widget'>
         <div className='widget-header'>
-          Event Files
+          {i18next.t('EVENT_FILES')}
         </div>
         <div className={'widget-body no-padding ' + this.props.size}>
           <table className='table table-hover'>
             <thead>
               <tr>
-                <th>File Name</th>
-                <th>Upload Date</th>
+                <th>{i18next.t('FILE_NAME')}</th>
+                <th>{i18next.t('UPLOAD_DATE')}</th>
                 {removeHeader}
               </tr>
             </thead>

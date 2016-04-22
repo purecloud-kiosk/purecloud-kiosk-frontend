@@ -1,5 +1,6 @@
 "use strict";
 import React, {Component} from "react";
+import i18next from 'i18next';
 import * as eventActions from "../actions/eventActions";
 import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
@@ -88,36 +89,36 @@ export default class EventSearch extends Component {
 		return(
 			<div>
 					<div className="col-md-10 col-md-offset-1">
-						<h4>Event Search</h4>
+						<h4>{i18next.t('EVENT_SEARCH')}</h4>
 			      <div className='form-group'>
 							<EventTypeAhead id='eventTypeAhead' query={this.state.query}/>
 			      </div>
 						<br></br>
 						<div className="form-group">
-						  <label for="privacySelect">Privacy</label>
+						  <label for="privacySelect">{i18next.t('PRIVACY')}</label>
 						  <select className="form-control" id="privacySelect" onChange={this.onPrivacyChange.bind(this)}>
-						    <option value={undefined}>Private and Public</option>
-						    <option value={true}>Private only</option>
-						    <option value={false}>Public only</option>
+						    <option value={undefined}>{i18next.t('PUBLIC_PRIVATE')}</option>
+						    <option value={true}>{i18next.t('PRIVATE_ONLY')}</option>
+						    <option value={false}>{i18next.t('PUBLIC_ONLY')}</option>
 						  </select>
 						</div>
 						<div className="form-group">
-						  <label for="managementSelect">Management</label>
+						  <label for="managementSelect">{i18next.t('MANAGEMENT')}</label>
 						  <select className="form-control" id="managementSelect" onChange={this.onManagementChange.bind(this)}>
-						    <option value={undefined}>All events</option>
-						    <option value={true}>Events managing only</option>
-						    <option value={false}>Events not managing only</option>
+						    <option value={undefined}>{i18next.t('ALL_EVENTS')}</option>
+						    <option value={true}>{i18next.t('EVENTS_MANAGING_ONLY')}</option>
+						    <option value={false}>{i18next.t('EVENTS_NOT_MANAGING_ONLY')}</option>
 						  </select>
 						</div>
 						<div className="form-group">
-						  <label for="upcomingSelect">Upcoming</label>
+						  <label for="upcomingSelect">{i18next.t('UPCOMING')}</label>
 						  <select className="form-control" id="upcomingSelect" onChange={this.onUpcomingChange.bind(this)}>
-						    <option value={undefined}>Upcoming and past events</option>
-								<option value={true}>Upcoming events</option>
-						    <option value={false}>Past events only</option>
+						    <option value={undefined}>{i18next.t('UPCOMING_AND_PAST')}</option>
+								<option value={true}>{i18next.t('UPCOMING_ONLY')}</option>
+						    <option value={false}>{i18next.t('PRIVATE_ONLY')}</option>
 						  </select>
 						</div>
-			      <EventsTableWidget title='Search Results' loading={this.state.loading} size='large'  faIcon='fa-user' events={this.state.eventSearchResults}/>
+			      <EventsTableWidget title={i18next.t('SEARCH_RESULTS')} loading={this.state.loading} size='large'  faIcon='fa-user' events={this.state.eventSearchResults}/>
 					</div>
 			</div>
 			);

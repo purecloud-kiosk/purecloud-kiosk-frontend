@@ -1,6 +1,7 @@
 import React, {
   Component
 } from 'react';
+import i18next from 'i18next';
 import * as eventActions from '../actions/eventActions';
 import eventsStore from '../stores/eventsStore';
 import eventsConstants from '../constants/eventsConstants';
@@ -58,8 +59,8 @@ export default class UserWidget extends Component{
           <table className='table table-hover'>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Email</th>
+                <th>{i18next.t('NAME')}</th>
+                <th>{i18next.t('EMAIL')}</th>
               </tr>
             </thead>
             <tbody>

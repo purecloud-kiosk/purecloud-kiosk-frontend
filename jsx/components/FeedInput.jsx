@@ -1,7 +1,7 @@
 
 "use strict";
 import React, { Component } from "react";
-
+import i18next from 'i18next';
 import * as eventActions from "../actions/eventActions";
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
@@ -48,7 +48,7 @@ export default class EventView extends Component {
             <span className="input-group-btn">
               <button className="btn btn-default" type="button"
                 disabled={this.state.message.length === 0} onClick={this.handleSubmit.bind(this)}>
-                Post Message
+                {i18next.t("POST_MESSAGE")}
               </button>
             </span>
           </div>

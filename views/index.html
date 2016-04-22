@@ -15,6 +15,7 @@
           queries.push(query[0]);
           queries[query[0]] = query[1];
         }
+        console.log(queries);
         return queries;
       }
       localStorage.setItem('pureCloudAccessToken', getQueries().client_token);

@@ -3,7 +3,7 @@
  **/
 'use strict';
 import React, { Component } from 'react';
-
+import i18next from 'i18next';
 import * as statsActions from '../actions/statsActions';
 import * as eventActions from '../actions/eventActions';
 import statsStore from '../stores/statsStore';
@@ -108,36 +108,36 @@ export default class Dash extends Component {
         <div className='row'>
           <div className='col-sm-6 col-md-3'>
             <NumbersWidget id='1' color='blue' faIcon='fa-unlock' value={stats.totalPublicEventsAvailable}
-              text='Upcoming Public Events'/>
+              text={i18next.t('UPCOMING_PUBLIC_EVENTS')}/>
           </div>
           <div className='col-sm-6 col-md-3'>
             <NumbersWidget id='2' color='red' faIcon='fa-lock' value={stats.totalPrivateEventsAvailable}
-              text='Upcoming Private Events Available'/>
+              text={i18next.t('UPCOMING_PRIVATE_EVENTS_AVAILABLE')}/>
           </div>
           <div className='col-sm-6 col-md-3'>
             <NumbersWidget id='3' color='green' faIcon='fa-check-square' value={stats.publicEventsCheckedIn}
-              text='Total Public Events Checked Into'/>
+              text={i18next.t('TOTAL_PUBLIC_EVENTS_CHECKED_INTO')}/>
           </div>
           <div className='col-sm-6 col-md-3'>
             <NumbersWidget id='4' color='orange' faIcon='fa-check-circle' value={stats.privateEventsCheckedIn}
-              text='Total Private Events Checked Into'/>
+              text={i18next.t('TOTAL_PRIVATE_EVENTS_CHECKED_INTO')}/>
           </div>
         </div>
       );
     }
     eventsManagingTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Upcoming Events You Are Managing' size='medium' faIcon='fa-user' events={eventsManaging}/>
+        <EventsTableWidget title={i18next.t('UPCOMING_EVENTS_MANAGING')} size='medium' faIcon='fa-user' events={eventsManaging}/>
       </div>
     );
     publicEventsTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Upcoming Public Events' size='medium' faIcon='fa-users' events={publicEvents}/>
+        <EventsTableWidget title={i18next.t('UPCOMING_PUBLIC_EVENTS')} size='medium' faIcon='fa-users' events={publicEvents}/>
       </div>
     );
     privateEventsTable = (
       <div className='col-md-6'>
-        <EventsTableWidget title='Upcoming Private Events' size='medium' faIcon='fa-user-secret' events={privateEvents}/>
+        <EventsTableWidget title={i18next.t('UPCOMING_PRIVATE_EVENTS')} size='medium' faIcon='fa-user-secret' events={privateEvents}/>
       </div>
     );
     if(barChartData !== null && barChartData.data[0] !== undefined){
@@ -148,7 +148,7 @@ export default class Dash extends Component {
           <div className="col-md-12">
             <div className='widget animate fadeInDown'>
               <div className='widget-header'>
-                Bar Chart
+                {i18next.t('BAR_CHART')}
               </div>
               <div className='widget-body large no-padding'>
                   <Chart type='bar' chartData={barChartData}/>

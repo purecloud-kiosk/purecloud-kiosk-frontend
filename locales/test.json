@@ -1,0 +1,19 @@
+{
+  "NO_NOTIFICATIONS" : "test",
+  "EVENT_WITH_TITLE" : "test",
+  "CREATED" : "test",
+  "NOTIFICATIONS" : "test",
+  "PROFILE" : "test",
+  "LOGOUT" : "test",
+  "CALENDAR" :"test",
+  "EVENT_SEARCH" :"test",
+  "SUPPORT" :"test",
+  "DASHBOARD" : "test",
+  "UPCOMING_PUBLIC_EVENTS" : "test",
+  "UPCOMING_PRIVATE_EVENTS" : "test",
+  "UPCOMING_EVENTS_MANAGING" : "test",
+  "UPCOMING_PRIVATE_EVENTS_AVAILABLE" : "test",
+  "UPCOMING_PUBLIC_EVENTS_AVAILABLE" : "test",
+  "TOTAL_PUBLIC_EVENTS_CHECKED_INTO" : "test",
+  "TOTAL_PRIVATE_EVENTS_CHECKED_INTO" :"test"
+ }

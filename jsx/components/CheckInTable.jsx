@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import i18next from 'i18next';
 export default class CheckInTable extends Component{
   constructor(props){
     super(props);
@@ -17,7 +18,7 @@ export default class CheckInTable extends Component{
     if(checkIns === null || checkIns.length ===  0){
        table = (
         <div className='text-center'>
-          <h5>No one has checked into this event yet.</h5>
+          <h5>{i18next.t('NO_CHECKINS')}</h5>
         </div>
       );
     }
@@ -40,9 +41,9 @@ export default class CheckInTable extends Component{
        <table className='table table-hover'>
          <thead>
            <tr>
-             <th>Image</th>
-             <th>Name</th>
-             <th>Date Checked In</th>
+             <th>{i18next.t('IMAGE')}</th>
+             <th>{i18next.t('NAME')}</th>
+             <th>{i18next.t('DATE_CHECKED_IN')}</th>
            </tr>
          </thead>
          <tbody>

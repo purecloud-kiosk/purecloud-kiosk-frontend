@@ -1,6 +1,6 @@
 "use strict";
 import React, { Component } from "react";
-
+import i18next from 'i18next';
 import * as eventActions from "../actions/eventActions";
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
@@ -390,23 +390,6 @@ export default class EventView extends Component {
           </div>
         </div>
       );
-      // checkInChart = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>);
-      // lineWidget = (
-      //   <div className="col-sm-6 col-md-4 ">
-      //     <div className='widget animated fadeInDown'>
-      //       <div className='widget-header'>
-      //         <i className="fa fa-user"></i>
-      //         Check In Chart
-      //          <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openChartModal.bind(this)}>
-      //           <i className="fa fa-cog fa-lg"></i> Expand
-      //          </a>
-      //       </div>
-      //       <div className='widget-body medium no-padding'>
-      //         {checkInChart}
-      //       </div>
-      //     </div>
-      //   </div>
-      // );
       event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
       event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
       if(files.length > 0){
@@ -515,13 +498,6 @@ export default class EventView extends Component {
         </div>
       );
     }
-    /*
-    <Modal id='scatterChartModal' title="Check In Chart" size='modal-lg'>
-      <div id='chartHolder' style={{'width' : '100%', 'height' : '400px'}}>
-        {checkInChart}
-      </div>
-    </Modal>
-    */
     return(
       <div>
         {view}
