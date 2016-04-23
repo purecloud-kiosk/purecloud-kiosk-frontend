@@ -104,15 +104,15 @@ export default class ManageView extends Component{
         <div className='col-md-12'>
           <div className='display-block'>
             <div className='col-md-10 col-md-offset-1'>
-              <h2>Event Management Dashboard</h2>
-              <h4>Event: {event.title}</h4>
+              <h2>{i18next.t('EVENT_MANAGEMENT_DASHBOARD')}</h2>
+              <h4>{i18next.t('EVENT')} {event.title}</h4>
             </div>
             <div className='col-md-1'></div>
           </div>
         </div>
         <div className='col-md-12'>
           <div className='col-md-3 col-md-offset-1'>
-            <label>Options Menu</label>
+            <label>{i18next.t('OPTIONS_MENU')}</label>
             <ul className="nav nav-pills nav-stacked">
               <li className={menu.edit ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'edit')}>
@@ -141,9 +141,9 @@ export default class ManageView extends Component{
             <div className='col-md-12'>{mainContent}</div>
           </div>
         </div>
-        <Modal id="deleteModal" title = "Delete Event" submitText='Yes'
+        <Modal id="deleteModal" title = "Delete Event" submitText={i18next.t('YES')}
           submitCallback={this.handleDeleteButtonClick.bind(this, "dash")} cancelText='No'>
-                <div> Are you sure do you want to delete this event?</div>
+                <div>{i18next.t('DELETE_WARNING')}</div>
         </Modal>
       </div>
     );

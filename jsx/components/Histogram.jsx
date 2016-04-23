@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from 'i18next';
 import navStore from '../stores/navStore';
 import * as eventActions from '../actions/eventActions';
 import navConstants from '../constants/navConstants';
@@ -126,7 +127,7 @@ export default class Histogram extends Component {
         yAxis: {
             min: 0,
             title: {
-                text: 'Check In Counts'
+                text: i18next.t('CHECK_IN_COUNTS')
             },
             tickInterval : 1,
         },
@@ -150,7 +151,7 @@ export default class Histogram extends Component {
             }
         },
         series: [{
-            name: 'Check Ins',
+            name: i18next.t('CHECK_INS'),
             pointInterval : 15 * 60 * 1000,
             data: chartData
         }]

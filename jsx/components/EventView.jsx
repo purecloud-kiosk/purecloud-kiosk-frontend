@@ -236,16 +236,16 @@ export default class EventView extends Component {
     console.log(files);
     let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, eventFeed, checkInChart,
       lineWidget, barWidget, histogram, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
-    let privacy = "public";;
+    let privacy = i18next.t('PUBLIC_EVENT');
     if(event != null){
       descriptionWidget = (
         <div className="col-sm-6 col-md-4">
           <div className="widget">
             <div className="widget-header">
               <i className="fa fa-user"></i>
-              Description
+              {i18next.t('DESCRIPTION')}
                <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openDescModal.bind(this)}>
-                <i className="fa fa-cog fa-lg"></i> Expand
+                <i className="fa fa-cog fa-lg"></i> {i18next.t('EXPAND')}
               </a>
             </div>
             <div className="widget-body medium no-padding">
@@ -261,17 +261,17 @@ export default class EventView extends Component {
         </div>
       );
       if(event.private && stats != null){
-        privacy = "private";
+        privacy = i18next.t("PRIVATE_EVENT");
         let chartData = [{
-            name: 'Percentage',
+            name: i18next.t('PERCENTAGE'),
             colorByPoint: true,
             data: [
               {
-                name: 'Not Checked In',
+                name: i18next.t('NOT_CHECKED_IN'),
                 y: stats.checkInStats.notCheckedIn
               },
               {
-                name: 'Checked In',
+                name: i18next.t('CHECKED_IN'),
                 y: stats.checkInStats.checkedIn,
                 sliced: true,
                 selected: true
@@ -280,25 +280,25 @@ export default class EventView extends Component {
         }];
         if(stats.inviteStats !== undefined){
           let inviteData = [{
-              name: 'Percentage',
+              name: i18next.t('PERCENTAGE'),
               colorByPoint: true,
               data: [
                 {
-                  name: 'Yes',
+                  name: i18next.t('YES'),
                   y: stats.inviteStats.yes,
                   sliced: true,
                   selected: true
                 },
                 {
-                  name: 'No',
+                  name: i18next.t('NO'),
                   y: stats.inviteStats.no
                 },
                 {
-                  name: 'Maybe',
+                  name: i18next.t('MAYBE'),
                   y: stats.inviteStats.maybe
                 },
                 {
-                  name: 'Pending',
+                  name: i18next.t('PENDING'),
                   y: stats.inviteStats.unknown,
                   sliced: true,
                   selected: true
@@ -309,7 +309,7 @@ export default class EventView extends Component {
             <div className="col-sm-6 col-md-4 ">
               <div className='widget'>
                 <div className='widget-header'>
-                  Invite Pie Chart
+                  {i18next.t('INVITE_PIE_CHART')}
                 </div>
                 <div className='widget-body medium no-padding'>
                     <Chart id='invitePieChart' type='doughnut' chartData={inviteData}/>
@@ -322,7 +322,7 @@ export default class EventView extends Component {
           <div className="col-sm-6 col-md-4 ">
             <div className='widget'>
               <div className='widget-header'>
-                Check In Pie Chart
+                {i18next.t('CHECK_IN_PIE_CHART')}
               </div>
               <div className='widget-body medium no-padding'>
                   <Chart id='checkInPieChart' chartData={chartData}/>
@@ -345,7 +345,7 @@ export default class EventView extends Component {
           feedInput = (<FeedInput eventID={this.state.event.id}/>);
           manageButton = (
             <button className= "btn btn-primary pull-right" onClick={this.navToManageView.bind(this)}>
-              Manage Event
+              {i18next.t('MANAGE_EVENT')}
             </button>
           );
         }
@@ -362,9 +362,9 @@ export default class EventView extends Component {
             <div className='widget'>
               <div className='widget-header'>
                 <i className="fa fa-map"></i>
-                Check In Histogram
+                {i18next.t('Check In Histogram')}
                  <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openHistogramModal.bind(this)}>
-                  <i className="fa fa-cog fa-lg"></i> Expand
+                  <i className="fa fa-cog fa-lg"></i> {i18next.t('EXPAND')}
                 </a>
               </div>
               <div className='widget-body medium no-padding'>
@@ -379,9 +379,9 @@ export default class EventView extends Component {
           <div className='widget animated fadeInDown'>
             <div className='widget-header'>
               <i className="fa fa-user"></i>
-              Event Check Ins
+              {i18next.t('EVENT_CHECK_INS')}
                <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openCheckInModal.bind(this)}>
-                <i className="fa fa-cog fa-lg"></i> Expand
+                <i className="fa fa-cog fa-lg"></i> {i18next.t('EXPAND')}
                </a>
             </div>
             <div className='widget-body medium no-padding'>
@@ -402,7 +402,7 @@ export default class EventView extends Component {
       if(feed.length === 0){
         eventFeed = (
           <div className='text-center'>
-            <h5>No messages have been published to the Event Feed</h5>
+            <h5>{i18next.t('NO_EVENT_FEED_MESSAGES')}</h5>
           </div>
         );
       }
@@ -417,9 +417,9 @@ export default class EventView extends Component {
           <div className='widget'>
             <div className='widget-header'>
               <i className="fa fa-user"></i>
-              Event Feed
+              {i18next.t('EVENT_FEED')}
                <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openFeedModal.bind(this)}>
-                <i className="fa fa-cog fa-lg"></i> Expand
+                <i className="fa fa-cog fa-lg"></i> {i18next.t('EXPAND')}
               </a>
             </div>
             <div className='widget-body medium no-padding'>
@@ -433,9 +433,9 @@ export default class EventView extends Component {
           <div className='widget'>
             <div className='widget-header'>
               <i className="fa fa-map"></i>
-              Event Location
+              {i18next.t('Event Location')}
                <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openMapModal.bind(this)}>
-                <i className="fa fa-cog fa-lg"></i> Expand
+                <i className="fa fa-cog fa-lg"></i> {i18next.t('EXPAND')}
               </a>
             </div>
             <div className='widget-body medium no-padding'>
@@ -459,10 +459,10 @@ export default class EventView extends Component {
                 <div className="event-details">
                   <div className="title">
                     <h4 className='word-break-all'>{event.title}</h4>
-                    <p>Start Date: {moment(event.startDate).format('LLL')}</p>
-                    <p>End Date: {moment(event.endDate).format('LLL')}</p>
+                    <p>{i18next.t('START_DATE')} {moment(event.startDate).format('LLL')}</p>
+                    <p>{i18next.t('END_DATE')} {moment(event.endDate).format('LLL')}</p>
                     <p className='word-break-all'>Location: {event.location}</p>
-                    <p>This event is {privacy}</p>
+                    <p>{privacy}</p>
                   </div>
                 </div>
               </div>
@@ -512,15 +512,6 @@ export default class EventView extends Component {
           <div className='feedHolder'>
             {eventFeed}
           </div>
-        </Modal>
-        <Modal id="deleteModal" title = "Delete Event">
-            <div id='selectDelete' style={{'width' : '100%', 'height' : '50px'}}>
-              <div>
-                <div> Do you want to delete this event?</div>
-                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleDeleteButtonClick.bind(this)}>Yes</button>
-                <button className = "btn btn-primary btn-sm pull-left text-center" type = "button" onClick = {this.handleChangedMind()}>NO</button>
-              </div>
-            </div>
         </Modal>
         <Modal id="userModal" title = "User">
           {userModalContent}

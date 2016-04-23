@@ -148,7 +148,7 @@ export default class Dash extends Component {
           <div className="col-md-12">
             <div className='widget animate fadeInDown'>
               <div className='widget-header'>
-                {i18next.t('BAR_CHART')}
+                {i18next.t('MOST_RECENT_EVENT_OUTCOMES')}
               </div>
               <div className='widget-body large no-padding'>
                   <Chart type='bar' chartData={barChartData}/>

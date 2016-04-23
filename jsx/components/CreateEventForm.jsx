@@ -1,5 +1,6 @@
 'use strict';
 import React, {Component} from 'react';
+import i18next from "i18next";
 import * as eventActions from '../actions/eventActions';
 import eventsStore from '../stores/eventsStore';
 import eventDetailsStore from '../stores/eventDetailsStore';
@@ -73,8 +74,8 @@ export default class Events extends Component {
 			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 
 			$('#privacy-checkbox').bootstrapSwitch({
-				'onText' : 'Private',
-				'offText' : 'Public',
+				'onText' : i18next.t('PRIVATE'),
+				'offText' : i18next.t('PUBLIC'),
 				'onColor' : 'danger',
 				'offColor' : 'primary',
 				'state' : this.state.event.private,
@@ -141,7 +142,7 @@ export default class Events extends Component {
 
   		this.setState(state);
   		this.notificationSystem.addNotification({
-    	 	message: 'Image successfully uploaded',
+    	 	message: i18next.t('SUCCESSFUL_IMAGE_UPLOAD'),
      		position: 'bc',
      		level: 'success'
     	});
@@ -189,7 +190,7 @@ export default class Events extends Component {
 			this.clear();
 		}
  		this.notificationSystem.addNotification({
-   	 	message: 'Event successfully updated',
+   	 	message: i18next.t('SUCCESSFUL_EVENT_UPDATE'),
     		position: 'bc',
    		level: 'success'
    	});
@@ -316,39 +317,39 @@ export default class Events extends Component {
 		<div className='form-container'>
 			<form className='form-all'>
 				<div>
-					<label className ='form-title'>Title</label>
+					<label className ='form-title'>{i18next.t('TITLE')}</label>
 					<input id='eventTitleInput' className='form-control' value={event.title} onChange={this.handleChange('title')}/>
 				</div>
 				<div>
-					<label className='form-title'>Privacy</label>
+					<label className='form-title'>{i18next.t('PRIVACY')}</label>
 					<div id='switch-wrapper'>
 						<input type='checkbox' id='privacy-checkbox' checked={event.private}/>
 					</div>
 				</div>
 				<div>
-					<label className ='form-date'>Start Date</label>
+					<label className ='form-date'>{i18next.t('START_DATE')}</label>
 					<DatePicker id='startDate' type='date' date={this.state.startDate} onChange={this.handleDateChange.bind(this, 'startDate', 'LL')}/>
 				</div>
 				<div>
-					<label className ='form-time'>Start Time</label>
+					<label className ='form-time'>{i18next.t('START_TIME')}</label>
 					<DatePicker id='startTime' type='time' date={this.state.startTime} onChange={this.handleDateChange.bind(this, 'startTime', 'LT')}/>
 				</div>
 				<div>
-					<label className ='form-end-date'>End Date</label>
+					<label className ='form-end-date'>{i18next.t('END_DATE')}</label>
 					<DatePicker id='endDate' type='date' date={this.state.endDate} onChange={this.handleDateChange.bind(this, 'endDate', 'LL')}/>
 				</div>
 				<div>
-					<label className ='form-time'>End Time</label>
+					<label className ='form-time'>{i18next.t('END_TIME')}</label>
 					<DatePicker id='endTime' type='time' date={this.state.endTime} onChange={this.handleDateChange.bind(this, 'endTime', 'LT')}/>
 				</div>
 				<div >
-					<label className ='form-location'>Location</label>
+					<label className ='form-location'>{i18next.t('LOCATION')}</label>
 					<input className='form-control' value={event.location} onChange={this.handleChange('location')}/>
 				</div>
 
 				<br/>
 		    <div className= 'form-image-thumb'>
-		      <label className='form-image-thumb'>Thumbnail Image</label>
+		      <label className='form-image-thumb'>{i18next.t('THUMBNAIL_IMAGE')}</label>
 		      <div className='input-group'>
 			      <input type="text" className="form-control" value={event.thumbnailUrl} onChange={this.handleChange('thumbnailUrl')}/>
 			      <span className="input-group-btn">
@@ -358,7 +359,7 @@ export default class Events extends Component {
 		    </div>
 				<br/>
 				<div className= 'form-image-banner'>
-		      <label className='form-image-banner'>Banner Image</label>
+		      <label className='form-image-banner'>{i18next.t('BANNER_IMAGE')}</label>
 		      <div className='input-group'>
 			      <input type="text" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
 			      <span className="input-group-btn">
@@ -367,7 +368,7 @@ export default class Events extends Component {
 		      </div>
 		    </div>
 				<div>
-					<label className= 'form-description'>Description of Event</label>
+					<label className= 'form-description'>{i18next.t('DESCRIPTION_OF_EVENT')}</label>
 					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
 				</div>
 				<br></br>
