@@ -23,6 +23,7 @@ export default class Events extends Component {
     		// endDate : moment(event.endDate).format('LL') || null,
     		// endTime : moment(event.endDate).format('LT') || null,
     		//outside the event variables important to time/date/success
+    		error : null,
     		success : false,
 
     		//event variable
@@ -49,7 +50,7 @@ export default class Events extends Component {
   		if(this.state.update){
    			var event = eventDetailsStore.getCurrentEvent();
    			//add listener
-				console.log('updating');
+			console.log('updating');
    			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_UPDATED, this.handleEventUpdatedSuccessfully.bind(this));
    			this.notificationSystem = this.refs.notificationSystem;
    			console.log(this.notificationSystem);
@@ -57,12 +58,9 @@ export default class Events extends Component {
    			//add event data
    			state.event = event;
 				// convert to local
-				var startDate = moment.utc(event.startDate).toDate();
-				state.startDate = moment(startDate).format('LL');
-				state.startTime = moment(startDate).format('LT');
-
-				// state.endDate = moment(endDate).format('LL');
-				// state.endTime = moment(endDate).format('LT');
+			var startDate = moment.utc(event.startDate).toDate();
+			state.startDate = moment(startDate).format('LL');
+			state.startTime = moment(startDate).format('LT');
    			this.setState(state);
    		}
    		//else this is a new event
@@ -75,19 +73,15 @@ export default class Events extends Component {
 
    		}
    			//notification and listeners established
+   			console.log(endDate);
+			state.endDate = moment(state.event.endDate).format('LL');
+			state.endTime = moment(state.event.endDate).format('LT');
 			this.notificationSystem = this.refs.notificationSystem;
 			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
 			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
    			this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
 			this.state.bannerListener = eventDetailsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
-			console.log(endDate);
-
-			state.endDate = moment(endDate).format('LL');
-			state.endTime = moment(endDate).format('LT');
-   			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
-
-			this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
-
+			this.state.errorListener = eventDetailsStore.addListener(eventsConstants.ERROR, this.handleError.bind(this));
 			$('#privacy-checkbox').bootstrapSwitch({
 				'onText' : 'Private',
 				'offText' : 'Public',
@@ -107,11 +101,33 @@ export default class Events extends Component {
   	}
   	//release the listeners
   	componentWillUnmount(){
-			this.state.submitListener.remove();
+		this.state.submitListener.remove();
   		this.state.thumbnailListener.remove();
-			this.state.bannerListener.remove();
+		this.state.bannerListener.remove();
   		this.state.eventStatsListener.remove();
-			$("#privacy-checkbox").bootstrapSwitch('destroy');
+  		this.state.errorListener.remove();
+		$("#privacy-checkbox").bootstrapSwitch('destroy');
+  	}
+  	handleError(){
+  		console.log('HANDLE ERROR');
+  		this.state.error = eventDetailsStore.getError();
+  		console.log(this.state.error);
+  		console.log(this.state.error.responseJSON.code);
+  		if (this.state.error.responseJSON.code == 33){
+  			this.notificationSystem.addNotification({
+	    	 	message: 'Event with same name aleady exists',
+	     		position: 'bc',
+	     		level: 'error'
+    		});
+
+  		} else if (this.state.error.responseJSON.code == 9){
+  			this.notificationSystem.addNotification({
+	    	 	message: 'Event end time needs to be after event start time',
+	     		position: 'bc',
+	     		level: 'error'
+    		});
+
+  		}
   	}
   	handleEventUpdated(){
   		//fill this in
@@ -192,7 +208,19 @@ export default class Events extends Component {
 		console.log('this is the event data that is getting sent off');
 		console.log(this.state.event);
 		//My attempt to grab error code
-		console.log("this is an error code" + this.state.error.responseJSON.code);
+		//console.log("this is an error code" + error.responseJSON.code);
+		//console.log(eventActions.updateEvent().fail(error.responseJSON.code));
+		//console.log(this.state.fail(error.responseJSON.code));
+		//this.state.error = eventDetailsStore.getError();
+		//this.setState(state);
+		//console.log("this is an error code: " + this.state.error);
+		//this.state.error = eventDetailsStore.setError(error);
+		if(this.state.error !== null){
+			console.log("This is what Error is occurring");
+			console.log(this.state.error);
+			//console.log(handleError());
+		}
+		
 		if(this.state.update){
 			this.state.event.eventID = this.state.event.id;
 			eventActions.updateEvent(this.state.event);

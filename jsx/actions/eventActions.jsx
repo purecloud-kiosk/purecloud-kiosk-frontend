@@ -110,9 +110,12 @@ export function createEvent(event){
 	      data : data
 	    });
 	  }).fail(function(error){
-      debugger;
 	  	console.log("ERROR : ");
 	    console.log(error);
+      dispatcher.dispatch({
+        'actionType' : eventsConstants.ERROR,
+        'data' : error
+      });
 	  });
 }
 export function updateEvent(event){
@@ -137,6 +140,10 @@ export function updateEvent(event){
   }).fail(function(error){
     console.log("ERROR : ");
     console.log(error);
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ERROR,
+      'data' : error
+    });
   });
 
 }
