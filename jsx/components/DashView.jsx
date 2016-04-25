@@ -23,6 +23,7 @@ export default class Dash extends Component {
       eventsManaging : eventsStore.getUpcomingEventsManaging(),
       publicEvents : eventsStore.getPublicEvents(),
       privateEvents : eventsStore.getPrivateEvents(),
+      checkInCountArray : eventsStore.getCheckInCountArray(),
       barChartData : null,
       showChart : false
     };
@@ -62,6 +63,8 @@ export default class Dash extends Component {
           chartData.data.push(checkInCountArray[i].checkInCount);
         }
         state[field] = chartData;
+        console.log(checkInCountArray);
+        console.log(state);
         break;
     }
     this.setState(state);
@@ -81,6 +84,9 @@ export default class Dash extends Component {
     setTimeout(() => {
       eventActions.getPastEventsManaged(10,0);
     }, 1000);
+    if(this.state.checkInCountArray.length > 0){
+      this.updateView('barChartData');
+    }
   }
   componentDidUpdate(){
     window.dispatchEvent(new Event('resize'));
@@ -134,8 +140,10 @@ export default class Dash extends Component {
         <EventsTableWidget title='Upcoming Private Events' size='medium' faIcon='fa-user-secret' events={privateEvents}/>
       </div>
     );
-    if(barChartData !== null){
+    if(barChartData !== null && barChartData.data[0] !== undefined){
+      console.log('it has data')
       if(barChartData.data[0].length !== 0){
+        console.log('should be able to render');
         barChart = (
           <div className="col-md-12">
             <div className='widget animate fadeInDown'>

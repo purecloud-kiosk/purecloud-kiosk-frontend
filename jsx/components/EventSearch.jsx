@@ -87,10 +87,9 @@ export default class EventSearch extends Component {
     	var widgets;
 		return(
 			<div>
-					<div className='col-md-1'></div>
-					<div className="col-md-10">
+					<div className="col-md-10 col-md-offset-1">
 						<h4>Event Search</h4>
-			      <div className='input-group'>
+			      <div className='form-group'>
 							<EventTypeAhead id='eventTypeAhead' query={this.state.query}/>
 			      </div>
 						<br></br>
@@ -120,7 +119,6 @@ export default class EventSearch extends Component {
 						</div>
 			      <EventsTableWidget title='Search Results' loading={this.state.loading} size='large'  faIcon='fa-user' events={this.state.eventSearchResults}/>
 					</div>
-					<div className='col-md-1'></div>
 			</div>
 			);
 	}

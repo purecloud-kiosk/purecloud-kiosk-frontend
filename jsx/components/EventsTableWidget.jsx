@@ -27,7 +27,7 @@ export default class EventsTable extends Component {
         rows.push(
           <tr className='animated fadeInLeft' key={events[i].title} onClick={this.handleRowClick.bind(this, i)}>
             <td>{events[i].title}</td>
-            <td>{moment(events[i].startDate).format('LT')}</td>
+            <td>{moment(events[i].startDate).format('LLL')}</td>
             <td>{events[i].location}</td>
           </tr>
         );

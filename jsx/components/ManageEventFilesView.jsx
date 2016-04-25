@@ -17,7 +17,8 @@ export default class ManageView extends Component{
     this.state = {
       'event' :this.props.event,
       'files' : [],
-      'formData' : null
+      'formData' : null,
+      'buttonActive' : true
     };
   }
   componentDidMount(){
@@ -27,6 +28,8 @@ export default class ManageView extends Component{
       eventDetailsStore.addListener(eventsConstants.FILE_ADDED, this.addFile.bind(this));
     this.state.fileRemovalListener =
       eventDetailsStore.addListener(eventsConstants.FILE_REMOVED, this.onFileRemoved.bind(this));
+    this.state.fileErrorListener =
+      eventDetailsStore.addListener(eventsConstants.ERROR, this.onFileError.bind(this));
     eventActions.getEventFiles(this.state.event.id);
   }
   componentWillUnmount(){
@@ -51,6 +54,7 @@ export default class ManageView extends Component{
   }
   addFile(){
     this.state.files.push(eventDetailsStore.getAddedFile());
+    this.state.buttonActive = true;
     this.setState(this.state);
   }
   readFile(input){
@@ -65,24 +69,33 @@ export default class ManageView extends Component{
     }
   }
   uploadFile(){
-    if(this.state.formData === null){
-      alert('nope');
+    let state = this.state;
+    if(state.buttonActive){
+      if(state.formData === null){
+        alert('nope');
+      }
+      else{
+        state.buttonActive = false;
+        eventActions.uploadImage(state.formData, 'event');
+      }
     }
-    else{
-      eventActions.uploadImage(this.state.formData, 'event');
-    }
+    this.setState(state);
   }
   render(){
-    const {files} = this.state;
+    const {files, buttonActive} = this.state;
+    let active = buttonActive ? 'active' : '';
     return (
       <div>
-        <h4>Event File Upload</h4>
-        <form class="form-inline" onSubmit={(e) => {e.preventDefault()}}>
-          <div class="form-group">
+        <h4>File Upload</h4>
+        <form className="form-inline" onSubmit={(e) => {e.preventDefault()}}>
+          <div className="form-group" id='file-form'>
             <label for="fileInput">File</label>
-            <FileInput id='fileInput' placeholder='Click here to select your file' className='file-input form-control' accept='*' onChange={this.readFile.bind(this)}/>
+            <FileInput className='form-control' name='event-file-input'
+              placeholder='Click here to select your file' className='form-control'
+              accept='*' onChange={this.readFile.bind(this)}/>
+            <br></br>
+            <button type="button" className={"btn btn-primary " + active}  onClick={this.uploadFile.bind(this)}>Upload File</button>
           </div>
-          <button type="submit" class="btn btn-primary" onClick={this.uploadFile.bind(this)}>Upload File</button>
         </form>
         <FileWidget files={files} size='large' remove={true}/>
       </div>

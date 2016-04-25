@@ -22,7 +22,8 @@ import UserWidget from './UserWidget';
 import FileWidget from './FileWidget';
 import EventFeed from './EventFeed';
 import EmbeddedMap from './EmbeddedMap';
-import CheckInTable from './CheckInTable'
+import CheckInTable from './CheckInTable';
+import Histogram from './Histogram';
 export default class EventView extends Component {
   constructor(props){
     super(props);
@@ -53,12 +54,18 @@ export default class EventView extends Component {
   }
   // on mount, add all of the listeners needed for the view to function
   componentDidMount(){
+    console.log('mounting the event view');
+    this.addListeners();
+    console.log(this.state.event);
+    this.refreshView();
+  }
+  addListeners(){
     webSocket.subscribe(this.state.event.id);
     this.state.eventStatsListener = statsStore.addListener(statsConstants.EVENT_STATS_RETRIEVED, this.updateStats.bind(this));
     this.state.deleteListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
     this.state.getEventCheckInsListener = eventDetailsStore.addListener(eventsConstants.EVENT_CHECKINS_RETRIEVED, this.updateCheckIns.bind(this));
     this.state.eventFilesListener = eventDetailsStore.addListener(eventsConstants.EVENT_FILES_RETRIEVED, this.updateEventFiles.bind(this));
-    this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.refreshView.bind(this));
+    this.state.refreshListener = navStore.addListener(navConstants.REFRESH, this.remount.bind(this));
     this.state.eventMessageListener = eventDetailsStore.addListener(eventsConstants.EVENT_MESSAGE_RECEIVED, this.setFeed.bind(this));
     this.state.eventFeedListener = eventDetailsStore.addListener(eventsConstants.EVENT_FEED_RETRIEVED, this.setFeed.bind(this));
     this.state.userListener = eventDetailsStore.addListener(eventsConstants.USER_RETRIEVED, this.showUser.bind(this));
@@ -67,11 +74,28 @@ export default class EventView extends Component {
       eventDetailsStore.addListener(eventsConstants.NEW_CHECKINS_AVAILABLE, this.retrieveCheckIns.bind(this));
     this.state.incomingCheckInListener =
       eventDetailsStore.addListener(eventsConstants.NEW_CHECKIN_RETRIEVED, this.updateCheckIns.bind(this, true));
-    this.refreshView();
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
+    console.log(this.state);
+    this.setState(this.state);
   }
-
+  removeListeners(){
+    console.log('removing listeners');
+    webSocket.unsubscribe(this.state.event.id);
+    // old
+    this.state.eventStatsListener.remove();
+    this.state.deleteListener.remove();
+    this.state.getEventCheckInsListener.remove();
+    this.state.eventFilesListener.remove();
+    this.state.refreshListener.remove();
+    this.state.eventMessageListener.remove();
+    this.state.eventFeedListener.remove();
+    this.state.userListener.remove();
+    this.state.messageRemovedListener.remove();
+    this.state.bulkCheckInsListener.remove()
+    this.state.incomingCheckInListener.remove();
+    this.setState(this.state);
+  }
   showUser(){
     console.log('called');
     let state = this.state;
@@ -80,6 +104,7 @@ export default class EventView extends Component {
   }
   retrieveCheckIns(){
     console.log('Retrieving more checkins');
+    console.log(this.state.event);
     eventActions.getEventCheckIns(this.state.event.id);
     statsActions.getEventStats(this.state.event.id);
   }
@@ -90,18 +115,30 @@ export default class EventView extends Component {
     console.log(state.feed);
     this.setState(state);
   }
+  remount(){
+    this.removeListeners();
+    this.state.event = eventDetailsStore.getCurrentEvent();
+    this.addListeners();
+    this.refreshView();
+  }
   refreshView(){
     console.log('refreshing');
     var state = this.state;
     state.event = eventDetailsStore.getCurrentEvent();
+    state.stats = null;
+    state.files = [];
+    state.feed = [];
+    state.managers = [];
+    state.message = '';
+    state.checkIns = null;
+    this.setState(state);
+    console.log(state.event.id);
     statsActions.getEventStats(state.event.id);
     eventActions.getEventCheckIns(state.event.id);
     setTimeout(() => {
       eventActions.getEventFiles(state.event.id);
       eventActions.getEventFeed(state.event.id);
     },1500);
-    this.setState(state);
-
   }
   updateEventFiles(){
     let state = this.state;
@@ -109,17 +146,8 @@ export default class EventView extends Component {
     this.setState(state);
   }
   componentWillUnmount(){
-    webSocket.unsubscribe(this.state.event.id);
-    this.state.eventStatsListener.remove();
-    this.state.deleteListener.remove();
-    this.state.getEventCheckInsListener.remove();
-    this.state.eventFilesListener.remove();
-    this.state.eventFeedListener.remove();
-    this.state.refreshListener.remove();
-    this.state.userListener.remove();
-    this.state.eventMessageListener.remove();
-    this.state.messageRemovedListener.remove();
-    this.state.incomingCheckInListener.remove();
+    console.log('unmounting the event view');
+    this.removeListeners();
   }
   handleEventUpdated(){
     eventActions.setUpdateFlag(true);
@@ -194,14 +222,20 @@ export default class EventView extends Component {
   navToManageView(){
     navActions.routeToPage('manage');
   }
+  openHistogramModal(){
+    setTimeout(()=>{
+      window.dispatchEvent(new Event('resize'));
+    },500);
+    $('#histogramModal').modal('show');
+  }
   render(){
     const {event, files, stats, checkIns, chartOptions, feed, managers} = this.state;
     console.log(managers);
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, invitedCheckInsWidget, eventFeed, checkInChart,
-      lineWidget, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
+    let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, eventFeed, checkInChart,
+      lineWidget, barWidget, histogram, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = "public";;
     if(event != null){
       descriptionWidget = (
@@ -271,9 +305,6 @@ export default class EventView extends Component {
                 }
               ]
           }];
-          invitedCheckInsWidget = (
-              <InviteTableWidget />
-          );
           invitePieChart = (
             <div className="col-sm-6 col-md-4 ">
               <div className='widget'>
@@ -304,7 +335,7 @@ export default class EventView extends Component {
         console.log(stats.checkInStats.checkedIn);
         checkInPieChart = (
           <div className='col-sm-6 col-md-4'>
-            <TickerWidget value={stats.checkInStats.checkedIn}/>
+            <TickerWidget id={'a'+event.id} value={stats.checkInStats.checkedIn}/>
           </div>
         );
       }
@@ -324,14 +355,24 @@ export default class EventView extends Component {
       };
       if(checkIns !== null){
         let count = 1;
-        checkIns.forEach((checkIn) => {
-          if(checkIn.timestamp !== undefined){
-            lineData.data.push([
-              new Date(checkIn.timestamp).getTime(), count
-            ]);
-          }
-          count++;
-        });
+        histogram = <Histogram checkIns={checkIns}/>;
+        //timeseries = <Timeseries checkIns={checkIns}/>
+        barWidget = (
+          <div className="col-sm-6 col-md-4">
+            <div className='widget'>
+              <div className='widget-header'>
+                <i className="fa fa-map"></i>
+                Check In Histogram
+                 <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openHistogramModal.bind(this)}>
+                  <i className="fa fa-cog fa-lg"></i> Expand
+                </a>
+              </div>
+              <div className='widget-body medium no-padding'>
+                {histogram}
+              </div>
+            </div>
+          </div>
+        );
       }
       checkInWidget = (
         <div className="col-sm-6 col-md-4 ">
@@ -349,23 +390,23 @@ export default class EventView extends Component {
           </div>
         </div>
       );
-      checkInChart = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>);
-      lineWidget = (
-        <div className="col-sm-6 col-md-4 ">
-          <div className='widget animated fadeInDown'>
-            <div className='widget-header'>
-              <i className="fa fa-user"></i>
-              Check In Chart
-               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openChartModal.bind(this)}>
-                <i className="fa fa-cog fa-lg"></i> Expand
-               </a>
-            </div>
-            <div className='widget-body medium no-padding'>
-              {checkInChart}
-            </div>
-          </div>
-        </div>
-      );
+      // checkInChart = (<Chart id='checkInLineChart' header='Check Ins' type='scatter' chartData={lineData}/>);
+      // lineWidget = (
+      //   <div className="col-sm-6 col-md-4 ">
+      //     <div className='widget animated fadeInDown'>
+      //       <div className='widget-header'>
+      //         <i className="fa fa-user"></i>
+      //         Check In Chart
+      //          <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openChartModal.bind(this)}>
+      //           <i className="fa fa-cog fa-lg"></i> Expand
+      //          </a>
+      //       </div>
+      //       <div className='widget-body medium no-padding'>
+      //         {checkInChart}
+      //       </div>
+      //     </div>
+      //   </div>
+      // );
       event.imageUrl = event.imageUrl || 'https://unsplash.it/1920/1080';
       event.thumbnailUrl = event.thumbnailUrl || 'https://unsplash.it/1920/1080';
       if(files.length > 0){
@@ -450,17 +491,12 @@ export default class EventView extends Component {
           {fileWidget}
           {checkInPieChart}
           {invitePieChart}
-          {lineWidget}
           {checkInWidget}
+          {barWidget}
         </div>
       );
+      //          {lineWidget}
     }
-    /*
-    <div className="col-sm-6 col-md-4 ">
-        {invitedCheckInsWidget}
-    </div>
-    */
-    console.log('about to complete render');
     let userModalContent = (
       <div>
         <div>Empty</div>
@@ -479,6 +515,13 @@ export default class EventView extends Component {
         </div>
       );
     }
+    /*
+    <Modal id='scatterChartModal' title="Check In Chart" size='modal-lg'>
+      <div id='chartHolder' style={{'width' : '100%', 'height' : '400px'}}>
+        {checkInChart}
+      </div>
+    </Modal>
+    */
     return(
       <div>
         {view}
@@ -487,11 +530,7 @@ export default class EventView extends Component {
             return <span>{item}<br/></span>
           })}
         </Modal>
-        <Modal id='scatterChartModal' title="Check In Chart" size='modal-lg'>
-          <div id='chartHolder' style={{'width' : '100%', 'height' : '400px'}}>
-            {checkInChart}
-          </div>
-        </Modal>
+
         <Modal id='feedModal' title='Event Feed'>
           {feedInput}
           <div className='feedHolder'>
@@ -518,6 +557,11 @@ export default class EventView extends Component {
         <Modal id="mapModal" title="Event Location" cancelText='Close' size='modal-lg'>
           <div className='map-container'>
             <EmbeddedMap location={event.location}/>
+          </div>
+        </Modal>
+        <Modal id="histogramModal" title="Event Location" cancelText='Close' size='modal-lg'>
+          <div id='chartHolder' style={{'width' : '100%', 'height' : '400px'}}>
+            {histogram}
           </div>
         </Modal>
       </div>

@@ -26,10 +26,12 @@ class WebSocket{
       eventActions.dispatchEventNotification(notification);
     });
     this.socket.on('ORG', (notification) => {
+      
       console.log(statsStore.getUserStats());
-      if(data.posterID !== statsStore.getUserStats().personID &&
+      if(notification.posterID !== statsStore.getUserStats().personID &&
       moment(new Date()).isBefore(new Date(notification.message.content.endDate))){
-        navActions.dispatchOrgNotification(data);
+        navActions.dispatchOrgNotification(notification);
+        console.log(this.notificationSystem);
         this.notificationSystem.addNotification({
           'message': 'A new event was created!',
           'position': 'tr',
