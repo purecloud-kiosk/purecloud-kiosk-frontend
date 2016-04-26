@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-
+import i18next from 'i18next';
 /**
  *  As simple modal. You can render data within this by passing in child components.
  *
@@ -18,11 +18,10 @@ export default class Modal extends Component{
     var {id, title, size, submitCallback, submitText, cancelText} = this.props;
     let submitButton;
     if(cancelText === undefined)
-      cancelText = 'Cancel';
+      cancelText = i18next.t('CANCEL');
     if(submitText === undefined)
-      submitText = 'Submit';
+      submitText = i18next.t('SUBMIT');
     if(submitCallback !== undefined){
-      console.log('submit defined')
       submitButton = <button type="button" className="btn btn-primary pull-left" onClick={submitCallback}>{submitText}</button>;
     }
     else{

@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from "i18next";
 import * as navActions from '../actions/navActions';
 import * as eventActions from '../actions/eventActions';
 
@@ -33,7 +34,7 @@ export default class EventsTable extends Component {
         );
       }
       if(rows.length == 0){ // there is no data
-        content = (<div className='text-center'><p>There are no events to show</p></div>);
+        content = (<div className='text-center'><p>{i18next.t('NO_EVENTS')}</p></div>);
       }
       else{
         content = (
@@ -41,9 +42,9 @@ export default class EventsTable extends Component {
             <table className='table table-hover'>
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Date</th>
-                  <th>Location</th>
+                  <th>{i18next.t('TITLE')}</th>
+                  <th>{i18next.t('DATE')}</th>
+                  <th>{i18next.t("LOCATION")}</th>
                 </tr>
               </thead>
               <tbody>

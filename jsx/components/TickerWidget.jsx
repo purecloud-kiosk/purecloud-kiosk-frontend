@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from 'i18next';
 
 export default class TickerWidget extends Component {
   constructor(props){
@@ -39,13 +40,13 @@ export default class TickerWidget extends Component {
     return(
       <div className='widget'>
         <div className='widget-header'>
-          <i className='fa fa-ticket'></i>Checked In
+          <i className='fa fa-ticket'></i>{i18next.t('CHECKED_IN')}
         </div>
         <div className='widget-body medium no-padding'>
           <div className='ticker-container'>
             <div className='ticker'>
               <span id={this.state.id} className='checked-in-odometer'>0</span><br/>
-              <span>people checked into this event</span>
+              <span>{i18next.t("PEOPLE_CHECKED_INTO_EVENT")}</span>
             </div>
           </div>
         </div>

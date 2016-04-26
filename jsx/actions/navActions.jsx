@@ -6,6 +6,7 @@ import dispatcher from '../dispatchers/dispatcher';
 import requestConstants from '../constants/requestConstants';
 import navConstants from '../constants/navConstants';
 import history from '../history/history';
+import i18next from 'i18next';
 
 let currentPath = null;
 history.listen(location => {
@@ -62,5 +63,25 @@ export function dispatchOrgNotification(message){
 export function refresh(){
   dispatcher.dispatch({
     actionType: navConstants.REFRESH
+  });
+}
+
+export function changeLanguage(lang){
+  i18next.changeLanguage(lang, (err, t) => {
+    // resources have been loaded
+    console.log('testing');
+    console.log('Error :' + err);
+    console.log(t);
+    if(!err){
+      localStorage.setItem('pureCloudKioskLang' , lang);
+      dispatcher.dispatch({
+        'actionType' : navConstants.LANG_CHANGED
+      });
+    }
+    else{
+      dispatcher.dispatch({
+        'actionType' : 'error'
+      });
+    }
   });
 }

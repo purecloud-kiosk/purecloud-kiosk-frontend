@@ -1,6 +1,7 @@
 import React, {
   Component
 } from 'react';
+import i18next from 'i18next';
 import * as eventActions from '../actions/eventActions';
 import * as navActions from '../actions/navActions';
 import eventDetailsStore from '../stores/eventDetailsStore';
@@ -128,14 +129,14 @@ export default class ManagerWidget extends Component{
           else if(user.eventManager === true){
             managerButton = (
               <button className='btn btn-danger' onClick={this.handleRemoveClicked.bind(this, user)}>
-                Remove
+                {i18next.t('REMOVE')}
               </button>
             );
           }
           else{ // not a manager, show add button
             managerButton = (
               <button className='btn btn-primary' onClick={this.handleAddClicked.bind(this, user)}>
-                Add
+                {i18next.t('ADD')}
               </button>
             );
           }
@@ -159,9 +160,9 @@ export default class ManagerWidget extends Component{
           <table className='table table-hover'>
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Email</th>
+                <th>{i18next.t('IMAGE')}</th>
+                <th>{i18next.t('NAME')}</th>
+                <th>{i18next.t('EMAIL')}</th>
                 <th></th>
               </tr>
             </thead>
@@ -183,11 +184,10 @@ export default class ManagerWidget extends Component{
         </div>
         <Modal title='Warning' id='removeCheck' submitCallback={this.removeEventManager.bind(this)}
           submitText='Yes' cancelText='No'>
-          Are you sure you want to remove your management privileges?
+          {i18next.t('MANAGEMENT_ARE_YOU_SURE')}
         </Modal>
         <Modal title='Warning' id='lastManager' cancelText='Okay'>
-          There is only one manager for this event. Please either delete this event or
-          pass management privileges to another user, then remove yourself.
+          {i18next.t('LAST_MANAGER_WARNING')}
         </Modal>
       </div>
     );

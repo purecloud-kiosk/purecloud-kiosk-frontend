@@ -13,6 +13,8 @@
     "flux": "^2.1.1",
     "history": "^1.13.1",
     "http-proxy": "^1.13.0",
+    "i18next": "^2.5.1",
+    "i18next-xhr-backend": "^0.5.3",
     "pm2": "^1.1.1",
     "react": "^0.14.8",
     "react-cropper": "^0.6.0",

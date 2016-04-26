@@ -1,5 +1,6 @@
 'use strict';
 import React, {Component} from 'react';
+import i18next from 'i18next';
 import * as navActions from '../actions/navActions';
 
 export default class SideBar extends Component{
@@ -22,17 +23,17 @@ export default class SideBar extends Component{
           <li className='sidebar-title'><span>NAVIGATION</span></li>
           <li className='sidebar-list'>
             <a href='javascript:void(0);' onClick={this.handleLinkClick.bind(this, 'dash')}>
-              Dashboard <span className='menu-icon fa fa-tachometer'></span>
+              {i18next.t('DASHBOARD')} <span className='menu-icon fa fa-tachometer'></span>
             </a>
           </li>
           <li className="sidebar-list">
             <a href="javascript:void(0);" onClick={this.handleLinkClick.bind(this, "calendar")}>
-              Calendar<span className="menu-icon fa fa-table"></span>
+              {i18next.t('CALENDAR')} <span className="menu-icon fa fa-table"></span>
             </a>
           </li>
           <li className="sidebar-list">
             <a href="javascript:void(0);" onClick={this.handleLinkClick.bind(this, "search")}>
-              Event Search <span className="menu-icon fa fa-search"></span>
+              {i18next.t('EVENT_SEARCH')} <span className="menu-icon fa fa-search"></span>
             </a>
           </li>
         </ul>
@@ -44,7 +45,7 @@ export default class SideBar extends Component{
           </div>
           <div className='col-xs-6'>
             <a href='http://www.inin.com/solutions/pages/cloud-contact-center-purecloud.aspx'>
-              Support
+              {i18next.t('SUPPORT')}
             </a>
           </div>
         </div>

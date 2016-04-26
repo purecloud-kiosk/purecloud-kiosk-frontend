@@ -7,6 +7,7 @@ import history from '../history/history';
 import * as eventActions from "../actions/eventActions";
 import eventsStore from "../stores/eventsStore";
 import eventsConstants from "../constants/eventsConstants";
+import i18next from 'i18next';
 export default class Calendar extends Component{
   constructor(props){
     super(props);
@@ -31,42 +32,49 @@ export default class Calendar extends Component{
       },
       'customButtons' : {
         'customPrev' : {
-          'text' : 'prev',
+          'text' : i18next.t('PREV'),
           'click' : () => {
               $('#calendar').fullCalendar('prev');
               self.retrieveEvents();
           }
         },
         'customNext' : {
-          'text' : 'next',
+          'text' : i18next.t('NEXT'),
           'click' : () => {
               $('#calendar').fullCalendar('next');
               self.retrieveEvents();
           }
         },
         'customMonth' : {
-          'text' : 'month',
+          'text' : i18next.t('MONTH'),
           'click' : () => {
               $('#calendar').fullCalendar('changeView', 'month');
               self.retrieveEvents();
           }
         },
         'customAgendaWeek' : {
-          'text' : 'week',
+          'text' : i18next.t('WEEK'),
           'click' : () => {
               $('#calendar').fullCalendar('changeView', 'agendaWeek');
               self.retrieveEvents();
           }
         },
+        'customAgendaWeek' : {
+          'text' : i18next.t('DAY'),
+          'click' : () => {
+              $('#calendar').fullCalendar('changeView', 'agendaDay');
+              self.retrieveEvents();
+          }
+        },
         'refresh' : {
-          'text' : 'refresh',
+          'text' : i18next.t('REFRESH'),
           'click' : () => {self.retrieveEvents();}
         }
       },
       'header': {
           'left': 'customPrev,customNext,refresh',
           'center': 'title',
-          'right': 'customMonth,customAgendaWeek,agendaDay'
+          'right': 'customMonth,customAgendaWeek,customDay'
       },
       'eventClick' : (calEvent, jsEvent, view) => {
         console.log(calEvent.title);
@@ -138,7 +146,7 @@ export default class Calendar extends Component{
     var alert = (
       <div className="alert alert-info animated fadeInDown">
         <a href="#" className="close" data-dismiss="alert" aria-label="close">&times;</a>
-        Click on an empty spot on the calendar to create an event.
+        {i18next.t('CALENDAR_ALERT')}
       </div>
     );
     console.log('rerendered');

@@ -7,6 +7,8 @@ import statsStore from '../stores/statsStore';
 import navStore from '../stores/navStore';
 import navConstants from '../constants/navConstants';
 import statsConstants from '../constants/statsConstants';
+import i18next from 'i18next';
+import Modal from './Modal';
 
 export default class HeaderBar extends Component {
   constructor(props){
@@ -19,6 +21,12 @@ export default class HeaderBar extends Component {
           navStore.addListener(navConstants.NOTIFICATION_RECIEVED, this.addNotification.bind(this));
     this.state.initialNotificationListener =
           navStore.addListener(navConstants.NOTIFICATIONS_RETRIEVED, this.addNotification.bind(this));
+    console.log('current lang');
+    console.log(i18next.language);
+    $('#lang-select').val(i18next.language || 'en'); // fallback is en
+  }
+  onLangChange(e){
+    navActions.changeLanguage(e.target.value);
   }
   addNotification(){
     console.log('adding notifications');
@@ -35,7 +43,6 @@ export default class HeaderBar extends Component {
     this.setState(state);
   }
   resetCount(){
-    let state = this.state;
     console.log(state.notificationMessages);
     state.notificationMessages.forEach((notification) => {
       notification.viewed = true;
@@ -53,6 +60,9 @@ export default class HeaderBar extends Component {
         break;
     }
   }
+  openLangModal(){
+    $('#langModal').modal('show');
+  }
   render(){
     let {stats, notificationMessages} = this.state;
     let notifications= [];
@@ -67,7 +77,7 @@ export default class HeaderBar extends Component {
       notifications.push(
         <li className='notification-message'>
           <a href='javascript:void(0);'>
-            No new notifications
+            {i18next.t('NO_NOTIFICATIONS')}
           </a>
         </li>
       );
@@ -81,7 +91,7 @@ export default class HeaderBar extends Component {
           nMsg = (
               <a className='notification-message'
                 onClick={this.onNotificationClick.bind(this,notification.message)}>
-                An event with the title <strong>{notification.message.content.title}</strong> has been created
+                i18next.t('EVENT_WITH_TITLE')<strong>{notification.message.content.title}</strong> {i18next.t('CREATED')}
               </a>
           );
         }
@@ -89,7 +99,7 @@ export default class HeaderBar extends Component {
           nMsg = (
               <a className='notification-message' onClick={this.onNotificationClick.bind(this,notification.message)}>
                 <strong>New:</strong>
-                An event with the title <strong>{notification.content.title}</strong> has been created
+                {i18next.t('EVENT_WITH_TITLE')} <strong>{notification.content.title}</strong> {i18next.t('CREATED')}
               </a>
           );
         }
@@ -110,9 +120,11 @@ export default class HeaderBar extends Component {
               <ul className='dropdown-menu dropdown-menu-right'>
                 <li className='dropdown-header'>{stats.name}</li>
                 <li className='divider'></li>
-                <li className='link'><a href='https://apps.mypurecloud.com/directory/'>Profile</a></li>
+                <li className='link'><a href='https://apps.mypurecloud.com/directory/'>{i18next.t('PROFILE')}</a></li>
                 <li className='divider'></li>
-                <li className='link'><a href='https://login.mypurecloud.com/logout'>Logout</a></li>
+                <li className='link'><a onClick={this.openLangModal.bind(this)}>{i18next.t('LANGUAGE')}</a></li>
+                <li className='divider'></li>
+                <li className='link'><a href='https://login.mypurecloud.com/logout'>{i18next.t('LOGOUT')}</a></li>
               </ul>
             </div>
             <div className='item dropdown'>
@@ -123,7 +135,7 @@ export default class HeaderBar extends Component {
                </span>
               </a>
               <ul className='notification-menu dropdown-menu dropdown-menu-right'>
-                <li className='dropdown-header'>Notifications</li>
+                <li className='dropdown-header'>{i18next.t('NOTIFICATIONS')}</li>
                 <li className='divider'></li>
                 {notifications}
               </ul>
@@ -131,13 +143,24 @@ export default class HeaderBar extends Component {
           </div>
           <div className='meta'>
             <div className='page'>
-              {stats.organization} Dashboard
+              {i18next.t('DASHBOARD')}
             </div>
             <div className='breadcrumb-links'>
               Home / Dashboard
             </div>
           </div>
         </div>
+        <Modal id='langModal' title={i18next.t('LANG_SELECT')} cancelText='close'>
+          <div className='lang-content'>
+            <div className="form-group">
+              <label for="sel1">{i18next.t('SELECT_PREFERRED_LANG')}</label>
+              <select className="form-control" id="lang-select" onChange={this.onLangChange.bind(this)}>
+                <option>en</option>
+                <option>test</option>
+              </select>
+            </div>
+          </div>
+        </Modal>
       </div>
     );
   }

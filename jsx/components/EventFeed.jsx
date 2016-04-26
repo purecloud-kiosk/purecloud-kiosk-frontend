@@ -1,7 +1,7 @@
 
 "use strict";
 import React, { Component } from "react";
-
+import i18next from 'i18next';
 import * as eventActions from "../actions/eventActions";
 import * as statsActions from "../actions/statsActions";
 import * as navActions from "../actions/navActions";
@@ -49,7 +49,7 @@ export default class EventView extends Component {
             <blockquote className='animated fadeInLeft' key={data.id}>
               {removeButton}
               <p className='text-size-medium notification-message'>{data.message.content}</p>
-              <footer>{data.posterName} on {moment(data.datePosted).format('LLL')}</footer>
+              <footer>{data.posterName} {i18next.t('ON')} {moment(data.datePosted).format('LLL')}</footer>
             </blockquote>
           );
         })}

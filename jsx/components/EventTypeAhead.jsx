@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from 'i18next';
 import requestConstants from '../constants/requestConstants';
 import * as pureCloudActions from '../actions/pureCloudActions';
 import * as eventActions from '../actions/eventActions';
@@ -106,9 +107,9 @@ export default class TypeAhead extends Component{
     return (
       <form onSubmit={this.handleSubmit.bind(this)}>
         <div class='form-group'>
-          <label for={id}>Search </label>
+          <label for={id}>{i18next.t('SEARCH')}</label>
           <input id={id} className='form-control' type='text' onChange={this.handleInputChange.bind(this)}
-            placeholder='Enter your search query here'/>
+            placeholder={i18next.t('ENTER_SEARCH_QUERY')}/>
         </div>
       </form>
     );

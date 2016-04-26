@@ -1,8 +1,10 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from 'i18next';
 import navStore from '../stores/navStore';
 import * as eventActions from '../actions/eventActions';
 import navConstants from '../constants/navConstants';
+
 Highcharts.setOptions({                                            // This is for all plots, change Date axis to local timezone
     global : {
         useUTC : false
@@ -91,59 +93,6 @@ export default class PieChartWidget extends Component {
     //let pieChartCtx = $('#' + state.id).get(0).getContext('2d');
     let chartOptions = null;
     switch(type){
-      case 'scatter':
-        console.log('chart data for scatter');
-        console.log(chartData);
-        chartOptions = {
-            chart: {
-              renderTo : this.state.id
-            },
-            title: {
-                text: 'Check In Chart'
-            },
-            subtitle: {
-                text: null
-            },
-            xAxis: {
-                type: 'datetime',
-                title: {
-                    text: 'Check In Times'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Check Ins'
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    marker: {
-                        enabled : true,
-                        symbol : 'circle',
-                        radius: 3
-                    },
-                    states: {
-                        hover: {
-                            enabled : true
-                        }
-                    }
-                }
-            },
-            tooltip: {
-                formatter: function(){
-                  return 'Check In: <b>' + moment(this.x).format('LLL') + '</b>';
-                }
-            },
-            series: [{
-                name: 'Check In',
-                data: chartData.data
-            }]
-        };
-        console.log(chartData.data);
-        break;
       case 'bar':
         chartOptions = {
             chart: {
@@ -151,7 +100,7 @@ export default class PieChartWidget extends Component {
                 type: 'column'
             },
             title: {
-                text: 'Most Recent Event Outcomes'
+                text: '',
             },
             xAxis: {
                 categories: chartData.categories,
@@ -160,7 +109,7 @@ export default class PieChartWidget extends Component {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Check In Counts'
+                    text: i18next.t("CHECK_IN_COUNTS")
                 }
             },
             tooltip: {
@@ -178,78 +127,11 @@ export default class PieChartWidget extends Component {
                 }
             },
             series: [{
-                name: 'Check Ins',
+                name: i18next.t("CHECK_INS"),
                 data: chartData.data
             }]
         };
         break;
-          case 'timeseries':
-            chartOptions = {
-                chart: {
-                  renderTo : this.state.id,
-                  zoomType : 'x'
-                },
-                title: {
-                    text: 'Check In Time series'
-                },
-                xAxis: {
-                    type : 'datetime',
-                    minRange : 1,
-                },
-                subtitle: {
-                  text: document.ontouchstart === undefined ?
-                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Check In Counts'
-                    }
-                },
-                // tooltip: {
-                //     headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                //     pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                //         '<td style="padding:0"><b>{point.y} check ins</b></td></tr>',
-                //     footerFormat: '</table>',
-                //     shared: true,
-                //     useHTML: true
-                // },
-                legend: {
-                  enabled: false
-              },
-                plotOptions: {
-                area: {
-                    fillColor: {
-                        linearGradient: {
-                            x1: 0,
-                            y1: 0,
-                            x2: 0,
-                            y2: 1
-                        },
-                        stops: [
-                            [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        ]
-                    },
-                    marker: {
-                        radius: 2
-                    },
-                    lineWidth: 1,
-                    states: {
-                        hover: {
-                            lineWidth: 1
-                        }
-                    },
-                    threshold: null
-                }
-              },
-                series: [{
-                    name: 'Check Ins',
-                    type: 'area',
-                    //pointInterval : 60 * 1000,
-                    data: chartData.data
-                }]
-            };
-            break;
       default:
         chartOptions = {
           chart: {

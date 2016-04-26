@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import i18next from 'i18next';
 import Modal from './Modal';
 import CreateEventForm from './CreateEventForm';
 import * as navActions from '../actions/navActions';
@@ -93,7 +94,7 @@ export default class ManageView extends Component{
       invitesButton = (
         <li className={menu.invites ? 'active' : ''}>
           <a onClick={this.menuItemClicked.bind(this, 'invites')}>
-            Invites
+            {i18next.t('INVITES')}
           </a>
         </li>
       )
@@ -103,34 +104,34 @@ export default class ManageView extends Component{
         <div className='col-md-12'>
           <div className='display-block'>
             <div className='col-md-10 col-md-offset-1'>
-              <h2>Event Management Dashboard</h2>
-              <h4>Event: {event.title}</h4>
+              <h2>{i18next.t('EVENT_MANAGEMENT_DASHBOARD')}</h2>
+              <h4>{i18next.t('EVENT')} {event.title}</h4>
             </div>
             <div className='col-md-1'></div>
           </div>
         </div>
         <div className='col-md-12'>
           <div className='col-md-3 col-md-offset-1'>
-            <label>Options Menu</label>
+            <label>{i18next.t('OPTIONS_MENU')}</label>
             <ul className="nav nav-pills nav-stacked">
               <li className={menu.edit ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'edit')}>
-                  Edit Event Details
+                  {i18next.t('EDIT_EVENT_DETAILS')}
                 </a>
               </li>
               <li className={menu.files ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'files')}>
-                  Files
+                  {i18next.t('FILES')}
                 </a>
               </li>
               <li className={menu.managers ? 'active' : ''}>
                 <a onClick={this.menuItemClicked.bind(this, 'managers')}>
-                  Event Managers
+                  {i18next.t('EVENT_MANAGERS')}
                 </a>
               </li>
               <li className={menu.delete ? 'active' : ''}>
                 <a onClick={this.openDeleteModal.bind()}>
-                  Delete Event
+                  {i18next.t('DELETE_EVENT')}
                 </a>
               </li>
               {invitesButton}
@@ -140,9 +141,9 @@ export default class ManageView extends Component{
             <div className='col-md-12'>{mainContent}</div>
           </div>
         </div>
-        <Modal id="deleteModal" title = "Delete Event" submitText='Yes'
+        <Modal id="deleteModal" title = "Delete Event" submitText={i18next.t('YES')}
           submitCallback={this.handleDeleteButtonClick.bind(this, "dash")} cancelText='No'>
-                <div> Are you sure do you want to delete this event?</div>
+                <div>{i18next.t('DELETE_WARNING')}</div>
         </Modal>
       </div>
     );

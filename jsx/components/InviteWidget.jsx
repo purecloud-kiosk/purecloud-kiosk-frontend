@@ -1,6 +1,7 @@
 import React, {
   Component
 } from 'react';
+import i18next from 'i18next';
 import * as eventActions from '../actions/eventActions';
 import * as navActions from '../actions/navActions';
 import eventDetailsStore from '../stores/eventDetailsStore';
@@ -119,12 +120,12 @@ export default class ManagerWidget extends Component{
           console.log(user);
 
           if(user.eventManager === true){
-            inviteButton = 'Event Manager';
+            inviteButton = i18next.t('EVENT_MANAGER');
           }
           else if(this.props.removeOnDelete){
             inviteButton = (
               <button className='btn btn-danger' onClick={this.handleRemoveClicked.bind(this, user)}>
-                Remove
+                {i18next.t('REMOVE')}
               </button>
             )
           }
@@ -134,14 +135,14 @@ export default class ManagerWidget extends Component{
           else if(user.invited === true){
             inviteButton = (
               <button className='btn btn-danger' onClick={this.handleRemoveClicked.bind(this, user)}>
-                Remove
+                {i18next.t('REMOVE')}
               </button>
             )
           }
           else{ // not a manager, show add button
             inviteButton = (
               <button className='btn btn-info' onClick={this.handleAddClicked.bind(this, user)}>
-                Invite
+                {i18next.t('INVITE')}
               </button>
             );
           }
@@ -167,9 +168,9 @@ export default class ManagerWidget extends Component{
           <table className='table table-hover'>
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Email</th>
+                <th>{i18next.t('IMAGE')}</th>
+                <th>{i18next.t('NAME')}</th>
+                <th>{i18next.t('EMAIL')}</th>
                 <th></th>
               </tr>
             </thead>
