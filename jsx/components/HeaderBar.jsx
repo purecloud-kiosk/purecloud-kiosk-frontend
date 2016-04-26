@@ -13,7 +13,11 @@ import Modal from './Modal';
 export default class HeaderBar extends Component {
   constructor(props){
     super(props);
-    this.state = {'stats' : null, 'notificationMessages' : []};
+    this.state = {
+      'stats' : null,
+      'notificationMessages' : [],
+      'breadcrumbs' : navStore.getBreadcrumbs()
+    };
   }
   componentDidMount(){
     this.state.statsListener = statsStore.addListener(statsConstants.USER_STATS_RETRIEVED, this.updateStats.bind(this));
@@ -21,8 +25,7 @@ export default class HeaderBar extends Component {
           navStore.addListener(navConstants.NOTIFICATION_RECIEVED, this.addNotification.bind(this));
     this.state.initialNotificationListener =
           navStore.addListener(navConstants.NOTIFICATIONS_RETRIEVED, this.addNotification.bind(this));
-    console.log('current lang');
-    console.log(i18next.language);
+    this.state.breadcrumbsListener = navStore.addListener(navConstants.BREADCRUMBS_CHANGE, this.updateBreadcrumbs.bind(this));
     $('#lang-select').val(i18next.language || 'en'); // fallback is en
   }
   onLangChange(e){
@@ -63,8 +66,12 @@ export default class HeaderBar extends Component {
   openLangModal(){
     $('#langModal').modal('show');
   }
+  updateBreadcrumbs(){
+    this.state.breadcrumbs = navStore.getBreadcrumbs();
+    this.setState(this.state);
+  }
   render(){
-    let {stats, notificationMessages} = this.state;
+    let {stats, notificationMessages, breadcrumbs} = this.state;
     let notifications= [];
     let newNotificationCount = null;
     if(stats == null) // fill with empty data if null
@@ -146,7 +153,7 @@ export default class HeaderBar extends Component {
               {i18next.t('DASHBOARD')}
             </div>
             <div className='breadcrumb-links'>
-              Home / Dashboard
+              {i18next.t(breadcrumbs)}
             </div>
           </div>
         </div>

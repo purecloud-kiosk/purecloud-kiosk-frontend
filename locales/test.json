@@ -9,6 +9,9 @@
   "EVENT_SEARCH" : "test",
   "SUPPORT" : "test",
   "DASHBOARD" : "test",
+  "LANGUAGE" : "test",
+  "LANG_SELECT" : "test",
+  "SELECT_PREFERRED_LANG" : "test",
   "UPCOMING_PUBLIC_EVENTS" : "test",
   "UPCOMING_PRIVATE_EVENTS" : "test",
   "UPCOMING_EVENTS_MANAGING" : "test",
@@ -104,5 +107,10 @@
   "LOCATION" : "test",
   "THUMBNAIL_IMAGE" : "test test",
   "BANNER_IMAGE" : "Banntesttester test",
-  "DESCRIPTION_OF_EVENT" : "test of test"
+  "DESCRIPTION_OF_EVENT" : "test of test",
+  "CALENDAR_BREADCRUMBS" : "Home / Calendar",
+  "DASHBOARD_BREADCRUMBS" : "Home / test",
+  "SEARCH_BREADCRUMBS" : "Home / test",
+  "EVENT_BREADCRUMBS" : "Home / test",
+  "MANAGE_EVENT_BREADCRUMBS" : "Home / test / test"
  }

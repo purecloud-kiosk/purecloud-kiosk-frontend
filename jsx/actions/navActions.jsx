@@ -30,6 +30,28 @@ export function routeToPage(page){
   if("/" + page !== currentPath)
     history.pushState(null, page);
   $('.main-content').scrollTop(0);
+  let breadcrumbs;
+  switch(page){
+    case 'dash':
+      breadcrumbs = 'DASHBOARD_BREADCRUMBS';
+      break;
+    case 'calendar':
+      breadcrumbs = 'CALENDAR_BREADCRUMBS';
+      break;
+    case 'event':
+      breadcrumbs = 'EVENT_BREADCRUMBS';
+      break;
+    case 'search':
+      breadcrumbs = 'SEARCH_BREADCRUMBS';
+      break;
+    case 'manage':
+      breadcrumbs = 'MANAGE_EVENT_BREADCRUMBS';
+      break;
+  }
+  dispatcher.dispatch({
+    'actionType' : navConstants.BREADCRUMBS_CHANGE,
+    'data' : breadcrumbs
+  });
 }
 export function goBack(){
   history.goBack();

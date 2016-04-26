@@ -107,5 +107,10 @@
   "LOCATION" : "Location",
   "THUMBNAIL_IMAGE" : "Thumbnail Image",
   "BANNER_IMAGE" : "Banner Image",
-  "DESCRIPTION_OF_EVENT" : "Description of Event"
+  "DESCRIPTION_OF_EVENT" : "Description of Event",
+  "CALENDAR_BREADCRUMBS" : "Home / Calendar",
+  "DASHBOARD_BREADCRUMBS" : "Home / Dashboard",
+  "SEARCH_BREADCRUMBS" : "Home / Search",
+  "EVENT_BREADCRUMBS" : "Home / Event",
+  "MANAGE_EVENT_BREADCRUMBS" : "Home / Event / Manage"
  }
