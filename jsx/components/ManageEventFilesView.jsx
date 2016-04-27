@@ -11,6 +11,9 @@ import ManageEventManagersView from './ManageEventManagersView';
 import ManageInvitesView from './ManageInvitesView';
 import FileWidget from './FileWidget';
 import FileInput from 'react-file-input';
+import LoadingIcon from './LoadingIcon';
+import i18next from 'i18next';
+
 export default class ManageView extends Component{
   constructor(props){
     super(props);
@@ -18,7 +21,8 @@ export default class ManageView extends Component{
       'event' :this.props.event,
       'files' : [],
       'formData' : null,
-      'buttonActive' : true
+      'buttonActive' : false,
+      'fileLoading' : false,
     };
   }
   componentDidMount(){
@@ -29,7 +33,7 @@ export default class ManageView extends Component{
     this.state.fileRemovalListener =
       eventDetailsStore.addListener(eventsConstants.FILE_REMOVED, this.onFileRemoved.bind(this));
     this.state.fileErrorListener =
-      eventDetailsStore.addListener(eventsConstants.ERROR, this.onFileError.bind(this));
+      eventDetailsStore.addListener(eventsConstants.FILE_ERROR, this.onFileError.bind(this));
     eventActions.getEventFiles(this.state.event.id);
   }
   componentWillUnmount(){
@@ -55,6 +59,7 @@ export default class ManageView extends Component{
   addFile(){
     this.state.files.push(eventDetailsStore.getAddedFile());
     this.state.buttonActive = true;
+    this.state.fileLoading = false;
     this.setState(this.state);
   }
   readFile(input){
@@ -66,35 +71,46 @@ export default class ManageView extends Component{
         formData.append('eventID' , this.state.event.id);
         formData.append('file', input.target.files[0]);
         this.state.formData = formData;
+        this.state.buttonActive = true;
+        this.setState(this.state);
     }
   }
   uploadFile(){
     let state = this.state;
     if(state.buttonActive){
       if(state.formData === null){
-        alert('nope');
+
       }
       else{
         state.buttonActive = false;
+        state.fileLoading = true;
         eventActions.uploadImage(state.formData, 'event');
       }
     }
     this.setState(state);
   }
+  onFileError(){
+    this.state.buttonActive = true;
+    this.setState(this.state);
+  }
   render(){
-    const {files, buttonActive} = this.state;
-    let active = buttonActive ? 'active' : '';
+    const {files, buttonActive, fileLoading} = this.state;
+    let active = buttonActive ? '' : 'disabled';
+    let loadingIcon;
+    if(fileLoading)
+      loadingIcon = <LoadingIcon/>;
     return (
       <div>
         <h4>File Upload</h4>
-        <form className="form-inline" onSubmit={(e) => {e.preventDefault()}}>
+        <form id='file-input-form' className="form-inline" onSubmit={(e) => {e.preventDefault()}}>
           <div className="form-group" id='file-form'>
             <label for="fileInput">File</label>
             <FileInput className='form-control' name='event-file-input'
-              placeholder='Click here to select your file' className='form-control'
+              placeholder='Click here to select your file' id='event-file-input'
               accept='*' onChange={this.readFile.bind(this)}/>
             <br></br>
-            <button type="button" className={"btn btn-primary " + active}  onClick={this.uploadFile.bind(this)}>Upload File</button>
+            <button type="button" className={"btn btn-primary " + active}  onClick={this.uploadFile.bind(this)}>{i18next.t('UPLOAD_FILE')}</button>
+            {loadingIcon}
           </div>
         </form>
         <FileWidget files={files} size='large' remove={true}/>

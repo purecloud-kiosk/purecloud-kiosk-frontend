@@ -26,6 +26,9 @@ export default class HeaderBar extends Component {
     this.state.initialNotificationListener =
           navStore.addListener(navConstants.NOTIFICATIONS_RETRIEVED, this.addNotification.bind(this));
     this.state.breadcrumbsListener = navStore.addListener(navConstants.BREADCRUMBS_CHANGE, this.updateBreadcrumbs.bind(this));
+    $('#notification-anchor').click(() => {
+      this.setNotifications();
+    });
     $('#lang-select').val(i18next.language || 'en'); // fallback is en
   }
   onLangChange(e){
@@ -38,6 +41,7 @@ export default class HeaderBar extends Component {
     this.setState(state);
   }
   componentWillUnmount(){
+    $('#notification-anchor').off();
     this.state.statsListener.remove();
   }
   updateStats(){
@@ -70,6 +74,13 @@ export default class HeaderBar extends Component {
     this.state.breadcrumbs = navStore.getBreadcrumbs();
     this.setState(this.state);
   }
+  setNotifications(){
+    console.log('notification called');
+    this.state.notificationMessages.forEach((notification) => {
+      notification.viewed  = true;
+    });
+    this.setState(this.state);
+  }
   render(){
     let {stats, notificationMessages, breadcrumbs} = this.state;
     let notifications= [];
@@ -93,20 +104,23 @@ export default class HeaderBar extends Component {
       newNotificationCount = 0;
       notificationMessages.forEach((notification) => {
         let nMsg;
+        console.log(notification);
+        let isNew;
         if(notification.viewed === false){
           newNotificationCount++;
+          isNew = <strong>New:</strong>
+        }
+        if(notification.message.action === "EVENT_INVITE"){
           nMsg = (
-              <a className='notification-message'
-                onClick={this.onNotificationClick.bind(this,notification.message)}>
-                i18next.t('EVENT_WITH_TITLE')<strong>{notification.message.content.title}</strong> {i18next.t('CREATED')}
+              <a className='notification-message' onClick={this.onNotificationClick.bind(this,notification.message)}>
+                {isNew} You were invited to <strong>{notification.message.content.title}</strong>
               </a>
           );
         }
         else{
           nMsg = (
               <a className='notification-message' onClick={this.onNotificationClick.bind(this,notification.message)}>
-                <strong>New:</strong>
-                {i18next.t('EVENT_WITH_TITLE')} <strong>{notification.content.title}</strong> {i18next.t('CREATED')}
+                {isNew} {i18next.t('EVENT_WITH_TITLE')} <strong>{notification.message.content.title}</strong> {i18next.t('CREATED')}
               </a>
           );
         }
@@ -135,7 +149,7 @@ export default class HeaderBar extends Component {
               </ul>
             </div>
             <div className='item dropdown'>
-             <a id='notification-anchor' href='javascript:void(0);' className='dropdown-toggle col-sm-8' data-toggle='dropdown'>
+             <a id='notification-anchor' onClick={this.setNotifications.bind(this)} className='dropdown-toggle col-sm-8' data-toggle='dropdown'>
                <span className='fa-stack'>
                  <i id='notification' className='fa fa-bell-o'></i>
                  <strong id='notification-count' className='fa-stack-1x'>{newNotificationCount}</strong>

@@ -42,7 +42,7 @@ export default class FileWidget extends Component{
       if(remove){
         removeButton = (
           <td>
-            <button className='btn btn-danger' onClick={this.handleRemoveButtonClicked.bind(this, file)}>{i8next.t('REMOVE')}</button>
+            <button className='btn btn-danger' onClick={this.handleRemoveButtonClicked.bind(this, file)}>{i18next.t('REMOVE')}</button>
           </td>
         );
       }

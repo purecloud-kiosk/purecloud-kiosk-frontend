@@ -366,6 +366,9 @@ export function uploadImage(formData, fileType){
       });
     },
     error: function () {
+      dispatcher.dispatch({
+        actionType : eventConstants.FILE_ERROR
+      });
       console.log('Upload error');
     }
   });

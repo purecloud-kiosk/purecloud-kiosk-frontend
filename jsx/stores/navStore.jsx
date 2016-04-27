@@ -21,7 +21,6 @@ function setOrgNotifications(messages){
 }
 function setBreadcrumbs(crumbs){
   breadcrumbs = crumbs;
-  console.log('BRead crumbs set to ' + crumbs);
 }
 class NavStore extends EventEmitter{
   sideBarIsOpen(){

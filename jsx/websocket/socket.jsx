@@ -1,3 +1,6 @@
+'use strict';
+
+import i18next from "i18next";
 import requestConstants from "../constants/requestConstants";
 import navConstants from '../constants/navConstants';
 import * as navActions from '../actions/navActions';
@@ -8,13 +11,15 @@ import config from '../../config.json';
 class WebSocket{
   constructor(){
     this.socket =  io(config.socketEndpoint);
+    this.socket.on('connect', () => {
+      console.log('connection made!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      this.socket.emit('auth', {'token': requestConstants.AUTH_TOKEN});
+    });
   }
   init(notificationSystem){
     this.notificationSystem = notificationSystem;
-    this.socket.on('connect', () => {
-      console.log('connected');
-      this.socket.emit('auth', {'token': requestConstants.AUTH_TOKEN});
-    });
+    console.log('socket init');
+    this.socket.emit('auth', {'token': requestConstants.AUTH_TOKEN});
     this.socket.on('subResponse', () => {
       console.log('subbed to channel');
     });
@@ -26,29 +31,47 @@ class WebSocket{
       eventActions.dispatchEventNotification(notification);
     });
     this.socket.on('ORG', (notification) => {
-      
-      console.log(statsStore.getUserStats());
+      console.log("ORG notification");
+      console.log('notification');
       if(notification.posterID !== statsStore.getUserStats().personID &&
       moment(new Date()).isBefore(new Date(notification.message.content.endDate))){
         navActions.dispatchOrgNotification(notification);
         console.log(this.notificationSystem);
-        this.notificationSystem.addNotification({
-          'message': 'A new event was created!',
-          'position': 'tr',
-          'level': 'info',
-          'action': {
-            'label': 'View Event',
-            'callback': () => {
-              eventActions.setCurrentEvent(notification.message.content);
-              navActions.routeToPage('event');
-              navActions.refresh();
+        let message;
+        if(notification.message.action === "EVENT_INVITE"){
+          message = {
+            'message': i18next.t('EVENT_INVITE'),
+            'position': 'tr',
+            'level': 'info',
+            'action': {
+              'label': i18next.t('VIEW_EVENT'),
+              'callback': () => {
+                eventActions.setCurrentEvent(notification.message.content);
+                navActions.routeToPage('event');
+                navActions.refresh();
+              }
             }
-          }
-        });
+          };
+        }
+        else{
+          this.notificationSystem.addNotification({
+            'message': i18next.t('EVENT_CREATED'),
+            'position': 'tr',
+            'level': 'info',
+            'action': {
+              'label': i18next.t('VIEW_EVENT'),
+              'callback': () => {
+                eventActions.setCurrentEvent(notification.message.content);
+                navActions.routeToPage('event');
+                navActions.refresh();
+              }
+            }
+          });
+        }
       }
     });
     this.socket.on('disconnect', () => {
-      console.log('disconnected');
+      console.log('socket disconnected');
     });
     this.socket.on('reconnect', () => {
       console.log('reconnected');

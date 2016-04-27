@@ -129,12 +129,12 @@ export default class ManageView extends Component{
                   {i18next.t('EVENT_MANAGERS')}
                 </a>
               </li>
+              {invitesButton}
               <li className={menu.delete ? 'active' : ''}>
                 <a onClick={this.openDeleteModal.bind()}>
                   {i18next.t('DELETE_EVENT')}
                 </a>
               </li>
-              {invitesButton}
             </ul>
           </div>
           <div className='col-md-7'>
