@@ -90,8 +90,10 @@
   "PUBLIC_EVENT" : "This event is public.",
   "ON" : "on",
   "SUBMIT" : "Submit",
-  "START_DATE" : "Start Date:",
-  "END_DATE" : "End Date:",
+  "START_DATE" : "Start Date",
+  "START_TIME" : "Start Time",
+  "END_DATE" : "End Date",
+  "END_TIME" : "End Time",
   "EVENT_LOCATION" : "Event Location",
   "EVENT_FEED" : "Event Feed",
   "NO_EVENT_FEED_MESSAGES" : "No messages have been published to the Event Feed",
@@ -102,8 +104,6 @@
   "SUCCESSFUL_IMAGE_UPLOAD" : "Image successfully uploaded",
   "SUCCESSFUL_EVENT_UPDATE" : "Event successfully updated",
   "TITLE" : "Title",
-  "START_TIME" : "Start Time",
-  "END_TIME" : "End Date",
   "LOCATION" : "Location",
   "THUMBNAIL_IMAGE" : "Thumbnail Image",
   "BANNER_IMAGE" : "Banner Image",
@@ -116,5 +116,6 @@
   "DASHBOARD_BREADCRUMBS" : "Home / Dashboard",
   "SEARCH_BREADCRUMBS" : "Home / Search",
   "EVENT_BREADCRUMBS" : "Home / Event",
-  "MANAGE_EVENT_BREADCRUMBS" : "Home / Event / Manage"
+  "MANAGE_EVENT_BREADCRUMBS" : "Home / Event / Manage",
+  "INVITATIONS_SENT" : "Invitations were successfully sent."
  }

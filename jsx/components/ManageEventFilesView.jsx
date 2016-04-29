@@ -23,6 +23,7 @@ export default class ManageView extends Component{
       'formData' : null,
       'buttonActive' : false,
       'fileLoading' : false,
+      'inputKey' : (Math.random() + 1).toString(36).substring(7)
     };
   }
   componentDidMount(){
@@ -58,8 +59,9 @@ export default class ManageView extends Component{
   }
   addFile(){
     this.state.files.push(eventDetailsStore.getAddedFile());
-    this.state.buttonActive = true;
+    this.state.buttonActive = false;
     this.state.fileLoading = false;
+    this.state.inputKey = (Math.random() + 1).toString(36).substring(7);
     this.setState(this.state);
   }
   readFile(input){
@@ -94,7 +96,7 @@ export default class ManageView extends Component{
     this.setState(this.state);
   }
   render(){
-    const {files, buttonActive, fileLoading} = this.state;
+    const {files, buttonActive, fileLoading, inputKey} = this.state;
     let active = buttonActive ? '' : 'disabled';
     let loadingIcon;
     if(fileLoading)
@@ -107,7 +109,8 @@ export default class ManageView extends Component{
             <label for="fileInput">File</label>
             <FileInput className='form-control' name='event-file-input'
               placeholder='Click here to select your file' id='event-file-input'
-              accept='*' onChange={this.readFile.bind(this)}/>
+              accept='*' onChange={this.readFile.bind(this)}
+              key={inputKey}/>
             <br></br>
             <button type="button" className={"btn btn-primary " + active}  onClick={this.uploadFile.bind(this)}>{i18next.t('UPLOAD_FILE')}</button>
             {loadingIcon}

@@ -11,6 +11,9 @@ import XHR from 'i18next-xhr-backend';
 // import application
 import App from './components/App.jsx';
 
+// silence console logs
+//console.log = function(){};
+
 i18next.use(XHR).init({
   'lng' : localStorage.getItem('pureCloudKioskLang'),
   'backend' : {

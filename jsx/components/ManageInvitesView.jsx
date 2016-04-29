@@ -1,6 +1,7 @@
 import React,{
   Component
 } from 'react';
+import i18next from 'i18next';
 import * as eventActions from "../actions/eventActions";
 import * as pureCloudActions from '../actions/pureCloudActions';
 import eventDetailsStore from "../stores/eventDetailsStore";
@@ -11,6 +12,8 @@ import UserWidget from './UserWidget';
 import PeopleTypeAhead from './PeopleTypeAhead';
 import ManagerWidget from './ManagerWidget';
 import InviteWidget from './InviteWidget';
+import NotificationSystem from 'react-notification-system';
+
 export default class EventManagerView extends Component{
   constructor(props){
     super(props);
@@ -23,12 +26,15 @@ export default class EventManagerView extends Component{
     };
   }
   componentDidMount(){
+    this.notificationSystem = this.refs.notificationSystem;
     this.state.eventManagerListener =
       eventDetailsStore.addListener(eventsConstants.EVENT_INVITES_RETRIEVED, this.updateEventInvites.bind(this));
     this.state.pureCloudSearchListener =
       pureCloudStore.addListener(pureCloudConstants.USER_SEARCH_RETRIEVED, this.updateSearchResults.bind(this));
     this.state.bulkCheckInListener =
       eventDetailsStore.addListener(eventsConstants.BULK_CHECKINS_RETRIEVED, this.updateInviteStatus.bind(this));
+    this.state.inviteListener =
+      eventDetailsStore.addListener(eventsConstants.INVITES_SENT, this.handleInviteConfirm.bind(this));
     eventActions.getEventInvites(this.state.event.id);
     pureCloudActions.searchUsers('');
   }
@@ -36,6 +42,14 @@ export default class EventManagerView extends Component{
     this.state.eventManagerListener.remove();
     this.state.pureCloudSearchListener.remove();
     this.state.bulkCheckInListener.remove();
+    this.state.inviteListener.remove();
+  }
+  handleInviteConfirm(){
+    this.notificationSystem.addNotification({
+      'message': i18next.t('INVITATIONS_SENT'),
+      'position': 'tr',
+      'level': 'info'
+    });
   }
   updateSearchResults(){
     let state = this.state;
@@ -85,6 +99,9 @@ export default class EventManagerView extends Component{
     console.log(this.state.invites);
     this.setState(state);
   }
+  sendInvites(){
+    eventActions.sendInvites(this.state.event.id);
+  }
   render(){
     const {userSearchResults, invites, event} = this.state;
     return (
@@ -94,6 +111,8 @@ export default class EventManagerView extends Component{
         </div>
         <InviteWidget title='Search Results' event={event} users={userSearchResults}/>
         <InviteWidget title='Event Attendees' event={event} users={invites} removeOnDelete={true}/>
+        <button className='btn btn-primary btn-block' onClick={this.sendInvites.bind(this)}>Send Invite Emails</button>
+        <NotificationSystem ref='notificationSystem'/>
       </div>
     );
   }

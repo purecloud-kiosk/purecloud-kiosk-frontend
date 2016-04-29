@@ -7,6 +7,7 @@ import eventDetailsStore from '../stores/eventDetailsStore';
 import eventsConstants from '../constants/eventsConstants';
 import DatePicker from './DatePicker';
 import ImageCropper from './ImageCropper';
+import LoadingIcon from './LoadingIcon';
 import Modal from "./Modal";
 
 var NotificationSystem = require('react-notification-system');
@@ -38,7 +39,13 @@ export default class Events extends Component {
     			imageUrl :  event.imageUrl || null,
     			thumbnailUrl : event.thumbnailUrl || null
     		},
-				update : this.props.update || false
+				update : this.props.update || false,
+				thumbModalKey : (Math.random() + 1).toString(36).substring(7),
+				bannerModalKey : (Math.random() + 1).toString(36).substring(7),
+				bannerLoading : false,
+				thumbLoading : false,
+				showBannerSave : false,
+				showThumbSave : false
 				//event : null
     	};
   	}
@@ -66,7 +73,7 @@ export default class Events extends Component {
    		}
    		//else this is a new event
    		else{
-				
+
 				var state = this.state;
 				state.event.startDate = this.props.startDate;
 				console.log('form rerendered');
@@ -80,9 +87,10 @@ export default class Events extends Component {
 			this.notificationSystem = this.refs.notificationSystem;
 			this.state.submitListener = eventsStore.addListener(eventsConstants.SUBMIT_FORM, this.handleSubmit.bind(this));
 			this.state.eventStatsListener = eventsStore.addListener(eventsConstants.EVENT_CREATED, this.handleEventCreatedSuccessfully.bind(this));
-   			this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
+   		this.state.thumbnailListener = eventDetailsStore.addListener(eventsConstants.IMAGE_THUMB_STORED, this.handleImageThumbUploadedSuccessfully.bind(this));
 			this.state.bannerListener = eventDetailsStore.addListener(eventsConstants.IMAGE_URL_STORED, this.handleImageUrlUploadedSuccessfully.bind(this));
 			this.state.errorListener = eventDetailsStore.addListener(eventsConstants.ERROR, this.handleError.bind(this));
+			this.state.cropperListener = eventDetailsStore.addListener(eventsConstants.CROPPER_CHANGE, this.onCropperChange.bind(this));
 			$('#privacy-checkbox').bootstrapSwitch({
 				'onText' : i18next.t('PRIVATE'),
 				'offText' : i18next.t('PUBLIC'),
@@ -102,13 +110,20 @@ export default class Events extends Component {
   	}
   	//release the listeners
   	componentWillUnmount(){
-		this.state.submitListener.remove();
-  		this.state.thumbnailListener.remove();
-		this.state.bannerListener.remove();
-  		this.state.eventStatsListener.remove();
-  		this.state.errorListener.remove();
-		$("#privacy-checkbox").bootstrapSwitch('destroy');
+			this.state.submitListener.remove();
+	  		this.state.thumbnailListener.remove();
+			this.state.bannerListener.remove();
+	  		this.state.eventStatsListener.remove();
+	  		this.state.errorListener.remove();
+			$("#privacy-checkbox").bootstrapSwitch('destroy');
   	}
+		onCropperChange(){
+			if(eventDetailsStore.getCropperID() === 'bannerCropper')
+				this.state.showBannerSave = true;
+			else
+				this.state.showThumbSave = true;
+			this.setState(this.state);
+		}
   	handleError(){
   		console.log('HANDLE ERROR');
   		this.state.error = eventDetailsStore.getError();
@@ -154,6 +169,7 @@ export default class Events extends Component {
   		//this.clear();
   		var state = this.state;
   		state.event.thumbnailUrl = eventDetailsStore.getThumbImageCrop();
+			state.thumbLoading = false;
   		this.setState(state);
   		this.notificationSystem.addNotification({
     	 	message: 'Image successfully uploaded',
@@ -162,6 +178,7 @@ export default class Events extends Component {
     	});
     	console.log($('#'+ id));
     	$('#'+ id).attr("src", "");
+			$('#imageModal').modal('hide');
   	}
   	//image is uploaded for a banner
   	handleImageUrlUploadedSuccessfully(id){
@@ -171,15 +188,17 @@ export default class Events extends Component {
   		//this.clear();
   		var state = this.state;
   		state.event.imageUrl = eventDetailsStore.getUrlImageCrop();
-
+			state.bannerLoading = false;
   		this.setState(state);
   		this.notificationSystem.addNotification({
     	 	message: i18next.t('SUCCESSFUL_IMAGE_UPLOAD'),
      		position: 'bc',
      		level: 'success'
     	});
+
     	console.log($('#'+ id));
     	$('#'+ id).attr("src", "");
+			$('#imageModal2').modal('hide');
   	}
 
 	handleChange(key) {
@@ -208,20 +227,10 @@ export default class Events extends Component {
 		console.log('handleButtonClick');
 		console.log('this is the event data that is getting sent off');
 		console.log(this.state.event);
-		//My attempt to grab error code
-		//console.log("this is an error code" + error.responseJSON.code);
-		//console.log(eventActions.updateEvent().fail(error.responseJSON.code));
-		//console.log(this.state.fail(error.responseJSON.code));
-		//this.state.error = eventDetailsStore.getError();
-		//this.setState(state);
-		//console.log("this is an error code: " + this.state.error);
-		//this.state.error = eventDetailsStore.setError(error);
 		if(this.state.error !== null){
 			console.log("This is what Error is occurring");
 			console.log(this.state.error);
-			//console.log(handleError());
 		}
-		
 		if(this.state.update){
 			this.state.event.eventID = this.state.event.id;
 			eventActions.updateEvent(this.state.event);
@@ -263,7 +272,13 @@ export default class Events extends Component {
  			'description' : '',
 			'imageUrl' : null,
  			'thumbnailUrl' : null
- 		}
+ 		};
+		state.bannerModalKey = (Math.random() + 1).toString(36).substring(7);
+		state.thumbModalKey = (Math.random() + 1).toString(36).substring(7);
+		state.bannerLoading = false;
+		state.thumbLoading = false;
+		state.showBannerSave = false;
+		state.showThumbSave = false;
  		//debugger;
  		this.setState(state);
 	}
@@ -296,30 +311,25 @@ export default class Events extends Component {
 		  formData.append('file', blob);
 		  console.log(formData);
 			eventActions.uploadImage(formData, this.state.imageType);
+			console.log(this.state.imageType);
+			if(this.state.imageType === 'banner'){
+				this.state.bannerLoading = true;
+			}
+			else{
+				this.state.thumbLoading = true;
+			}
+			this.setState(this.state);
 		}, "image/png");
 	}
-	//or a banner
-	saveImage2(id){
 
-		console.log($('#'+ id).cropper('getCroppedCanvas'));
-		$('#'+ id).cropper('getCroppedCanvas').toBlob((blob) => {
-		  var formData = new FormData();
-			formData.append('fileName', this.state.imageType);
-		  formData.append('fileType', this.state.imageType);
-		  console.log(blob);
-		  formData.append('file', blob);
-		  console.log(formData);
-			eventActions.uploadImage(formData, this.state.imageType);
-		}, "image/png");
-	}
 	//thumbnail open image modal
   openImageModal(type){
     setTimeout(()=>{
       window.dispatchEvent(new Event('resize'));
     },500);
     this.state.imageType = type;
-    this.setState(this.state);
-    console.log(this.state.imageType);
+    //this.setState(this.state);
+    //console.log(this.state.imageType);
     $('#imageModal').modal('show');
   }
   //banner open image modal
@@ -328,13 +338,15 @@ export default class Events extends Component {
       window.dispatchEvent(new Event('resize'));
     },500);
     this.state.imageType = type;
-    this.setState(this.state);
-    console.log(this.state.imageType);
+    //this.setState(this.state);
+    //console.log(this.state.imageType);
     $('#imageModal2').modal('show');
   }
   //the render method
 	render(){
-		const {event, success, date, mode, format, inputFormat, startDate, endDate} = this.state;
+		const {event, success, date, mode, format, inputFormat,
+			startDate, endDate, bannerLoading, thumbLoading,
+			bannerModalKey, thumbModalKey, showBannerSave, showThumbSave} = this.state;
 		const {hideButton} = this.props;
 		var iCropper;
 		var temporaryImage;
@@ -352,11 +364,20 @@ export default class Events extends Component {
 	  }
 	}
 	let submit = (
-		<div className='pull-left'>
-			<label className='form-submit'></label>
-			<button className ="btn btn-primary" type = 'button'  onClick={this.handleButtonClick.bind(this)}>Submit</button>
+		<div>
+			<button className="btn btn-primary btn-block" type='button' onClick={this.handleButtonClick.bind(this)}>Submit</button>
+			<br/>
+			<br/>
 		</div>
+
 	);
+	let banner, thumbnail;
+	if(event.imageUrl !== null && event.imageUrl !== undefined && event.imageUrl.length > 0){
+		banner = <img className='pull-right' width='80' height='60' src={event.imageUrl}></img>
+	}
+	if(event.thumbnailUrl !== null && event.thumbnailUrl !== undefined && event.thumbnailUrl.length > 0){
+		thumbnail = <img className='pull-right'width='80' height='80' src={event.thumbnailUrl}></img>
+	}
 	if(hideButton){
 		submit = null;
 	}
@@ -369,85 +390,96 @@ export default class Events extends Component {
 					<input id='eventTitleInput' className='form-control' value={event.title} onChange={this.handleChange('title')}/>
 				</div>
 				<div>
-					<label className='form-title'>{i18next.t('PRIVACY')}</label>
+					<label className ='form-title'>{i18next.t('PRIVACY')}</label>
 					<div id='switch-wrapper'>
 						<input type='checkbox' id='privacy-checkbox' checked={event.private}/>
 					</div>
 				</div>
 				<div>
-					<label className ='form-date'>{i18next.t('START_DATE')}</label>
+					<label className ='form-title'>{i18next.t('START_DATE')}</label>
 					<DatePicker id='startDate' type='date' date={this.state.startDate} onChange={this.handleDateChange.bind(this, 'startDate', 'LL')}/>
 				</div>
 				<div>
-					<label className ='form-time'>{i18next.t('START_TIME')}</label>
+					<label className ='form-title'>{i18next.t('START_TIME')}</label>
 					<DatePicker id='startTime' type='time' date={this.state.startTime} onChange={this.handleDateChange.bind(this, 'startTime', 'LT')}/>
 				</div>
 				<div>
-					<label className ='form-end-date'>{i18next.t('END_DATE')}</label>
+					<label className ='form-title'>{i18next.t('END_DATE')}</label>
 					<DatePicker id='endDate' type='date' date={this.state.endDate} onChange={this.handleDateChange.bind(this, 'endDate', 'LL')}/>
 				</div>
 				<div>
-					<label className ='form-time'>{i18next.t('END_TIME')}</label>
+					<label className ='form-title'>{i18next.t('END_TIME')}</label>
 					<DatePicker id='endTime' type='time' date={this.state.endTime} onChange={this.handleDateChange.bind(this, 'endTime', 'LT')}/>
 				</div>
 				<div >
-					<label className ='form-location'>{i18next.t('LOCATION')}</label>
+					<label className ='form-title'>{i18next.t('LOCATION')}</label>
 					<input className='form-control' value={event.location} onChange={this.handleChange('location')}/>
 				</div>
 
 				<br/>
 		    <div className= 'form-image-thumb'>
-		      <label className='form-image-thumb'>{i18next.t('THUMBNAIL_IMAGE')}</label>
+		      <label className ='form-title'>{i18next.t('THUMBNAIL_IMAGE')}</label>
 		      <div className='input-group'>
-			      <input type="text" className="form-control" value={event.thumbnailUrl} onChange={this.handleChange('thumbnailUrl')}/>
+			      <input type="hidden" className="form-control" value={event.thumbnailUrl} onChange={this.handleChange('thumbnailUrl')}/>
 			      <span className="input-group-btn">
-			        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'thumbnail')}>Crop Image</button>
+			        <button className="btn btn-default" type="button" onClick={this.openImageModal.bind(this, 'thumbnail')}>Upload Image</button>
 			      </span>
+						{thumbnail}
 		      </div>
 		    </div>
 				<br/>
 				<div className= 'form-image-banner'>
-		      <label className='form-image-banner'>{i18next.t('BANNER_IMAGE')}</label>
+		      <label className ='form-title'>{i18next.t('BANNER_IMAGE')}</label>
 		      <div className='input-group'>
-			      <input type="text" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
+			      <input type="hidden" className="form-control" value={event.imageUrl} onChange={this.handleChange('imageUrl')}/>
 			      <span className="input-group-btn">
-			        <button className="btn btn-default" type="button" onClick={this.openImageModal2.bind(this, 'banner')}>Crop Image</button>
+			        <button className="btn btn-default" type="button" onClick={this.openImageModal2.bind(this, 'banner')}>Upload Image</button>
 			      </span>
+						{banner}
 		      </div>
 		    </div>
 				<div>
-					<label className= 'form-description'>{i18next.t('DESCRIPTION_OF_EVENT')}</label>
-					<textarea className='form-control' value={event.description}  onChange={this.handleChange('description')}/>
+					<label className ='form-title'>{i18next.t('DESCRIPTION_OF_EVENT')}</label>
+					<textarea className='form-control description-textarea' value={event.description}
+						rows='3' onChange={this.handleChange('description')}/>
 				</div>
-				{submit}
+				<br/>
+				<div className='text-center'>
+					{submit}
+				</div>
 				<div>
   				  <NotificationSystem ref='notificationSystem' style={style}/>
   			</div>
 			</form>
-			<Modal id='imageModal' title="Thumbnail">
-       			 <div style={{'width' : '100%', 'height' : '400px'}}>
-					<ImageCropper id='thumbCropper' type = {this.state.imageType} ></ImageCropper>
-					<div className>
-						<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage.bind(this, 'thumbCropper')}>Save Image</button>
-	       			
-       			 	</div>
-       			 </div>
-	   		</Modal>
-		    <Modal id='imageModal2' title="Banner">
-	       		 <div style={{'width' : '100%', 'height' : '400px'}}>
-						<ImageCropper id='bannerCropper' type = {this.state.imageType} > </ImageCropper>
-						<div className>
-							<button className="btn btn-primary btn-sm pull-right text-center" type = "button" onClick={this.saveImage2.bind(this, 'bannerCropper')}>Save Image</button>
-	        			</div>
-	        		</div>
-		    </Modal>
+			<Modal id='imageModal' title="Thumbnail" cancelText='Close'
+				submitButtonClass={showThumbSave ? '' : 'disabled'}
+				submitText='Save'
+				submitCallback={this.saveImage.bind(this, 'thumbCropper')}>
+				<div className={thumbLoading ? '' : 'hide-element'} style={{'height' : '400px'}}>
+					<div className='text-center image-loading-block'>
+						Uploading Image
+						<LoadingIcon/>
+					</div>
+				</div>
+				<div  key={thumbModalKey} id='thumbCropperContainer' className={thumbLoading ? 'hide-element' : ''}>
+					<ImageCropper id='thumbCropper' type ='' image={event.thumbnailUrl}></ImageCropper>
+				</div>
+	   	</Modal>
+		  <Modal id='imageModal2' title="Banner" cancelText='Close'
+				submitButtonClass={showBannerSave ? '' : 'disabled'}
+				submitText='Save'
+				submitCallback={this.saveImage.bind(this, 'bannerCropper')}>
+				<div className={bannerLoading ? '' : 'hide-element'} style={{'height' : '400px'}}>
+					<div className='text-center image-loading-block'>
+						Uploading Image
+						<LoadingIcon/>
+					</div>
+				</div>
+				<div  key={bannerModalKey} id='bannerCropperContainer' className={bannerLoading ? 'hide-element' : ''}>
+					<ImageCropper id='bannerCropper' type ='bannerCropper' image={event.imageUrl}> </ImageCropper>
+				</div>
+		  </Modal>
 		</div>
 		);
 	}
 }
-					// <div>
-					// 	<a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openImageModal.bind(this)}>Crop Image
-					// 	</a>
-					// </div>
-					
-						

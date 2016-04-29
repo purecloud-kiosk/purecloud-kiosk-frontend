@@ -29,10 +29,17 @@ export default class ManageView extends Component{
   componentDidMount(){
     //listener for delete
     this.state.eventsStoreListener = eventsStore.addListener(eventsConstants.EVENT_DELETED, navActions.routeToPage.bind(this));
+    this.state.eventDetailsListener = eventDetailsStore.addListener(eventsConstants.EVENT_UPDATED, this.refresh.bind(this));
 
   }
   componentWillUnmount(){
     this.state.eventsStoreListener.remove();
+    this.state.eventDetailsListener.remove();
+  }
+  refresh(){
+    console.log('refreshing manage view');
+    this.state.event = eventDetailsStore.getCurrentEvent();
+    this.setState(this.state);
   }
   //this is the call to open modal to delete event
   openDeleteModal(){

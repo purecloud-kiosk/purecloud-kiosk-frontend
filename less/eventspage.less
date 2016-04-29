@@ -20,12 +20,11 @@ and (max-width : 749px) {
     .form-image, .form-description, .form-private, .form-time, .form-submit {
 			//position : fixed;
 			//display: -webkit-flex;
-			padding: 1px 1px 1px 1px;
-    		margin: 15px 10px 15px 10px;
+    		margin: 15px 0px 15px 10px !important;
     	}
 
-      }
-  	}
+    }
+	}
 
 
 /* Tablets and up */
@@ -41,8 +40,7 @@ and (min-width : 750px) {
     .form-image, .form-description, .form-private, .form-time, .form-submit {
 			//position : fixed;
 			//display: -webkit-flex;
-			padding: 1px 1px 1px 1px;
-    		margin: 10px 5px 10px 5px;
+				margin: 15px 0px 15px 10px !important;
     	}
 
   	}
@@ -76,9 +74,19 @@ and (min-width : 750px) {
 		width : 100%;
 	}
 }
+.cropper-container{
+	height : 400px !important;
+}
+.image-loading-block{
+	vertical-align: middle;
+	height : 400px;
+}
 input[name="event-file-input"]{
 	width : 100% !important;
 }
 input[name="event-file-input_filename"]{
 	width : 100% !important;
+}
+.description-textarea{
+	resize : none;
 }

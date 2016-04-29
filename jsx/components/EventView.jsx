@@ -234,7 +234,7 @@ export default class EventView extends Component {
     console.log('about to render');
     console.log(event);
     console.log(files);
-    let view, checkInWidget, checkInTable,  checkInPieChart, invitePieChart, mapWidget, eventFeed, checkInChart,
+    let view, checkInWidget, checkInTable, tickerWidget, checkInPieChart, invitePieChart, mapWidget, eventFeed, checkInChart,
       lineWidget, barWidget, histogram, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = i18next.t('PUBLIC_EVENT');
     if(event != null){
@@ -331,16 +331,13 @@ export default class EventView extends Component {
           </div>
         );
       }
-      else if(stats !== null){ // public, so show ticker instead
-        console.log(stats.checkInStats.checkedIn);
-        checkInPieChart = (
+      // regardless of whether the event is private or not
+      if(stats !== null){
+        tickerWidget = (
           <div className='col-sm-6 col-md-4'>
             <TickerWidget id={'a'+event.id} value={stats.checkInStats.checkedIn}/>
           </div>
         );
-      }
-      // regardless of whether the event is private or not
-      if(stats !== null){
         if(statsStore.getUserStats().userType === 'admin' || stats.userIsManager){
           feedInput = (<FeedInput eventID={this.state.event.id}/>);
           manageButton = (
@@ -472,6 +469,7 @@ export default class EventView extends Component {
           {mapWidget}
           {feedWidget}
           {fileWidget}
+          {tickerWidget}
           {checkInPieChart}
           {invitePieChart}
           {checkInWidget}

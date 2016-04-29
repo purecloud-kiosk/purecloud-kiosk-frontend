@@ -15,14 +15,15 @@ export default class Modal extends Component{
     $('#' + this.props.id).modal('hide');
   }
   render(){
-    var {id, title, size, submitCallback, submitText, cancelText} = this.props;
+    var {id, title, size, submitCallback, submitText, cancelText, submitButtonClass} = this.props;
     let submitButton;
     if(cancelText === undefined)
       cancelText = i18next.t('CANCEL');
     if(submitText === undefined)
       submitText = i18next.t('SUBMIT');
     if(submitCallback !== undefined){
-      submitButton = <button type="button" className="btn btn-primary pull-left" onClick={submitCallback}>{submitText}</button>;
+      submitButton = <button type="button" className={"btn btn-primary pull-left " + submitButtonClass}
+        onClick={submitCallback}>{submitText}</button>;
     }
     else{
       console.log('submit not defined');

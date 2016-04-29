@@ -13,110 +13,89 @@ export default class ImageCropper extends Component {
 	constructor(props){
 		super(props);
 		//var id = this.props.id || {};
+		let image = this.props.image;
+		console.log('cropper constructor');
 		this.state = {
-			imgUrl : "img/no-image.png",
-			id : this.props.id
-			//id : null
+			image : undefined,
+			id : this.props.id,
+			fileSelected : false,
+			loading : false,
+			key : (Math.random() + 1).toString(36).substring(7)
 		};
+		console.log(this.state);
 	}
-	componentWillReceiveProps(newProps) {
-    console.log('got some better props', newProps);
-    //this.setState({id :this.newProps.id});
-    	// this.props = {
-    	// 	id : newProps.id
-    	// };
-   //  	if (newProps.type == "banner"){
-   //  		iType = newProps.type;
-	  //   }
-	  //   else{
-	  //   	iType=newProps.type;
-	  //   }
-
-  	}
+	componentWillReceiveProps(newProps){
+		console.log('cropper new props');
+		if(newProps.image !== this.state.image){
+			console.log(newProps.image);
+			console.log(this.state.image);
+			console.log('key change');
+			//this.state.key = (Math.random() + 1).toString(36).substring(7);
+		}
+		this.setState(this.state);
+	}
+	componentDidUpdate(){
+		console.log(this.state.fileSelected);
+		//this.initCropper();
+	}
 	componentDidMount(){
-
-		//this.setState(id);
-		// $('#blah').cropper({
-		// 	responsive:true,
-	 //  		aspectRatio: 16 / 9,
-	 //  		crop: function(e) {
-	 //    // Output the result data for cropping image.
-	 //   		 console.log(e.x);
-		// 	  console.log(e.y);
-		// 	  console.log(e.width);
-		// 	  console.log(e.height);
-		// 	  console.log(e.rotate);
-		//     console.log(e.scaleX);
-		//     console.log(e.scaleY);
-		//   }
-		// });
-	// 	$().cropper('getCroppedCanvas').toBlob(function (blob) {
-	// 	  var formData = new FormData();
-
-	// 	  formData.append('croppedImage', blob);
-
-	// 	  $.ajax('/path/to/upload', {
-	// 	    method: "POST",
-	// 	    data: formData,
-	// 	    processData: false,
-	// 	    contentType: false,
-	// 	    success: function () {
-	// 	      console.log('Upload success');
-	// 	    },
-	// 	    error: function () {
-	// 	      console.log('Upload error');
-	// 	    }
-	// 	  });
-	// 	});
+		$(window).on('resize', () => {
+			console.log('cropper resize');
+			$('#'+ this.state.id).cropper('reset');
+		});
+		console.log('mounted');
+		this.initCropper();
 	}
-	componentWillUnmount(){
-
-  	}
-
+	initCropper(){
+		console.log('init called');
+		console.log(this.state.id);
+		if(this.state.id === "bannerCropper"){
+			$('#'+ this.state.id).cropper({
+				responsive: true,
+				aspectRatio: 1.618,
+				scaleX: 1,
+				scaleY: 1,
+				minCanvasHeight : 200,
+				minContainerHeight :400
+			});
+		} else {
+			$('#'+ this.state.id).cropper({
+				responsive: true,
+				aspectRatio: 1,
+				scaleX: 1,
+				scaleY: 1,
+				minCanvasHeight : 200,
+				minContainerHeight : 400
+			});
+		}
+	}
 	readURL(input) {
 		console.log('called');
 		console.log(this.state);
 		const {id} = this.state;
-        if (input.target.files && input.target.files[0]) {
-            var reader = new FileReader();
-            reader.onload = (e) => {
-							if(this.state.id == "bannerCropper"){
-								$('#'+ this.state.id).cropper("setAspectRatio", 1.618);
-								$('#'+ this.state.id).cropper({
-									responsive: true,
-									aspectRatio: 16/9,
-									scaleX: 1,
-									scaleY: 1
-								});
-							} else {
-								$('#'+ this.state.id).cropper("setAspectRatio", 1.33333);
-								$('#'+ this.state.id).cropper({
-									responsive: true,
-									aspectRatio: 3/4,
-									scaleX: 1,
-									scaleY: 1
-								});
-							}
-              $('#'+ this.state.id ).cropper("replace", e.target.result);
-            };
-            reader.readAsDataURL(input.target.files[0]);
-        }
-
+    if (input.target.files && input.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = (e) => {
+          $('#'+ this.state.id ).cropper("replace", e.target.result);
+					this.state.fileSelected = true;
+					this.setState(this.state);
+					eventActions.emitCropperStateChange(this.state.id);
+        };
+        reader.readAsDataURL(input.target.files[0]);
+    }
 	}
 
 	render() {
-
-    	var image;
+		console.log(this.state);
 		return(
 			<div>
 				<div className="file-input2">
-					<FileInput className='file-input' accept=".png,.gif,.jpeg,.jpg" onChange={this.readURL.bind(this)} />
-					<img id = {this.state.id} width='100%' height='400px' src={this.state.imgUrl} alt="your image" />
+					<FileInput  className='file-input' accept=".png,.gif,.jpeg,.jpg" onChange={this.readURL.bind(this)} />
+					 <img id={this.state.id} className='hide-element' width='100%' height='400px' src={this.state.image} alt="your image" />
 				</div>
 			</div>
-			);
+		);
 	}
-
 }
 /*
 

@@ -25,6 +25,7 @@ var currentEvent = null;
 var updateFlag = false;
 var addedFile = null;
 var removedFileID = null;
+var cropperID = null;
 function setEventManagers(managers){
   eventManagers = managers;
 }
@@ -98,7 +99,9 @@ function setError(e){
 function addCheckIn(data){
   eventCheckIns.push(data.message.content);
 }
-
+function setCropperID(data){
+  cropperID = data;
+}
 class EventDetailsStore extends EventEmitter{
   getCurrentEvent(){
     return currentEvent;
@@ -150,6 +153,9 @@ class EventDetailsStore extends EventEmitter{
   }
   getRemovedFileID(){
     return removedFileID;
+  }
+  getCropperID(){
+    return cropperID;
   }
   getError(){
     return error;
@@ -224,6 +230,9 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.ERROR:
       setError(payload.data);
+      break;
+    case eventsConstants.CROPPER_CHANGE:
+      setCropperID(payload.data);
       break;
     default:
       //no op

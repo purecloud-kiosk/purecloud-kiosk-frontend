@@ -40,41 +40,24 @@ export default class Histogram extends Component {
     console.log(newProps);
     if(this.state.chart !== null){
       if(this.state.checkIns.length < newProps.checkIns.length){
-        console.log('awww yessss');
         this.state.checkIns = newProps.checkIns;
-        // let newData = [];
-        // for(let i = this.state.checkIns.length; i < newProps.checkIns.length; i++){
-        //   newData.push(newProps.checkIns[i])
-        // }
-        // console.log(this.state);
-        // this.state.chartData = this.state.chartData.concat();
-        // console.log(this.calculateData);
-        // console.log(this.state.chartData);
         this.state.chart.series[0].setData(this.calculateData(this.state.checkIns), true);
       }
     }
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    return nextProps.length > this.state.checkIns.length;
+    return nextProps.length != this.state.checkIns.length;
   }
   calculateData(checkIns){
     console.log(checkIns);
-    // checkIns.forEach((checkIn) => {
-    //   if(checkIn.timestamp !== undefined){
-    //     lineData.data.push([
-    //       new Date(checkIn.timestamp).getTime(), count
-    //     ]);
-    //   }
-    //   count++;
-    // });
     // round each date to the current date
-    let fiveMin = 15 * 60 * 1000;
+    let interval = 15 * 60 * 1000;
     let intervals = checkIns.map((checkIn) => {
       let date = new Date(checkIn.timestamp);
       //console.log(minute.startOf('minute').valueOf());
-      console.log(new Date(Math.round((date.getTime()/fiveMin) * fiveMin)));
-      return new Date(Math.round(date.getTime()/fiveMin) * fiveMin).getTime();
+      console.log(new Date(Math.round((date.getTime()/interval) * interval)));
+      return new Date(Math.round(date.getTime()/interval) * interval).getTime();
       //return minute.startOf('minute').valueOf();
     });
     console.log(intervals);

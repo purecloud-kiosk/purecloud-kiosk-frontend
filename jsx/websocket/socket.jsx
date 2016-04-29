@@ -54,7 +54,7 @@ class WebSocket{
           };
         }
         else{
-          this.notificationSystem.addNotification({
+          message = {
             'message': i18next.t('EVENT_CREATED'),
             'position': 'tr',
             'level': 'info',
@@ -66,8 +66,9 @@ class WebSocket{
                 navActions.refresh();
               }
             }
-          });
+          };
         }
+        this.notificationSystem.addNotification(message);
       }
     });
     this.socket.on('disconnect', () => {

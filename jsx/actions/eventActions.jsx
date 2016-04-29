@@ -367,7 +367,7 @@ export function uploadImage(formData, fileType){
     },
     error: function () {
       dispatcher.dispatch({
-        actionType : eventConstants.FILE_ERROR
+        actionType : eventsConstants.FILE_ERROR
       });
       console.log('Upload error');
     }
@@ -590,5 +590,37 @@ export function removeEventMessage(id){
       'actionType' : eventsConstants.ERROR,
       'data' : data
     });
+  });
+}
+
+export function sendInvites(eventID){
+  $.ajax({
+    url: 'api/events/sendInvitations',
+    method : 'POST',
+    data : {
+      'eventID' : eventID,
+    },
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done((data) => {
+    console.log('successfully sent invites');
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.INVITES_SENT
+    });
+  }).fail((data) => {
+    console.log('Failed');
+    console.log(data);
+    dispatcher.dispatch({
+      'actionType' : eventsConstants.ERROR,
+      'data' : data
+    });
+  });
+}
+
+export function emitCropperStateChange(id){
+  dispatcher.dispatch({
+    'actionType' : eventsConstants.CROPPER_CHANGE,
+    'data' : id
   });
 }
