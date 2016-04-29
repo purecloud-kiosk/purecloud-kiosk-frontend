@@ -8,14 +8,17 @@ export default class CheckInTable extends Component{
     }
   }
   componentWillReceiveProps(newProps){
-    this.state.checkIns = newProps.checkIns;
-    this.setState(this.state);
-  }
-  shouldComponentUpdate(newProps){
-    if(this.state.checkIns !== null)
-      return this.state.checkIns.length !== newProps.checkIns.length;
-    else
-      return true;
+    if(this.state.checkIns !== null){
+      if(this.state.checkIns.length !== newProps.checkIns.length){
+        this.state.checkIns = newProps.checkIns;
+        this.setState(this.state);
+      }
+    }
+    else{
+      this.state.checkIns = newProps.checkIns;
+      this.setState(this.state);
+    }
+
   }
   render(){
     console.log('about to render table');

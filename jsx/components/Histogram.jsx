@@ -101,8 +101,6 @@ export default class Histogram extends Component {
             startOnTick : true,
             labels : {
               formatter : function(){
-                console.log('xaxis');
-                console.log(this);
                 return moment(this.value).format('LLL');
               }
             }

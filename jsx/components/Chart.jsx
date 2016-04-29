@@ -2,7 +2,9 @@
 import React, { Component } from 'react';
 import i18next from 'i18next';
 import navStore from '../stores/navStore';
+import * as navActions from '../actions/navActions';
 import * as eventActions from '../actions/eventActions';
+import eventsStore from '../stores/eventsStore';
 import navConstants from '../constants/navConstants';
 
 Highcharts.setOptions({                                            // This is for all plots, change Date axis to local timezone
@@ -23,6 +25,20 @@ export default class PieChartWidget extends Component {
     this.state.width = $('#' + this.state.id).width();
     console.log(this.state);
     this.renderChart(this.props);
+    console.log(eventsStore.getPastEventsManaged());
+    if(this.props.type === 'bar'){
+      function handleClick(index){
+        console.log(index);
+        console.log('click handler');
+        console.log(eventsStore.getPastEventsManaged()[index]);
+        eventActions.setCurrentEvent(eventsStore.getPastEventsManaged()[index]);
+        navActions.routeToPage('event');
+      }
+      for(let i = 0; i < this.props.chartData.data.length; i++){
+        console.log('applying handler ' + i);
+        $('#pastEvent' + i).click(handleClick.bind(this, i));
+      }
+    }
     var self = this;
     this.state.navListener = navStore.addListener(navConstants.SIDEBAR_TOGGLED, ()=> {
       setTimeout(() => {
@@ -35,6 +51,12 @@ export default class PieChartWidget extends Component {
     });
   }
   componentWillUnmount(){
+    if(this.props.type === 'bar'){
+      for(let i = 0; i < this.props.chartData.data.length; i++){
+        console.log('removing handler');
+        $('#pastEvent' + i).off();
+      }
+    }
     this.state.navListener.remove();
   }
   componentWillReceiveProps(newProps){
@@ -94,6 +116,7 @@ export default class PieChartWidget extends Component {
     let chartOptions = null;
     switch(type){
       case 'bar':
+        let index = 0;
         chartOptions = {
             chart: {
               renderTo : this.state.id,
@@ -104,7 +127,18 @@ export default class PieChartWidget extends Component {
             },
             xAxis: {
                 categories: chartData.categories,
-                crosshair: true
+                crosshair: true,
+                labels : {
+                  formatter : function(){
+                    console.log('xaxis');
+                    console.log(this);
+                    let i = index % eventsStore.getPastEventsManaged().length;
+                    index++;
+                    return '<a id="pastEvent' + i + '" class="clickable">' + this.value +'</a>';
+                  },
+                  useHTML : true
+                },
+
             },
             yAxis: {
                 min: 0,
