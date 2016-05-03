@@ -14,7 +14,7 @@ export default class Histogram extends Component {
     super(props);
     this.state = {
       'id' : (Math.random() + 1).toString(36).substring(7),
-      'checkIns' : props.checkIns,
+      'checkInIntervals' : props.checkInIntervals,
       'chart' : null,
       'chartData' : null
     };
@@ -22,7 +22,7 @@ export default class Histogram extends Component {
   componentDidMount(){
     this.state.width = $('#' + this.state.id).width();
     console.log(this.state);
-    this.renderChart(this.state.checkIns);
+    this.renderChart(this.state.checkInIntervals);
     var self = this;
     this.state.navListener = navStore.addListener(navConstants.SIDEBAR_TOGGLED, ()=> {
       setTimeout(() => {
@@ -38,58 +38,31 @@ export default class Histogram extends Component {
   componentWillReceiveProps(newProps){
     console.log('New Props for histogram');
     console.log(newProps);
-    if(this.state.chart !== null){
-      if(this.state.checkIns.length < newProps.checkIns.length){
-        this.state.checkIns = newProps.checkIns;
-        this.state.chart.series[0].setData(this.calculateData(this.state.checkIns), true);
-      }
-    }
+    // if(this.state.chart !== null){
+    //   if(this.state.checkIns.length < newProps.checkIns.length){
+    //     this.state.checkIns = newProps.checkIns;
+    //     this.state.chart.series[0].setData(this.calculateData(this.state.checkIns), true);
+    //   }
+    // }
+    this.state.checkInIntervals = newProps.checkInIntervals;
+    this.state.chart.series[0].setData(this.convertData(this.state.checkInIntervals), true);
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    return nextProps.length != this.state.checkIns.length;
+    //return nextProps.length != this.state.checkIns.length;
+    return true;
   }
-  calculateData(checkIns){
-    console.log(checkIns);
-    // round each date to the current date
-    let interval = 15 * 60 * 1000;
-    let intervals = checkIns.map((checkIn) => {
-      let date = new Date(checkIn.timestamp);
-      //console.log(minute.startOf('minute').valueOf());
-      console.log(new Date(Math.round((date.getTime()/interval) * interval)));
-      return new Date(Math.round(date.getTime()/interval) * interval).getTime();
-      //return minute.startOf('minute').valueOf();
+  convertData(data){
+    let chartData = [];
+    Object.keys(data).forEach((key) => {
+      chartData.push([Number(key), data[key]]);
     });
-    console.log(intervals);
-    // reduce the data, the inital value of prev is an array
-    let reduce = intervals.reduce((prev, current) => {
-      console.log(prev);
-      console.log(current);
-      if(prev !== undefined){
-        if(prev[current] === undefined){
-          prev[current] = 1;
-        }
-        else{
-          prev[current]++;
-        }
-      }
-      return prev;
-    }, []);
-    console.log('reduced result')
-    console.log(reduce);
-    let values = [];
-    for(let key in reduce){
-      values.push({
-        x : Number(key),
-        y : reduce[key],
-        pointDate : Number(key)
-      });
-    }
-    return values;
+    console.log(chartData);
+    return chartData;
   }
-  renderChart(checkIns){
-    let chartData = this.calculateData(checkIns);
-    let chartOptions = chartOptions = {
+  renderChart(checkInIntervals){
+    let chartData = this.convertData(checkInIntervals);
+    let chartOptions = {
         chart: {
           renderTo : this.state.id,
             type: 'column'

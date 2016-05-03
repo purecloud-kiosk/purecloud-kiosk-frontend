@@ -26,6 +26,7 @@ var updateFlag = false;
 var addedFile = null;
 var removedFileID = null;
 var cropperID = null;
+var intervalData = null;
 function setEventManagers(managers){
   eventManagers = managers;
 }
@@ -102,6 +103,9 @@ function addCheckIn(data){
 function setCropperID(data){
   cropperID = data;
 }
+function setCheckInIntervalData(data){
+  intervalData = data;
+}
 class EventDetailsStore extends EventEmitter{
   getCurrentEvent(){
     return currentEvent;
@@ -157,6 +161,9 @@ class EventDetailsStore extends EventEmitter{
   getCropperID(){
     return cropperID;
   }
+  getCheckInIntervals(){
+    return intervalData;
+  }
   getError(){
     return error;
   }
@@ -205,6 +212,9 @@ dispatcher.register(function(payload){
       break;
     case eventsConstants.NEW_CHECKIN_RETRIEVED:
       addCheckIn(payload.data);
+      break;
+    case eventsConstants.CHECKIN_INTERVALS_RETRIEVED:
+      setCheckInIntervalData(payload.data);
       break;
     case eventsConstants.BULK_CHECKINS_RETRIEVED:
       setBulkCheckIns(payload.data);

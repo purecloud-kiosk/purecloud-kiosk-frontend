@@ -522,6 +522,23 @@ export function getEventInvites(event){
     console.log(error);
   });
 }
+export function getCheckInIntervals(event){
+  $.ajax({
+    url: 'api/events/retrieveCheckInIntervals?&eventID=' + event,
+    method : 'GET',
+    headers : {
+      "Authorization" : "bearer " + requestConstants.AUTH_TOKEN
+    }
+  }).done(function(data){
+    dispatcher.dispatch({
+      actionType : eventsConstants.CHECKIN_INTERVALS_RETRIEVED,
+      data : data
+    });
+  }).fail(function(error){
+    console.log("ERROR : ");
+    console.log(error);
+  });
+}
 
 export function addAttendee(userData){
   $.ajax({

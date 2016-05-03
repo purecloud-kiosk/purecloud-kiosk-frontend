@@ -32,6 +32,7 @@ export default class EventView extends Component {
       'files' : [],
       'stats' : null,
       'checkIns' : null,
+      'checkInIntervals' : null,
       'user' : null,
       'feed' : [],
       'managers' : [],
@@ -73,7 +74,8 @@ export default class EventView extends Component {
     this.state.bulkCheckInsListener=
       eventDetailsStore.addListener(eventsConstants.NEW_CHECKINS_AVAILABLE, this.retrieveCheckIns.bind(this));
     this.state.incomingCheckInListener =
-      eventDetailsStore.addListener(eventsConstants.NEW_CHECKIN_RETRIEVED, this.updateCheckIns.bind(this, true));
+      eventDetailsStore.addListener(eventsConstants.NEW_CHECKIN_RETRIEVED, this.insertCheckIn.bind(this, true));
+    this.state.intervalListener = eventDetailsStore.addListener(eventsConstants.CHECKIN_INTERVALS_RETRIEVED, this.updateIntervals.bind(this));
     $('.banner').error(this.onBannerError.bind(this));
     $('.thumbnail').error(this.onThumbnailError.bind(this));
     console.log(this.state);
@@ -94,6 +96,7 @@ export default class EventView extends Component {
     this.state.messageRemovedListener.remove();
     this.state.bulkCheckInsListener.remove()
     this.state.incomingCheckInListener.remove();
+    this.state.intervalListener.remove();
     this.setState(this.state);
   }
   showUser(){
@@ -107,6 +110,7 @@ export default class EventView extends Component {
     console.log(this.state.event);
     eventActions.getEventCheckIns(this.state.event.id);
     statsActions.getEventStats(this.state.event.id);
+    eventActions.getCheckInIntervals(this.state.event.id);
   }
   setFeed(){
     console.log('feed set');
@@ -138,7 +142,22 @@ export default class EventView extends Component {
     setTimeout(() => {
       eventActions.getEventFiles(state.event.id);
       eventActions.getEventFeed(state.event.id);
+      eventActions.getCheckInIntervals(state.event.id);
     },1500);
+  }
+  insertCheckIn(){
+    let state = this.state;
+    state.stats.checkInStats.checkedIn++;
+    state.stats.checkInStats.notCheckedIn--;
+    state.checkIns = eventDetailsStore.getCheckIns();
+    let timestamp = new Date(state.checkIns[state.checkIns.length - 1].timestamp).getTime();
+    timestamp = Math.round(timestamp / (15 * 1000 * 60)) * (15 * 1000 * 60);
+    console.log(timestamp);
+    if(state.checkInIntervals[timestamp] === undefined)
+      state.checkInIntervals[timestamp] = 1;
+    else
+      state.checkInIntervals[timestamp]++;
+    this.setState(state);
   }
   updateEventFiles(){
     let state = this.state;
@@ -196,9 +215,11 @@ export default class EventView extends Component {
   updateCheckIns(increment){
     let state = this.state;
     state.checkIns = eventDetailsStore.getCheckIns();
-    if(increment){
-      state.stats.checkInStats.checkedIn++;
-    }
+    this.setState(state);
+  }
+  updateIntervals(){
+    let state = this.state;
+    state.checkInIntervals = eventDetailsStore.getCheckInIntervals();
     this.setState(state);
   }
   openDescModal(){
@@ -229,7 +250,7 @@ export default class EventView extends Component {
     $('#histogramModal').modal('show');
   }
   render(){
-    const {event, files, stats, checkIns, chartOptions, feed, managers} = this.state;
+    const {event, files, stats, checkIns, checkInIntervals, chartOptions, feed, managers} = this.state;
     console.log(managers);
     console.log('about to render');
     console.log(event);
@@ -237,6 +258,41 @@ export default class EventView extends Component {
     let view, checkInWidget, checkInTable, tickerWidget, checkInPieChart, invitePieChart, mapWidget, eventFeed, checkInChart,
       lineWidget, barWidget, histogram, fileWidget, descriptionWidget, feedWidget, feedInput,  manageButton;
     let privacy = i18next.t('PUBLIC_EVENT');
+    let description;
+    if(event.description === null){
+      console.log('description');
+      description = i18next.t('NO_DESCRIPTION');
+    }
+    else{
+      description = event.description.split('\n').map((item) => {
+        return <span>{item}<br/></span>
+      });
+    }
+    console.log('event.location ' + event.location);
+    let location = event.location === null ? i18next.t('NO_LOCATION') : event.location;
+    if(event.location === null){
+      location = i18next.t('NO_LOCATION');
+    }
+    else{
+      location = event.location;
+      mapWidget = (
+        <div className="col-sm-6 col-md-4">
+          <div className='widget'>
+            <div className='widget-header'>
+              <i className="fa fa-map"></i>
+              {i18next.t('Event Location')}
+               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openMapModal.bind(this)}>
+                <i className="fa fa-cog fa-lg"></i> {i18next.t('EXPAND')}
+              </a>
+            </div>
+            <div className='widget-body medium no-padding'>
+              <EmbeddedMap location={event.location}/>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    console.log(location);
     if(event != null){
       descriptionWidget = (
         <div className="col-sm-6 col-md-4">
@@ -251,9 +307,7 @@ export default class EventView extends Component {
             <div className="widget-body medium no-padding">
               <div className="text-body">
                 <p>
-                  {event.description.split('\n').map((item) => {
-                    return <span>{item}<br/></span>
-                  })}
+                  {description}
                 </p>
               </div>
             </div>
@@ -350,9 +404,9 @@ export default class EventView extends Component {
       let lineData = {
         data : []
       };
-      if(checkIns !== null){
+      if(checkInIntervals !== null){
         let count = 1;
-        histogram = <Histogram checkIns={checkIns}/>;
+        histogram = <Histogram checkInIntervals={checkInIntervals}/>;
         //timeseries = <Timeseries checkIns={checkIns}/>
         barWidget = (
           <div className="col-sm-6 col-md-4">
@@ -425,22 +479,6 @@ export default class EventView extends Component {
           </div>
         </div>
       );
-      mapWidget = (
-        <div className="col-sm-6 col-md-4">
-          <div className='widget'>
-            <div className='widget-header'>
-              <i className="fa fa-map"></i>
-              {i18next.t('Event Location')}
-               <a className="btn btn-primary btn-sm pull-right text-center" onClick={this.openMapModal.bind(this)}>
-                <i className="fa fa-cog fa-lg"></i> {i18next.t('EXPAND')}
-              </a>
-            </div>
-            <div className='widget-body medium no-padding'>
-              <EmbeddedMap location={event.location}/>
-            </div>
-          </div>
-        </div>
-      );
       view = (
         <div className="animated fadeInUp">
           <div className="event-container">
@@ -458,7 +496,7 @@ export default class EventView extends Component {
                     <h4 className='word-break-all'>{event.title}</h4>
                     <p>{i18next.t('START_DATE')} {moment(event.startDate).format('LLL')}</p>
                     <p>{i18next.t('END_DATE')} {moment(event.endDate).format('LLL')}</p>
-                    <p className='word-break-all'>Location: {event.location}</p>
+                    <p className='word-break-all'>Location: {location}</p>
                     <p>{privacy}</p>
                   </div>
                 </div>
@@ -500,11 +538,8 @@ export default class EventView extends Component {
       <div>
         {view}
         <Modal id='descriptionModal' title="Event Description">
-          {event.description.split('\n').map((item) => {
-            return <span>{item}<br/></span>
-          })}
+          {description}
         </Modal>
-
         <Modal id='feedModal' title='Event Feed'>
           {feedInput}
           <div className='feedHolder'>
